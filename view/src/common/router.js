@@ -75,7 +75,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
     '/result/success': {
-      component: dynamicWrapper(app, [], () => import('../routes/Home/Home')),
+      component: dynamicWrapper(app, [], () => import('../routes/Upload/FileUpload')),
     },
     '/result/fail': {
       component: dynamicWrapper(app, [], () => import('../routes/Result/Error')),
@@ -94,42 +94,9 @@ export const getRouterData = app => {
         import('../routes/Exception/triggerException')
       ),
     },
-    '/monitor/test': {
-      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Home/Test')),
+    '/monitor/fileUpload': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Upload/FileUpload')),
     },
-    // '/monitor/user': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/User')),
-    // },
-    // '/monitor/target': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/Target')),
-    // },
-    // '/monitor/pro-user': {
-    //   component: dynamicWrapper(app, ['monitor'], () => import('../routes/Monitor/ProUser')),
-    // },
-    // '/mydata/moni-data': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/QueryData/MoniData')),
-    // },
-    // '/updata/upfirst-data': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/UpData/UpFirstData')),
-    // },
-    // '/app/uploadPhonePicture': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/App/UploadPicture')),
-    // },
-    // '/app/test': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/App/Test')),
-    // },
-    // '/app/uploadPhonePicture': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/App/UploadPicture')),
-    // },
-    // '/binding/zhuhaibinding': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/Binding/Binding')),
-    // },
-    // '/imagesetting/pointmap': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/Image/PointMap')),
-    // },
-    // '/upload/imageupload': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/upload/ImageUpload')),
-    // },
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
     },
@@ -142,9 +109,6 @@ export const getRouterData = app => {
     '/user/register-result': {
       component: dynamicWrapper(app, [], () => import('../routes/User/RegisterResult')),
     },
-    // '/user/:id': {
-    //   component: dynamicWrapper(app, [], () => import('../routes/User/SomeComponent')),
-    // },
   };
   // Get name from ./menu.js or just set it in the router data.
   const menuData = getFlatMenuData(getMenuData());

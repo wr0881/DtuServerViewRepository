@@ -11,6 +11,7 @@ const { AuthorizedRoute } = Authorized;
 
 function RouterConfig({ history, app }) {
   const routerData = getRouterData(app);
+  // const UserLayout = routerData['/'].component;
   const UserLayout = routerData['/user'].component;
   const BasicLayout = routerData['/'].component;
   return (

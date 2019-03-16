@@ -24,15 +24,15 @@ export default class LoginPage extends Component {
   handleSubmit = (err, values) => {
     const { type } = this.state;
     const { dispatch } = this.props;
-    if (!err) {
-      dispatch({
-        type: 'login/login',
-        payload: {
-          ...values,
-          type,
-        },
-      });
-    }
+    // if (!err) {
+    dispatch({
+      type: 'login/login',
+      payload: {
+        ...values,
+        type,
+      },
+    });
+    // }
   };
 
   // changeAutoLogin = e => {
