@@ -13,13 +13,13 @@ const menuData = [
   //   ],
   // },
   {
-    name: '在线监测',
-    icon: 'area-chart',
-    path: 'monitor',
+    name: '出入库平台',
+    icon: 'inbox',
+    path: 'library',
     children: [
       {
-        name: '文件上传',
-        path: 'fileUpload',
+        name: '传感器仓库',
+        path: 'sensorLib',
       },
     ],
   },

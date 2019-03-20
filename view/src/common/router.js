@@ -75,7 +75,7 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['user', 'login'], () => import('../layouts/BasicLayout')),
     },
     '/result/success': {
-      component: dynamicWrapper(app, [], () => import('../routes/Upload/FileUpload')),
+      component: dynamicWrapper(app, [], () => import('../routes/Platform/SensorLib/SensorLib')),
     },
     '/result/fail': {
       component: dynamicWrapper(app, [], () => import('../routes/Result/Error')),
@@ -96,6 +96,11 @@ export const getRouterData = app => {
     },
     '/monitor/fileUpload': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Upload/FileUpload')),
+    },
+    '/library/sensorLib': {
+      component: dynamicWrapper(app, ['monitor'], () =>
+        import('../routes/Platform/SensorLib/SensorLib')
+      ),
     },
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
