@@ -98,9 +98,10 @@ export const getRouterData = app => {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Upload/FileUpload')),
     },
     '/library/sensorLib': {
-      component: dynamicWrapper(app, ['monitor'], () =>
-        import('../routes/Platform/SensorLib/SensorLib')
-      ),
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Platform/SensorLib/SensorLib')),
+    },
+    '/server/youren': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Server/YouRen')),
     },
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),

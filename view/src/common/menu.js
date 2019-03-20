@@ -23,6 +23,22 @@ const menuData = [
       },
     ],
   },
+
+  {
+    name: '服务管理',
+    icon: 'area-chart',
+    path: 'server',
+    children: [
+      {
+        name: '有人DTU服务',
+        path: 'youren',
+      },
+      {
+        name: '测智终端服务',
+        path: 'cezhi',
+      },
+    ],
+  },
 ];
 
 function formatter(data, parentPath = '/', parentAuthority) {
