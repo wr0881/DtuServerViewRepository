@@ -100,6 +100,9 @@ export const getRouterData = app => {
     '/library/sensorLib': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Platform/SensorLib/SensorLib')),
     },
+    '/device/deviceConfig': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Device/DeviceConfig')),
+    },
     '/server/youren': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Server/YouRen')),
     },

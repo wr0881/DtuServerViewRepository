@@ -1,57 +1,28 @@
 import React, { Component } from 'react';
-import { Table, Form, Input, Card, Button, Popover, Row, Col, Select, Drawer, message } from 'antd';
+import { Table, Form, Input, Card, Button, Row, Col, Select, Drawer, message } from 'antd';
 import axios from '../../axios';
 
 @Form.create()
-export default class YouRen extends Component {
+export default class DeviceConfig extends Component {
 
   state = {
-    startLoading: false,
-    stopLoading: false,
-    startDisabled: false,
-    stopDisabled: false,
     drawerVisible: false,
-    serverDetail: "服务未启动",
     sensorData: [],
-    terminalType: 1,
     terminalData: [],
   }
 
   componentWillMount() {
-    if (this.props.match.url.lastIndexOf("youren") >= 0) {
-      this.setState({ terminalType: 1 });
-    } else if (this.props.match.url.lastIndexOf("cezhi") >= 0) {
-      this.setState({ terminalType: 2 });
-    }
-
-    this.initButtonStatus();
     this.initTableData();
-
-  }
-
-  //初始化对应button的状态
-  initButtonStatus() {
-    axios.get(`/server/getServer`, {})
-      .then(response => {
-        if (response.data.code == 0) { //服务已启动
-          this.setState({ startDisabled: true, stopDisabled: false, serverDetail: "域名：iot.zdjcyun.com 端口：8888" });
-        } else { //服务未启动
-          this.setState({ startDisabled: false, stopDisabled: true, serverDetail: "服务未启动" });
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
   }
 
   //初始化Table的数据
   initTableData() {
-    axios.get(`/deviceConfig/listDeviceConfigByType`, { params: { 'terminalType': this.state.terminalType } })
+    axios.get(`/deviceConfig/listDeviceConfig`)
       .then(response => {
-        if (response.data.code == 0) { //服务已启动
+        if (response.data.code == 0) { 
           this.setState({ terminalData: response.data.data });
-        } else { //服务未启动
-          console.log("该服务下暂无终端");
+        } else {
+          message.info("暂无设备绑定信息");
         }
       })
       .catch(function (error) {
@@ -59,40 +30,9 @@ export default class YouRen extends Component {
       });
   }
 
-  //启动服务
-  startServer = () => {
-    this.setState({ startLoading: true });
-    axios.post(`/server/startServer`)
-      .then(response => {
-        if (response.data.code == 0) { //服务启动成功
-          this.setState({ startDisabled: true, stopDisabled: false, serverDetail: "域名：iot.zdjcyun.com 端口：8888" });
-        } else { //服务启动失败
-          message.error(response.data.msg);
-        }
-        this.setState({ startLoading: false });
-      })
-      .catch(function (error) {
-        console.log(error);
-        this.setState({ startLoading: false });
-      });
-  }
-
-  //停止服务
-  stopServer = () => {
-    this.setState({ stopLoading: true });
-    axios.delete(`/server/stopServer`)
-      .then(response => {
-        if (response.data.code == 0) { //服务停止成功
-          this.setState({ startDisabled: false, stopDisabled: true, serverDetail: "服务未启动" });
-        } else { //服务停止失败
-          message.error(response.data.msg);
-        }
-        this.setState({ stopLoading: false });
-      })
-      .catch(function (error) {
-        console.log(error);
-        this.setState({ stopLoading: false });
-      });
+  //打开设备绑定页面
+  openBindDrawer = () => {
+    this.setState({ drawerVisible: true });
   }
 
   handleSubmit = (e) => {
@@ -204,7 +144,7 @@ export default class YouRen extends Component {
 
   render() {
 
-    const terminalColumns = [
+    const deviceConfigColumns = [
       {
         title: '终端编号', dataIndex: 'terminalNumber', key: 'terminalNumber',
       }, {
@@ -214,17 +154,6 @@ export default class YouRen extends Component {
       }, {
         title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus',
       }, {
-        title: '操作', dataIndex: 'showSensor', key: 'showSensor',
-        render: (text, item, index) => {
-          return <Button onClick={() => {
-            this.setState({ drawerVisible: true })
-
-          }}>修改采集频率</Button>;
-        }
-      }];
-
-    const sensorColumns = [
-      {
         title: '传感器编号', dataIndex: 'sensorNumber', key: 'sensorNumber',
       }, {
         title: '传感器地址', dataIndex: 'sensorAddress', key: 'sensorAddress',
@@ -237,30 +166,21 @@ export default class YouRen extends Component {
       }, {
         title: '使用状态', dataIndex: 'useStatus', key: 'useStatus',
       }, {
-        title: '手动触发', dataIndex: 'manalSend', key: 'manalSend',
+        title: '操作', dataIndex: 'removeBinding', key: 'removeBinding',
         render: (text, item, index) => {
           return <Button onClick={() => {
             message.info("还未实现");
-          }}>触发指令</Button>;
+          }}>解除绑定</Button>;
         }
       }];
 
-
     return (
       <div>
-        <Card title={<div>有人DTU服务<Popover content={this.state.serverDetail} title="服务各参数详细信息"><Button icon="info-circle"></Button></Popover></div>} extra={<div>
-          <Button type="primary" icon="play-circle" disabled={this.state.startDisabled} loading={this.state.startLoading} onClick={this.startServer}>启动服务</Button>
-          &nbsp;&nbsp;&nbsp;<Button type="primary" icon="poweroff" disabled={this.state.stopDisabled} loading={this.state.stopLoading} onClick={this.stopServer}>停止服务</Button>
-        </div>}>
+        <Card title="设备绑定" extra={<div><Button type="primary" onClick={this.openBindDrawer}>绑定设备</Button></div>}>
           {this.serachTerminalForm()}
           {this.showSensorDrawer()}
           <div>
-            <Table
-              columns={terminalColumns}
-              dataSource={this.state.terminalData}
-              expandedRowRender={(record) => {  return <Table columns={sensorColumns} dataSource={this.state.sensorData}></Table> }}
-              onExpand={(expanded, record) => {expanded? this.getSensorData(record):null }}
-            />
+            <Table columns={deviceConfigColumns} dataSource={this.state.terminalData} />
           </div>
 
         </Card>

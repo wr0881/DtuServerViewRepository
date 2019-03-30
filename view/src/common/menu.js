@@ -23,7 +23,17 @@ const menuData = [
       },
     ],
   },
-
+  {
+    name: '设备管理',
+    icon: 'area-chart',
+    path: 'device',
+    children: [
+      {
+        name: '设备绑定',
+        path: 'deviceConfig',
+      },
+    ],
+  },
   {
     name: '服务管理',
     icon: 'area-chart',
