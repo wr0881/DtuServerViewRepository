@@ -2,3 +2,27 @@
   text-align: center;
   color: red;
 }
+.lmp_form_one {
+  padding: 24px;
+  background: #fbfbfb;
+  border: 1px solid #d9d9d9;
+  border-radius: 6px;
+}
+.lmp_test {
+  background-color: red;
+  color: white;
+}
+.lmp_sc_col {
+  overflow-y: scroll;
+}
+.lmp_sc_row {
+  height: 100%;
+  width: 100%;
+  overflow: hidden;
+}
+.lmp_tag_div {
+  width: 600px;
+  height: 300px;
+  border: 1px solid #d9d9d9;
+  border-radius: 4px;
+}

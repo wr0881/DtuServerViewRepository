@@ -5,15 +5,18 @@ export function fixedZero(val) {
   return val * 1 < 10 ? `0${val}` : val;
 }
 
-export const serverhttp="http://123.207.88.210:8090/";
-export const testhttp = "http://localhost:8090/";
-export const dtuhttp = "http://123.207.88.210:8095/";
-export const wstcp = "http://10.88.89.170:8095/";
+export const serverhttp = 'http://123.207.88.210:8090/';
+export const testhttp = 'http://localhost:8090/';
+export const dtuhttp = 'http://123.207.88.210:8095/';
+export const wstcp = 'http://10.88.89.170:8095/';
 // export const wstcp = "http://123.207.88.210:8095/";
 // export const dtuhttp = "http://10.88.89.170:8095/";
 
 export function getNowFormatDate(time) {
-  const date = new Date(time);
+  const date = new Date();
+  if (time !== undefined) {
+    date.setMonth(date.getMonth() - time);
+  }
   const year = date.getFullYear();
   let month = date.getMonth() + 1;
   let strDate = date.getDate();
