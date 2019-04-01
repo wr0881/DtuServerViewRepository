@@ -7,8 +7,12 @@ export default class DeviceConfig extends Component {
 
   state = {
     drawerVisible: false,
-    sensorData: [],
-    terminalData: [],
+    deviceData: [],
+    pagination: {
+      total: 0,
+      defaultCurrent: 1,
+      defaultPageSize: 10,
+    },
   }
 
   componentWillMount() {
@@ -20,7 +24,7 @@ export default class DeviceConfig extends Component {
     axios.get(`/deviceConfig/listDeviceConfig`)
       .then(response => {
         if (response.data.code == 0) { 
-          this.setState({ terminalData: response.data.data });
+          this.setState({ deviceData: response.data.data });
         } else {
           message.info("暂无设备绑定信息");
         }
@@ -39,8 +43,19 @@ export default class DeviceConfig extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        message.info('Received values of form: ', values);
-        console.log(values);
+        if (Object.keys(values).some((key) => values[key] != undefined)) {
+          axios.get(`/deviceConfig/getDeviceConfigByCombine`, { params: values })
+            .then(response => {
+              if (response.data.code == 0) {
+                this.setState({ deviceData: response.data.data });
+              } else {
+                message.info("暂无设备绑定信息");
+              }
+            })
+            .catch(function (error) {
+              console.log(error);
+            });
+        }
       }
     });
   }
@@ -68,7 +83,7 @@ export default class DeviceConfig extends Component {
                 // onChange={this.handleChange}
                 style={{ width: '100%' }}
               >
-                {this.state.terminalData.map(terminal => <Option key={terminal.terminalNumber}>{terminal.terminalNumber}</Option>)}
+                {this.state.deviceData.map(device => <Select.Option key={device.terminalNumber}>{device.terminalNumber}</Select.Option>)}
               </Select>
             )}
           </Form.Item>
@@ -78,6 +93,7 @@ export default class DeviceConfig extends Component {
             {getFieldDecorator('connectStatus')
               (
                 <Select placeholder="连接状态">
+                  <Select.Option value=""></Select.Option>
                   <Select.Option value="上线">上线</Select.Option>
                   <Select.Option value="离线">离线</Select.Option>
                 </Select>
@@ -96,6 +112,7 @@ export default class DeviceConfig extends Component {
             {getFieldDecorator('useStatus')
               (
                 <Select placeholder="使用状态">
+                  <Select.Option value=""></Select.Option>
                   <Select.Option value="未使用">未使用</Select.Option>
                   <Select.Option value="已使用">已使用</Select.Option>
                 </Select>
@@ -119,7 +136,7 @@ export default class DeviceConfig extends Component {
     axios.get(`/deviceConfig/getDeviceConfigByTerminal`, { params: { 'terminalNumber': record.terminalNumber } })
       .then(response => {
         if (response.data.code == 0) {
-          this.setState({ sensorData: response.data.data });
+          this.setState({ deviceData: response.data.data });
         } else {
           message.info(response.data.msg);
         }
@@ -142,6 +159,19 @@ export default class DeviceConfig extends Component {
     </Drawer>;
   }
 
+  pageSizeChange = (page, pageSize) => {
+    const { form } = this.props;
+    const value = form.getFieldsValue();
+    value.mytabel = undefined;
+    if (value.productDate !== undefined) {
+      value.productDate = value.productDate.format('YYYY-MM-DD');
+    }
+    if (value.endDate !== undefined) {
+      value.endDate = value.endDate.format('YYYY-MM-DD');
+    }
+    this.queryDataSource(page, pageSize, value);
+  }
+
   render() {
 
     const deviceConfigColumns = [
@@ -150,7 +180,7 @@ export default class DeviceConfig extends Component {
       }, {
         title: '终端类型', dataIndex: 'terminalType', key: 'terminalType',
       }, {
-        title: '采集频率', dataIndex: 'collectionFrequency', key: 'collectionFrequency',
+        title: '采集频率(分钟/次)', dataIndex: 'collectionFrequency', key: 'collectionFrequency',
       }, {
         title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus',
       }, {
@@ -163,6 +193,10 @@ export default class DeviceConfig extends Component {
         title: '解析方式', dataIndex: 'parserMethod', key: 'parserMethod',
       }, {
         title: '查询指令', dataIndex: 'queryInstruct', key: 'queryInstruct',
+      }, {
+        title: '测点编号', dataIndex: 'monitorPointNumber', key: 'monitorPointNumber',
+      }, {
+        title: '监测类型', dataIndex: 'monitorType', key: 'monitorType',
       }, {
         title: '使用状态', dataIndex: 'useStatus', key: 'useStatus',
       }, {
@@ -180,9 +214,17 @@ export default class DeviceConfig extends Component {
           {this.serachTerminalForm()}
           {this.showSensorDrawer()}
           <div>
-            <Table columns={deviceConfigColumns} dataSource={this.state.terminalData} />
+            <Table columns={deviceConfigColumns} dataSource={this.state.deviceData} pagination={{
+              showSizeChanger: true,
+              bordered: true,
+              pageSizeOptions: ['5', '10', '20', '40', '50'],
+              defaultCurrent: this.state.pagination.defaultCurrent,
+              defaultPageSize: this.state.pagination.defaultPageSize,
+              total: this.state.pagination.total,
+              onShowSizeChange: this.pageSizeChange,
+              onChange: this.pageSizeChange,
+            }} />
           </div>
-
         </Card>
       </div>
     )
