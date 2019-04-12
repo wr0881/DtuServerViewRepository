@@ -1,18 +1,19 @@
 import React, { Component } from 'react';
-import { Table, Form, Input, Card, Button, Row, Col, Select, Drawer, message } from 'antd';
+import { Table, Form, Input, Card, Button, Row, Col, Select, Drawer, message, Icon, DatePicker } from 'antd';
 import axios from '../../axios';
+import DeviceBindDrawer from './AddDeviceConfig';
 
 @Form.create()
 export default class DeviceConfig extends Component {
 
   state = {
-    drawerVisible: false,
+    bindDrawerVisible: false,
+    terminalNumbers: [],
+    sensorNumbers: [],
     deviceData: [],
-    pagination: {
-      total: 0,
-      defaultCurrent: 1,
-      defaultPageSize: 10,
-    },
+    pageTotal: 0,
+    defaultPageNum: 1,
+    defaultPageSize: 10,
   }
 
   componentWillMount() {
@@ -23,8 +24,12 @@ export default class DeviceConfig extends Component {
   initTableData() {
     axios.get(`/deviceConfig/listDeviceConfig`)
       .then(response => {
-        if (response.data.code == 0) { 
-          this.setState({ deviceData: response.data.data });
+        let result = response.data
+        if (result.code == 0) {
+          this.setState({
+            deviceData: result.data.list,
+            pageTotal: result.data.total,
+          });
         } else {
           message.info("暂无设备绑定信息");
         }
@@ -34,34 +39,76 @@ export default class DeviceConfig extends Component {
       });
   }
 
-  //打开设备绑定页面
-  openBindDrawer = () => {
-    this.setState({ drawerVisible: true });
-  }
-
+  //表单提交触发事件
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        if (Object.keys(values).some((key) => values[key] != undefined)) {
-          axios.get(`/deviceConfig/getDeviceConfigByCombine`, { params: values })
-            .then(response => {
-              if (response.data.code == 0) {
-                this.setState({ deviceData: response.data.data });
-              } else {
-                message.info("暂无设备绑定信息");
-              }
-            })
-            .catch(function (error) {
-              console.log(error);
-            });
-        }
+        values.pageNum = this.state.defaultPageNum
+        values.pageSize = this.state.defaultPageSize
+        axios.get(`/deviceConfig/getDeviceConfigByCombine`, { params: values })
+          .then(response => {
+            let result = response.data
+            if (result.code == 0) {
+              this.setState({
+                deviceData: result.data.list,
+                pageTotal: result.data.total,
+              });
+            } else {
+              message.info("暂无设备绑定信息");
+            }
+          })
+          .catch(function (error) {
+            console.log(error);
+          });
       }
     });
   }
 
+  //选择框提供终端编号供选择
+  getTerminalNumber = () => {
+    if (this.state.terminalNumbers.length != 0) {
+      return
+    }
+    axios.get(`/deviceConfig/listTerminalNumber`)
+      .then(response => {
+        let result = response.data
+        if (result.code == 0) {
+          this.setState({
+            terminalNumbers: result.data,
+          });
+        } else {
+          message.info("暂无终端编号信息");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
+  //选择框提供传感器编号供选择
+  getSensorNumber = () => {
+    if (this.state.sensorNumbers.length != 0) {
+      return
+    }
+    axios.get(`/deviceConfig/listSensorNumber`)
+      .then(response => {
+        let result = response.data
+        if (result.code == 0) {
+          this.setState({
+            sensorNumbers: result.data,
+          });
+        } else {
+          message.info("暂无传感器编号信息");
+        }
+      })
+      .catch(function (error) {
+        console.log(error);
+      });
+  }
+
   //搜索框
-  serachTerminalForm = () => {
+  serachDeviceForm = () => {
     const {
       getFieldDecorator
     } = this.props.form;
@@ -78,12 +125,13 @@ export default class DeviceConfig extends Component {
             {getFieldDecorator('terminalNumber')(
               <Select
                 placeholder="终端编号"
-                // notFoundContent={fetching ? <Spin size="small" /> : null}
-                filterOption={false}
-                // onChange={this.handleChange}
+                showSearch={true}
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                onDropdownVisibleChange={this.getTerminalNumber}
+                onPopupScroll={(a) => { console.log(a) }}
                 style={{ width: '100%' }}
               >
-                {this.state.deviceData.map(device => <Select.Option key={device.terminalNumber}>{device.terminalNumber}</Select.Option>)}
+                {this.state.terminalNumbers.map(device => <Select.Option key={device.terminalNumber}>{device.terminalNumber}</Select.Option>)}
               </Select>
             )}
           </Form.Item>
@@ -103,7 +151,15 @@ export default class DeviceConfig extends Component {
         <Col span={5} >
           <Form.Item label="传感器编号"  {...formItemLayout}>
             {getFieldDecorator('sensorNumber')(
-              <Input placeholder="传感器编号" />
+              <Select
+                placeholder="传感器编号"
+                showSearch={true}
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+                onDropdownVisibleChange={this.getSensorNumber}
+                style={{ width: '100%' }}
+              >
+                {this.state.sensorNumbers.map(device => <Select.Option key={device.sensorNumber}>{device.sensorNumber}</Select.Option>)}
+              </Select>
             )}
           </Form.Item>
         </Col>
@@ -132,75 +188,62 @@ export default class DeviceConfig extends Component {
     </Form>)
   }
 
-  getSensorData(record) {
-    axios.get(`/deviceConfig/getDeviceConfigByTerminal`, { params: { 'terminalNumber': record.terminalNumber } })
+  pageSizeOrNumChange = (pageNum, pageSize) => {
+    const { form } = this.props;
+    const value = form.getFieldsValue();
+    let param = {
+      pageNum: pageNum,
+      pageSize: pageSize,
+      ...value,
+    };
+    axios.get(`/deviceConfig/getDeviceConfigByCombine`, { params: param })
       .then(response => {
-        if (response.data.code == 0) {
-          this.setState({ deviceData: response.data.data });
+        let result = response.data
+        if (result.code == 0) {
+          this.setState({
+            deviceData: result.data.list,
+            pageTotal: result.data.total,
+          });
         } else {
-          message.info(response.data.msg);
+          message.info("暂无设备绑定信息");
         }
       })
       .catch(function (error) {
         console.log(error);
       });
-  };
-
-  showSensorDrawer = () => {
-    return <Drawer
-      title="sensorDetail"
-      placement="right"
-      visible={this.state.drawerVisible}
-      onClose={() => { this.setState({ drawerVisible: false }) }}
-    >
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-      <p>Some contents...</p>
-    </Drawer>;
   }
 
-  pageSizeChange = (page, pageSize) => {
-    const { form } = this.props;
-    const value = form.getFieldsValue();
-    value.mytabel = undefined;
-    if (value.productDate !== undefined) {
-      value.productDate = value.productDate.format('YYYY-MM-DD');
-    }
-    if (value.endDate !== undefined) {
-      value.endDate = value.endDate.format('YYYY-MM-DD');
-    }
-    this.queryDataSource(page, pageSize, value);
-  }
+
 
   render() {
 
-    const deviceConfigColumns = [
+    const deviceColumns = [
       {
-        title: '终端编号', dataIndex: 'terminalNumber', key: 'terminalNumber',
+        title: '终端编号', dataIndex: 'terminalNumber', key: 'terminalNumber', align: 'center',
       }, {
-        title: '终端类型', dataIndex: 'terminalType', key: 'terminalType',
+        title: '终端类型', dataIndex: 'terminalType', key: 'terminalType', align: 'center',
       }, {
-        title: '采集频率(分钟/次)', dataIndex: 'collectionFrequency', key: 'collectionFrequency',
+        title: '采集频率(分钟/次)', dataIndex: 'collectionFrequency', key: 'collectionFrequency', align: 'center',
       }, {
-        title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus',
+        title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus', align: 'center',
       }, {
-        title: '传感器编号', dataIndex: 'sensorNumber', key: 'sensorNumber',
+        title: '传感器编号', dataIndex: 'sensorNumber', key: 'sensorNumber', align: 'center',
       }, {
-        title: '传感器地址', dataIndex: 'sensorAddress', key: 'sensorAddress',
+        title: '传感器地址', dataIndex: 'sensorAddress', key: 'sensorAddress', align: 'center',
       }, {
-        title: '标定系数K', dataIndex: 'timingFactor', key: 'timingFactor',
+        title: '标定系数K', dataIndex: 'timingFactor', key: 'timingFactor', align: 'center',
       }, {
-        title: '解析方式', dataIndex: 'parserMethod', key: 'parserMethod',
+        title: '解析方式', dataIndex: 'parserMethod', key: 'parserMethod', align: 'center',
       }, {
-        title: '查询指令', dataIndex: 'queryInstruct', key: 'queryInstruct',
+        title: '查询指令', dataIndex: 'queryInstruct', key: 'queryInstruct', align: 'center',
       }, {
-        title: '测点编号', dataIndex: 'monitorPointNumber', key: 'monitorPointNumber',
+        title: '测点编号', dataIndex: 'monitorPointNumber', key: 'monitorPointNumber', align: 'center',
       }, {
-        title: '监测类型', dataIndex: 'monitorType', key: 'monitorType',
+        title: '监测类型', dataIndex: 'monitorType', key: 'monitorType', align: 'center',
       }, {
-        title: '使用状态', dataIndex: 'useStatus', key: 'useStatus',
+        title: '使用状态', dataIndex: 'useStatus', key: 'useStatus', align: 'center',
       }, {
-        title: '操作', dataIndex: 'removeBinding', key: 'removeBinding',
+        title: '操作', dataIndex: 'removeBinding', key: 'removeBinding', align: 'center',
         render: (text, item, index) => {
           return <Button onClick={() => {
             message.info("还未实现");
@@ -210,19 +253,18 @@ export default class DeviceConfig extends Component {
 
     return (
       <div>
-        <Card title="设备绑定" extra={<div><Button type="primary" onClick={this.openBindDrawer}>绑定设备</Button></div>}>
-          {this.serachTerminalForm()}
-          {this.showSensorDrawer()}
+        <Card title="设备绑定" extra={<div><Button type="primary" onClick={() => this.setState({bindDrawerVisible: true})}>绑定设备</Button></div>}>
+          {this.serachDeviceForm()}
+          <DeviceBindDrawer drawerVisible={this.state.bindDrawerVisible}/>
           <div>
-            <Table columns={deviceConfigColumns} dataSource={this.state.deviceData} pagination={{
+            <Table columns={deviceColumns} dataSource={this.state.deviceData} pagination={{
               showSizeChanger: true,
-              bordered: true,
               pageSizeOptions: ['5', '10', '20', '40', '50'],
-              defaultCurrent: this.state.pagination.defaultCurrent,
-              defaultPageSize: this.state.pagination.defaultPageSize,
-              total: this.state.pagination.total,
-              onShowSizeChange: this.pageSizeChange,
-              onChange: this.pageSizeChange,
+              defaultCurrent: this.state.defaultPageNum,
+              defaultPageSize: this.state.defaultPageSize,
+              total: this.state.pageTotal,
+              onShowSizeChange: this.pageSizeOrNumChange,
+              onChange: this.pageSizeOrNumChange,
             }} />
           </div>
         </Card>
@@ -230,7 +272,7 @@ export default class DeviceConfig extends Component {
     )
   }
 
-  
+
 }
 
 
