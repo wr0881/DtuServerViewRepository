@@ -240,6 +240,24 @@ export default class YouRen extends Component {
         title: '手动触发', dataIndex: 'manalSend', key: 'manalSend',
         render: (text, item, index) => {
           return <Button onClick={() => {
+            console.log(item)
+            const hide = message.loading('正在发送指令，请稍候', 0);
+            axios.get(`/deviceConfig/manualSend`, { params: item })
+              .then(response => {
+                let result = response.data
+                if (result.code == 0) {
+                  message.info(result.msg);
+                } else {
+                  message.error(result.msg);
+                }
+                setTimeout(hide, 2500);
+              })
+              .catch(function (error) {
+                message.error(error);
+                console.log(error);
+                setTimeout(hide, 2500);
+              });
+
             message.info("还未实现");
           }}>触发指令</Button>;
         }

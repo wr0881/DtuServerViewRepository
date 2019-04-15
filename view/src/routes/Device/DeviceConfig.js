@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Form, Input, Card, Button, Row, Col, Select, Drawer, message, Icon, DatePicker } from 'antd';
+import { Table, Form, Card, Button, Row, Col, Select, message } from 'antd';
 import axios from '../../axios';
 import DeviceBindDrawer from './AddDeviceConfig';
 

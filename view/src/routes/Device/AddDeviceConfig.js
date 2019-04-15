@@ -23,7 +23,7 @@ export default class AddDeviceConfig extends Component {
 
   //关闭设备绑定页面
   closeBindDrawer = () => {
-    this.setState({ bindDrawerVisible: false });
+    this.setState({ bindDrawerVisible: false, sensorAddress: null });
   }
 
   //表单提交触发事件
@@ -31,6 +31,7 @@ export default class AddDeviceConfig extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
+        const hide = message.loading('绑定中，请稍候', 0);
         var formDate = new URLSearchParams();
         console.log(values)
         Object.keys(values).map(key => { values[key] ? formDate.append(key, values[key]) : null; });
@@ -42,10 +43,12 @@ export default class AddDeviceConfig extends Component {
             } else {
               message.error(result.msg);
             }
+            setTimeout(hide, 2500);
           })
           .catch(function (error) {
             message.error(error);
             console.log(error);
+            setTimeout(hide, 2500);
           });
       }
     });
@@ -175,7 +178,13 @@ export default class AddDeviceConfig extends Component {
         let sensorAddressVar = this.state.sensorAddress
         if(sensorAddressVar){
           console.log(typeof sensorAddressVar)
-          if(sensorAddressVar.toString().indexOf(sensor.sensorAddress) > -1){
+          if(sensorAddressVar.toString().includes("," + sensor.sensorAddress + ",")){
+            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+          }
+          if(sensorAddressVar.toString().startsWith(sensor.sensorAddress + ",")){
+            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+          }
+          if(sensorAddressVar.toString().endsWith("," + sensor.sensorAddress + ",")){
             message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
           }
           sensorAddressVar = sensorAddressVar + "," + sensor.sensorAddress
@@ -403,6 +412,22 @@ export default class AddDeviceConfig extends Component {
                     style={{ width: '100%' }}
                   >
                     {this.state.monitorTypes.map(type => <Select.Option key={type.index}>{type.value}</Select.Option>)}
+                  </Select>
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+          <Row gutter={8}>
+            <Col span={24}>
+              <Form.Item label="是否强制绑定" {...formItemLayout}>
+                {getFieldDecorator('forceBind', {
+                  rules: [{
+                    required: true, message: '请选择对应的绑定类型',
+                  }],
+                })(
+                  <Select placeholder="选择强制绑定不能确保数据能正常收到，请谨慎操作">
+                    <Option value="0">不强制绑定</Option>
+                    <Option value="1">强制绑定</Option>
                   </Select>
                 )}
               </Form.Item>
