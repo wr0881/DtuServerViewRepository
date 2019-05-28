@@ -49,6 +49,17 @@ const menuData = [
       },
     ],
   },
+  {
+    name: '数据管理',
+    icon: 'area-chart',
+    path: 'data',
+    children: [
+      {
+        name: '数据查询',
+        path: 'querydata',
+      },
+    ],
+  },
 ];
 
 function formatter(data, parentPath = '/', parentAuthority) {

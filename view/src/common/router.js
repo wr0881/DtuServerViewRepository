@@ -106,6 +106,9 @@ export const getRouterData = app => {
     '/server/youren': {
       component: dynamicWrapper(app, ['monitor'], () => import('../routes/Server/YouRen')),
     },
+    '/data/querydata': {
+      component: dynamicWrapper(app, ['monitor'], () => import('../routes/Data/QueryData')),
+    },
     '/user': {
       component: dynamicWrapper(app, [], () => import('../layouts/UserLayout')),
     },
