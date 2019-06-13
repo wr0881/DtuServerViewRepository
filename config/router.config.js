@@ -49,6 +49,41 @@ export default [
           },
         ],
       },
+      // 项目管理
+      {
+        path: '/project',
+        name: '项目管理',
+        icon: 'yuque',
+        routes: [
+          {
+            path: '/project/add-project',
+            name: '新建项目',
+            component: './Project/AddProject/AddProject',
+            hideChildrenInMenu: true,
+            routes: [
+              {
+                path: '/project/add-project',
+                redirect: '/project/add-project/add-project-name',
+              },
+              {
+                path: '/project/add-project/add-project-name',
+                name: '新建项目名',
+                component: './Project/AddProject/AddProjectName',
+              },
+              {
+                path: '/project/add-project/add-sector-name',
+                name: '新建区间名',
+                component: './Project/AddProject/AddSectorName',
+              },
+              {
+                path: '/project/add-project/add-sector-info',
+                name: '新建区间信息',
+                component: './Project/AddProject/AddSectorInfo',
+              },
+            ],
+          },
+        ],
+      },
       // dashboard
       { path: '/', redirect: '/dashboard/analysis', authority: ['admin', 'user'] },
       {
