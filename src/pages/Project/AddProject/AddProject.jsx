@@ -33,7 +33,7 @@ class Project extends Component {
       <PageHeaderWrapper title='新建项目'>
         <Card bordered={false}>
           <Fragment>
-            <Steps current={this.getCurrentStep()}>
+            <Steps current={this.getCurrentStep()} style={{ margin: '0 auto', width: '700px' }}>
               <Step title="新建项目名" />
               <Step title="新建区间名" />
               <Step title="新建区间信息" />
