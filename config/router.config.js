@@ -49,6 +49,37 @@ export default [
           },
         ],
       },
+      // 服务管理
+      {
+        path: '/server',
+        name: '服务管理',
+        icon: 'cloud-server',
+        routes: [
+          {
+            path: '/server/youren',
+            name: '有人DTU服务',
+            component: './Server/DtuServer',
+          },
+          {
+            path: '/server/cezhi',
+            name: '测智终端服务',
+            component: './Server/CzServer',
+          },
+        ],
+      },
+      // 数据管理
+      {
+        path: '/data',
+        name: '数据管理',
+        icon: 'database',
+        routes: [
+          {
+            path: '/data/querydata',
+            name: '数据查询',
+            component: './Data/QueryData',
+          },
+        ],
+      },
       // 项目管理
       {
         path: '/project',
