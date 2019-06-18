@@ -24,7 +24,7 @@
     "lint:style": "stylelint 'src/**/*.less' --syntax less",
     "prettier": "node ./scripts/prettier.js",
     "site": "umi build && npm run functions:build",
-    "start": "umi dev --port=8001",
+    "start": "umi dev --port=8002",
     "start:no-mock": "cross-env MOCK=none umi dev --port=8001",
     "test": "umi test",
     "test:all": "node ./tests/run-tests.js",
