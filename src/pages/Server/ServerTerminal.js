@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Form, Input, Modal, Button, Row, Col, Select, message } from 'antd';
-import axios from '../../axios';
+import axios from '@/services/axios';
 
 @Form.create()
 export default class ServerTerminal extends Component {
@@ -139,7 +139,6 @@ export default class ServerTerminal extends Component {
                 showSearch={true}
                 filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                 onDropdownVisibleChange={this.getProjectNames}
-                // onSelect={this.fillProjectName}
                 style={{ width: '100%' }}
                 allowClear
               >

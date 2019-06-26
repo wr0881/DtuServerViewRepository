@@ -36,19 +36,6 @@ export default [
           },
         ],
       },
-      // 设备管理
-      {
-        path: '/device',
-        name: '设备管理',
-        icon: 'yuque',
-        routes: [
-          {
-            path: '/device/device-bind',
-            name: '设备绑定',
-            component: './Device/DeviceBindList',
-          },
-        ],
-      },
       // 服务管理
       {
         path: '/server',
@@ -64,19 +51,6 @@ export default [
             path: '/server/cezhi',
             name: '测智终端服务',
             component: './Server/CzServer',
-          },
-        ],
-      },
-      // 数据管理
-      {
-        path: '/data',
-        name: '数据管理',
-        icon: 'database',
-        routes: [
-          {
-            path: '/data/querydata',
-            name: '数据查询',
-            component: './Data/QueryData',
           },
         ],
       },

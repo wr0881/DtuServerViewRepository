@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Table, Form, Input, Button, Row, Col, Select, Drawer, message } from 'antd';
-import axios from '../../axios';
+import axios from '@/services/axios';
 
 @Form.create()
 export default class ServerSensor extends Component {

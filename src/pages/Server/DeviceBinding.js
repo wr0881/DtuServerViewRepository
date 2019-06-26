@@ -1,6 +1,6 @@
 import React, { Component } from 'react';
 import { Form, Input, InputNumber, Button, Row, Col, Select, Drawer, message } from 'antd';
-import axios from '../../axios';
+import axios from '@/services/axios';
 
 @Form.create()
 export default class DeviceBinding extends Component {
