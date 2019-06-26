@@ -13,6 +13,7 @@ import {
   message,
   Spin,
   Empty,
+  Upload,
   Form,
   Input,
   DatePicker,
@@ -130,9 +131,12 @@ class AddSectorInfo extends Component {
               {/* {getFieldDecorator('dec', {
                 rules: [{ required: true, message: '请输入图片描述' }],
               })(<Input placeholder="示例: 这是1号布点图" />)} */}
-              <div>
-                <Icon type="plus" />
-                <div className="ant-upload-text">Upload</div>
+
+              <div className={styles.addFile}>
+                <div className={styles.plus}>
+                  <Icon type="plus" style={{ fontSize: '32px' }} />
+                  <div className="ant-upload-text">Upload</div>
+                </div>
               </div>
             </Form.Item>
             <Form.Item label="图片名称">

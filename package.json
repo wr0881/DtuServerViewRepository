@@ -56,6 +56,7 @@
     "enquire-js": "^0.2.1",
     "express": "^4.16.4",
     "gg-editor": "^2.0.2",
+    "jquery": "^3.4.1",
     "lodash": "^4.17.11",
     "lodash-decorators": "^6.0.1",
     "memoize-one": "^5.0.0",

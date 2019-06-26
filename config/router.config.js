@@ -36,16 +36,21 @@ export default [
           },
         ],
       },
-      // 设备管理
+      // 服务管理
       {
-        path: '/device',
-        name: '设备管理',
-        icon: 'yuque',
+        path: '/server',
+        name: '服务管理',
+        icon: 'cloud-server',
         routes: [
           {
-            path: '/device/device-bind',
-            name: '设备绑定',
-            component: './Device/DeviceBindList',
+            path: '/server/youren',
+            name: '有人DTU服务',
+            component: './Server/DtuServer',
+          },
+          {
+            path: '/server/cezhi',
+            name: '测智终端服务',
+            component: './Server/CzServer',
           },
         ],
       },
