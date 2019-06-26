@@ -1,9 +1,11 @@
 import React, { Component, Fragment } from 'react';
+import { observer } from 'mobx-react';
 import { Form, Input, Button, Select, Divider, Cascader, DatePicker, Slider } from 'antd';
 import moment from 'moment';
 import Map from '@/components/Map/Map';
-import { getAllProjectType, getAllProject } from '@/services/project';
+import { getsectorType, addSector } from '@/services/project';
 import { getLocation } from '@/utils/getLocation';
+import projectState from './project';
 import styles from './style.less';
 
 const { Option } = Select;
@@ -18,79 +20,72 @@ const formItemLayout = {
   },
 };
 
+@observer
 @Form.create()
 class AddSectorName extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      allProjectType: [],
-      allProject: [],
-      JW:{lng:'',lat:''},
+      sectorType: [],
+      JW: { lng: '', lat: '' },
 
-      getAllProjectTypeLoading: false,
-      getAllProjectLoading: false
     };
   }
-  getAllProjectType = () => {
-    const { allProjectType } = this.state;
-    if (allProjectType.length === 0) {
-      this.setState({ getAllProjectTypeLoading: true });
-      getAllProjectType().then(res => {
-        const { code, data } = res.data;
-        if (code === 0) {
-          this.setState({ allProjectType: data });
-        } else {
-          this.setState({ allProjectType: [] });
-        }
-        this.setState({ getAllProjectTypeLoading: false });
-      }).catch(err => {
-        this.setState({ getAllProjectTypeLoading: false });
-        console.log(err);
-      })
-    }
-  }
-  getAllProject = () => {
-    const { allProject } = this.state;
-    if (allProject.length === 0) {
-      this.setState({ getAllProjectLoading: true });
-      getAllProject().then(res => {
-        const { code, data } = res.data;
-        if (code === 0) {
-          this.setState({ allProject: data });
-        } else {
-          this.setState({ allProject: [] });
-        }
-        this.setState({ getAllProjectLoading: false });
-      }).catch(err => {
-        this.setState({ getAllProjectLoading: false });
-        console.log(err);
-      })
-    }
-  }
-  setJW=v=>{
-    this.setState({JW:v});
+  setJW = v => {
+    this.setState({ JW: v });
   }
   onValidateForm = () => {
     const { form } = this.props;
     const { validateFields } = form;
     validateFields((err, values) => {
       if (!err) {
-        // router.push('/project/add-project/add-sector');
-        // let res = {
-        //   name: values.name,
-        //   adress: values.adress.join('') + values.adress_detail,
-        //   dec: values.dec,
-        //   type: values.type
-        // };
-        console.log(values);
+        let result = {
+          projectId: projectState.projectId,
+          sectorAddress: values.adress.join('') + values.adress_detail,
+          sectorBeginTime: values.sectorBegin_time.format('YYYY-MM-DD HH:mm:ss'),
+          sectorDescription: values.sectorDescription,
+          sectorEndTime: values.sectorEnd_time.format('YYYY-MM-DD HH:mm:ss'),
+          mapScale: values.mapScale,
+          sectorLatitude: this.state.JW.lat,
+          sectorLongitude: this.state.JW.lng,
+          sectorName: values.sectorName,
+          sectorStatus: values.sectorStatus,
+          sectorType: values.sectorType
+        };
+        console.log(result);
+        addSector(result).then(res => {
+          const { code, data, msg } = res.data;
+          if (code === 0) {
+            projectState.sectorId = data;
+            router.push('/project/add-project/add-member-info');
+          }
+        })
       }
     });
   }
+
+  getsectorType = () => {
+    const { sectorType } = this.state;
+    if (sectorType.length === 0) {
+      getsectorType().then(res => {
+        const { code, data } = res.data;
+        console.log(data);
+        if (code === 0) {
+          this.setState({ sectorType: data });
+        } else {
+          this.setState({ sectorType: [] });
+        }
+      }).catch(err => {
+        console.log(err);
+      })
+    }
+  }
+
   detailForm = () => {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
-      <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
+      <Form layout="horizontal" className={`${styles.stepForm} ${styles.disabled}`}>
         <Form.Item {...formItemLayout} label="区段名称">
           {getFieldDecorator('sectorName', {
             rules: [{ required: true, message: '请输入区段名称' }],
@@ -99,7 +94,16 @@ class AddSectorName extends Component {
         <Form.Item {...formItemLayout} label="区段类型">
           {getFieldDecorator('sectorType', {
             rules: [{ required: true, message: '请输入区段类型' }],
-          })(<Input placeholder="示例: 长丰路站" />)}
+          })(
+            <Select
+              placeholder="示例：区段类型"
+              onFocus={this.getsectorType}
+              dropdownMatchSelectWidth={false}
+              style={{ width: '100%' }}
+            >
+              {this.state.sectorType.map((type, i) => <Select.Option key={i} value={type.typeCode}>{type.itemName}</Select.Option>)}
+            </Select>
+          )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="区段创建时间">
           {getFieldDecorator('sectorBegin_time', {

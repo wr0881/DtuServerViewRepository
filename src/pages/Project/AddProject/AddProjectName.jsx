@@ -1,7 +1,10 @@
 import React, { Component, Fragment } from 'react';
-import { Form, Input, Button, Select, Divider, Cascader } from 'antd';
-import { getAllProjectType, getAllProject } from '@/services/project';
+import router from 'umi/router';
+import { observer } from 'mobx-react';
+import { Form, Input, Button, Select, Divider, Cascader, Spin, message } from 'antd';
+import { getAllProjectType, getAllProject, addProject } from '@/services/project';
 import { getLocation } from '@/utils/getLocation';
+import projectState from './project';
 import styles from './style.less';
 
 const { Option } = Select;
@@ -16,6 +19,7 @@ const formItemLayout = {
   },
 };
 
+@observer
 @Form.create()
 class AddProjectName extends Component {
   constructor(props) {
@@ -65,19 +69,36 @@ class AddProjectName extends Component {
       })
     }
   }
-  onValidateForm = () => {
+  onValidateFormDetail = () => {
     const { form } = this.props;
     const { validateFields } = form;
     validateFields((err, values) => {
       if (!err) {
-        // router.push('/project/add-project/add-sector');
-        let res = {
-          name: values.name,
-          adress: values.adress.join('') + values.adress_detail,
-          dec: values.dec,
-          type: values.type
+        let result = {
+          projectName: values.name,
+          projectAddress: values.adress.join('') + values.adress_detail,
+          projectDescription: values.dec,
+          projectType: values.type
         };
-        console.log(res);
+        addProject(result).then(res => {
+          const { code, data, msg } = res.data;
+          if (code === 0) {
+            projectState.projectId = data;
+            router.push('/project/add-project/add-sector-name');
+          } else {
+            message.info(msg);
+          }
+        }).catch(err => { console.log(err) });
+      }
+    });
+  }
+  onValidateFormSimple = () => {
+    const { form } = this.props;
+    const { validateFields } = form;
+    validateFields((err, values) => {
+      if (!err) {
+        projectState.projectId = values.projectId;
+        router.push('/project/add-project/add-sector-name');
       }
     });
   }
@@ -85,7 +106,7 @@ class AddProjectName extends Component {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
-      <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
+      <Form layout="horizontal" className={styles.stepForm}>
         <Form.Item {...formItemLayout} label="项目名称">
           {getFieldDecorator('name', {
             rules: [{ required: true, message: '请输入项目名称' }],
@@ -130,6 +151,7 @@ class AddProjectName extends Component {
             <Select
               placeholder="示例: 地铁"
               loading={this.state.getAllProjectTypeLoading}
+              notFoundContent={this.state.getAllProjectTypeLoading ? <Spin size="small" /> : null}
               onFocus={this.getAllProjectType}
               dropdownMatchSelectWidth={false}
               style={{ width: '100%' }}
@@ -148,7 +170,7 @@ class AddProjectName extends Component {
           }}
           label=""
         >
-          <Button type="primary" style={{ marginRight: '30px' }} onClick={this.onValidateForm}>
+          <Button type="primary" style={{ marginRight: '30px' }} onClick={this.onValidateFormDetail}>
             下一步
           </Button>
         </Form.Item>
@@ -159,9 +181,9 @@ class AddProjectName extends Component {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
-      <Form layout="horizontal" className={styles.stepForm} hideRequiredMark>
+      <Form layout="horizontal" className={styles.stepForm}>
         <Form.Item {...formItemLayout} label="项目名称">
-          {getFieldDecorator('name', {
+          {getFieldDecorator('projectId', {
             rules: [{ required: true, message: '请选择项目' }],
           })(
             <Select
@@ -169,7 +191,6 @@ class AddProjectName extends Component {
               placeholder="示例: xxx项目"
               loading={this.state.getAllProjectLoading}
               onFocus={this.getAllProject}
-              dropdownMatchSelectWidth={false}
               optionFilterProp='children'
               style={{ width: '100%' }}
             >
@@ -194,7 +215,7 @@ class AddProjectName extends Component {
           }}
           label=""
         >
-          <Button type="primary" style={{ marginRight: '30px' }} onClick={this.onValidateForm}>
+          <Button type="primary" style={{ marginRight: '30px' }} onClick={this.onValidateFormSimple}>
             下一步
           </Button>
         </Form.Item>

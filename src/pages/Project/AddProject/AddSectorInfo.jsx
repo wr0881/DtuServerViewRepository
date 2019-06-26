@@ -1,4 +1,5 @@
-import React, { Component } from 'react';
+import React, { Component, Fragment } from 'react';
+import { observer } from 'mobx-react';
 import {
   Row,
   Col,
@@ -8,7 +9,10 @@ import {
   Switch,
   Alert,
   Drawer,
+  Modal,
   message,
+  Spin,
+  Empty,
   Form,
   Input,
   DatePicker,
@@ -21,7 +25,12 @@ import {
   Icon,
   Tooltip,
 } from 'antd';
+import debounce from 'lodash/debounce';
+import IndexInfo from './AddIndexInfo';
 import ImgMark from '@/components/ImgMark/ImgMark';
+import projectState from './project';
+import { uploadImage } from '@/services/project';
+import styles from './style.less';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -29,455 +38,130 @@ const { Option } = Select;
 const RadioGroup = Radio.Group;
 const { TabPane } = Tabs;
 
+@observer
 @Form.create()
 class AddSectorInfo extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addJsUnit: [0],
-      addSgUnit: [0],
-      addJcUnit: [0],
-      addJlUnit: [0],
-      indexInfo: [],
+      uploadVisible: false,
+      imgUrl: []
     };
   }
 
-  dotChange = v => {
-    this.setState({ indexInfo: v });
+  addImgUrl = (file, url) => {
+    console.log(url);
+    // const body = {
+    //   projectId: projectState.projectId,
+    //   img: file
+    // }
+    // uploadImage(body).then(res => {
+    //   const { code, msg, data } = res.data;
+    //   if (code === 0) {
+
+    //   } else {
+    //     message.info('测点图上传失败: ' + msg);
+    //   }
+    // }).catch(err => {
+    //   message.info('测点图上传失败: ' + err);
+    // })
+    this.setState({ imgUrl: [...this.state.imgUrl, url] });
+  }
+
+  deleteImgUrl = v => {
+    const { imgUrl } = this.state;
+    const index = imgUrl.findIndex(item => item === v);
+    imgUrl.splice(index, 1);
+    this.setState({ imgUrl });
   }
 
   render() {
     const { form } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
-    const _this = this;
     return (
-      <div>
-        <Tabs style={{ marginTop: '30px', minHeight: '500px' }} tabPosition='left' defaultActiveKey="4">
-          <TabPane tab='建设单位' key={0}>
-            <Form
-              layout="vertical"
-              hideRequiredMark
-              onSubmit={this.handleSubmit}
+      <div className={styles.disabled}>
+        <div style={{ paddingTop: '30px', minHeight: '500px' }}>
+          {this.state.imgUrl.length ? null :
+            <Empty
+              image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
+              imageStyle={{
+                height: 60,
+              }}
+              description={
+                <span>
+                  请先选择布点图
+                </span>
+              }
             >
-              {this.state.addJcUnit.map(i => {
-                if (i !== undefined) {
-                  return (
-                    <Row gutter={16} key={i}>
-                      <Col span={6}>
-                        <Form.Item label={i > 0 ? '' : '建设单位名称'}>
-                          {getFieldDecorator(`JsUnitName_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：武魂殿" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '联系人'}>
-                          {getFieldDecorator(`JsUnitConcat_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：萧炎" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '电话'}>
-                          {getFieldDecorator(`JsUnitPhone_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：12345678912" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '邮箱'}>
-                          {getFieldDecorator(`JsUnitEmail_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：123456@qq.com" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '职位'}>
-                          {getFieldDecorator(`JsUnitJob_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：总工" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={2}>
-                        <Form.Item>
-                          <Button
-                            type='dashed'
-                            style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' }}
-                            onClick={_ => {
-                              const addJcUnit = this.state.addJcUnit;
-                              addJcUnit[i] = undefined;
-                              this.setState({ addJcUnit });
-                            }}
-                          >删除</Button>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  )
-                } else {
-                  return null
-                }
-              })}
-              <Row gutter={16}>
-                <Col span={24}>
-                  <Form.Item>
-                    <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addJcUnit: [...this.state.addJcUnit, this.state.addJcUnit.length] }) }}>
-                      <Icon type="plus" /> 批量增加单位信息
-                  </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </TabPane>
-          <TabPane tab='施工单位' key={1}>
-            <Form
-              layout="vertical"
-              hideRequiredMark
-              onSubmit={this.handleSubmit}
-            >
-              {this.state.addSgUnit.map(i => {
-                if (i !== undefined) {
-                  return (
-                    <Row gutter={16} key={i}>
-                      <Col span={6}>
-                        <Form.Item label={i > 0 ? '' : '施工单位名称'}>
-                          {getFieldDecorator(`SgUnitName_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：英灵殿" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '联系人'}>
-                          {getFieldDecorator(`SgUnitConcat_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：奇衡三" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '电话'}>
-                          {getFieldDecorator(`SgUnitPhone_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：12345678912" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '邮箱'}>
-                          {getFieldDecorator(`SgUnitEmail_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：123456@qq.com" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '职位'}>
-                          {getFieldDecorator(`SgUnitJob_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：总工" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={2}>
-                        <Form.Item>
-                          <Button
-                            type='dashed'
-                            style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' }}
-                            onClick={_ => {
-                              const addSgUnit = this.state.addSgUnit;
-                              addSgUnit[i] = undefined;
-                              this.setState({ addSgUnit });
-                            }}
-                          >删除</Button>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  )
-                } else {
-                  return null
-                }
-              })}
-              <Row gutter={16}>
-                <Col span={24}>
-                  <Form.Item>
-                    <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addSgUnit: [...this.state.addSgUnit, this.state.addSgUnit.length] }) }}>
-                      <Icon type="plus" /> 批量增加单位信息
-                  </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </TabPane>
-          <TabPane tab='监测单位' key={2}>
-            <Form
-              layout="vertical"
-              hideRequiredMark
-              onSubmit={this.handleSubmit}
-            >
-              {this.state.addJcUnit.map(i => {
-                if (i !== undefined) {
-                  return (
-                    <Row gutter={16} key={i}>
-                      <Col span={6}>
-                        <Form.Item label={i > 0 ? '' : '施工单位名称'}>
-                          {getFieldDecorator(`JcUnitName_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：凌霄殿" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '联系人'}>
-                          {getFieldDecorator(`JcUnitConcat_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：弥罗宫三公子" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '电话'}>
-                          {getFieldDecorator(`JcUnitPhone_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：12345678912" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '邮箱'}>
-                          {getFieldDecorator(`JcUnitEmail_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：123456@qq.com" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '职位'}>
-                          {getFieldDecorator(`JcUnitJob_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：总工" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={2}>
-                        <Form.Item>
-                          <Button
-                            type='dashed'
-                            style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' }}
-                            onClick={_ => {
-                              const addJcUnit = this.state.addJcUnit;
-                              addJcUnit[i] = undefined;
-                              this.setState({ addJcUnit });
-                            }}
-                          >删除</Button>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  )
-                } else {
-                  return null
-                }
-              })}
-              <Row gutter={16}>
-                <Col span={24}>
-                  <Form.Item>
-                    <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addJcUnit: [...this.state.addJcUnit, this.state.addJcUnit.length] }) }}>
-                      <Icon type="plus" /> 批量增加单位信息
-                  </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </TabPane>
-          <TabPane tab='监理单位' key={3}>
-            <Form
-              layout="vertical"
-              hideRequiredMark
-              onSubmit={this.handleSubmit}
-            >
-              {this.state.addJlUnit.map(i => {
-                if (i !== undefined) {
-                  return (
-                    <Row gutter={16} key={i}>
-                      <Col span={6}>
-                        <Form.Item label={i > 0 ? '' : '施工单位名称'}>
-                          {getFieldDecorator(`JlUnitName_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：混沌殿" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '联系人'}>
-                          {getFieldDecorator(`JlUnitConcat_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：太易" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '电话'}>
-                          {getFieldDecorator(`JlUnitPhone_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：12345678912" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '邮箱'}>
-                          {getFieldDecorator(`JlUnitEmail_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：123456@qq.com" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={4}>
-                        <Form.Item label={i > 0 ? '' : '职位'}>
-                          {getFieldDecorator(`JlUnitJob_${i}`, {
-                            rules: [
-                              { required: true, message: '不允许为空' },
-                            ],
-                          })(<Input placeholder="示例：总工" />)}
-                        </Form.Item>
-                      </Col>
-                      <Col span={2}>
-                        <Form.Item>
-                          <Button
-                            type='dashed'
-                            style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' }}
-                            onClick={_ => {
-                              const addJlUnit = this.state.addJlUnit;
-                              addJlUnit[i] = undefined;
-                              this.setState({ addJlUnit });
-                            }}
-                          >删除</Button>
-                        </Form.Item>
-                      </Col>
-                    </Row>
-                  )
-                } else {
-                  return null
-                }
-              })}
-              <Row gutter={16}>
-                <Col span={24}>
-                  <Form.Item>
-                    <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addJlUnit: [...this.state.addJlUnit, this.state.addJlUnit.length] }) }}>
-                      <Icon type="plus" /> 批量增加单位信息
-                  </Button>
-                  </Form.Item>
-                </Col>
-              </Row>
-            </Form>
-          </TabPane>
-          <TabPane tab='测点信息' key={4}>
-            <ImgMark
-              src={'http://123.207.88.210/monitor/images/three/pointMap/cfl.png'}
-              dot={this.state.indexInfo}
-              onChange={this.dotChange}
-            />
-            <div style={{ marginTop: '50px' }}>
-              <Form
-                layout="vertical"
-                hideRequiredMark
-                onSubmit={this.handleSubmit}
-              >
-                {this.state.indexInfo.map((v, i) => {
-                  if (i !== undefined) {
-                    return (
-                      <Row gutter={16} key={i}>
-                        <Col span={4}>
-                          <Form.Item label={i > 0 ? '' : '编号'}>
-                            {getFieldDecorator(`JsUnitName_${i}`, {
-                              initValue: `编号${v.number}`,
-                              rules: [
-                                { required: true, message: '不允许为空' },
-                              ],
-                            })(<Input placeholder={`编号${v.number}`} />)}
-                          </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                          <Form.Item label={i > 0 ? '' : '测点名'}>
-                            <Input placeholder="示例：007" onChange={e => {
-                              let dot = this.state.indexInfo;
-                              dot[i].indexName = e.target.value;
-                              console.log(dot);
-                              this.setState({ dot });
-                            }} />
-                          </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                          <Form.Item label={i > 0 ? '' : '终端编号'}>
-                            {getFieldDecorator(`JsUnitPhone_${i}`, {
-                              rules: [
-                                { required: true, message: '不允许为空' },
-                              ],
-                            })(<Input placeholder="示例：12345678912" />)}
-                          </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                          <Form.Item label={i > 0 ? '' : '传感器编号'}>
-                            {getFieldDecorator(`JsUnitEmail_${i}`, {
-                              rules: [
-                                { required: true, message: '不允许为空' },
-                              ],
-                            })(<Input placeholder="示例：123456" />)}
-                          </Form.Item>
-                        </Col>
-                        <Col span={4}>
-                          <Form.Item label={i > 0 ? '' : '监测指标'}>
-                            {getFieldDecorator(`JsUnitJob_${i}`, {
-                              rules: [
-                                { required: true, message: '不允许为空' },
-                              ],
-                            })(<Input placeholder="示例：钢支撑轴力" />)}
-                          </Form.Item>
-                        </Col>
-                        <Col span={2}>
-                          <Form.Item label={i > 0 ? '' : '标点位置'}>
-                            <Switch checkedChildren="查看" unCheckedChildren="隐藏" style={{ marginTop: '5px' }}
-                              onChange={v => {
-                                let dot = this.state.indexInfo;
-                                dot[i].visible = v;
-                                console.log(dot);
-                                this.setState({ dot });
-                              }}
-                            />
-                          </Form.Item>
-                        </Col>
-                      </Row>
-                    )
-                  } else {
-                    return null
+              {/* <input
+                ref={ref => { this.imgSelect = ref }}
+                type="file"
+                style={{ display: 'none' }}
+                onChange={e => {
+                  const file = e.target.files.item(0);
+                  if (file) {
+                    const url = window.URL.createObjectURL(file);
+                    this.addImgUrl(file, url);
                   }
-                })}
-              </Form>
-            </div>
-          </TabPane>
-        </Tabs>
+                }} />
+              <Button type="primary" onClick={_ => { this.imgSelect.click() }}>
+                选择图片
+              </Button> */}
+              <Button type="primary" onClick={_ => { this.setState({ uploadVisible: true }) }}>
+                选择图片
+              </Button>
+            </Empty>
+          }
+          {this.state.imgUrl.map((v, i) => {
+            return <IndexInfo key={i} src={v} addImgUrl={this.addImgUrl} deleteImgUrl={this.deleteImgUrl} />
+          })}
+        </div>
+
+        <Modal
+          title="上传布点图"
+          visible={this.state.uploadVisible}
+          // onOk={this.handleOk}
+          onCancel={_ => { this.setState({ uploadVisible: false }) }}
+          okText="确认"
+          cancelText="取消"
+        >
+          <Form >
+            <Form.Item label="选择图片">
+              {/* {getFieldDecorator('dec', {
+                rules: [{ required: true, message: '请输入图片描述' }],
+              })(<Input placeholder="示例: 这是1号布点图" />)} */}
+              <div>
+                <Icon type="plus" />
+                <div className="ant-upload-text">Upload</div>
+              </div>
+            </Form.Item>
+            <Form.Item label="图片名称">
+              {getFieldDecorator('name', {
+                rules: [{ required: true, message: '请输入图片名称' }],
+              })(<Input placeholder="示例: 1号布点图" />)}
+            </Form.Item>
+            <Form.Item label="图片类型">
+              {getFieldDecorator('type', {
+                initValue: 1,
+                rules: [{ required: true, message: '请输入图片类型' }],
+              })(
+                <Select
+                  placeholder="请选择图片类型"
+                >
+                  <Option key={1}>布点图</Option>
+                  <Option key={2}>现场图</Option>
+                  <Option key={3}>剖面图</Option>
+                </Select>
+              )}
+            </Form.Item>
+            <Form.Item label="图片描述">
+              {getFieldDecorator('dec', {
+                rules: [{ required: true, message: '请输入图片描述' }],
+              })(<Input placeholder="示例: 这是1号布点图" />)}
+            </Form.Item>
+          </Form>
+        </Modal>
+
         <Divider style={{ margin: '40px 0 24px' }} />
         <div>
           <h4>易大师</h4>

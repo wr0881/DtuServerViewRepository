@@ -1,5 +1,23 @@
 @import '~antd/lib/style/themes/default.less';
 
+.disabled{
+  :global {
+    .ant-input[disabled],
+    .ant-input-disabled{
+      color: inherit !important;
+      background-color: inherit !important;
+      cursor: not-allowed !important;
+      opacity: 1 !important;
+    }
+  }
+}
+
+.imgSelct{
+  :global {
+    ant-upload{}
+  }
+}
+
 .stepForm {
   max-width: 500px;
   margin: 40px auto 0;

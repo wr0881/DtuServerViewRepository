@@ -1,15 +1,45 @@
 import React, { Component } from 'react';
 import { Tooltip, Icon, Divider } from 'antd';
 import mark from './mark.svg';
+import isMark from './isMark.svg';
 import styles from './ImgMark.less';
 
 class ImgMark extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dot: []
+      imgSize: {
+        width: '0',
+        height: '0'
+      },
+      dot: [],
     };
   }
+  // computeRowCol = e => {
+  //   if (e) {
+  //     const boxW = this.box.clientWidth;
+  //     const boxH = this.box.clientHeight;
+
+  //     const imgWidth = e.currentTarget.naturalWidth;
+  //     const imgHeight = e.currentTarget.naturalHeight;
+
+  //     const scale = boxW / imgWidth;
+
+  //     if (imgHeight * scale > boxH) {
+  //       let size = {
+  //         width: 'auto',
+  //         height: boxH
+  //       }
+  //       this.setState({ imgSize: size });
+  //     } else {
+  //       let size = {
+  //         width: boxW,
+  //         height: 'auto'
+  //       }
+  //       this.setState({ imgSize: size });
+  //     }
+  //   }
+  // }
   clickXY = e => {
     const currentTarget = e.currentTarget;
     const eleToScreenX = currentTarget.getBoundingClientRect().x;
@@ -21,23 +51,38 @@ class ImgMark extends Component {
       y: clickToScreenY - eleToScreenY
     }
   }
+  computeRealXY = index => {
+    const imgWrapperW = this.imgWrapper.clientWidth;
+    const imgWrapperH = this.imgWrapper.clientHeight;
+    const imgWidth = this.img.naturalWidth;
+    const imgHeight = this.img.naturalHeight;
+    const realX = imgWidth * index.x / imgWrapperW;
+    const realY = imgHeight * index.y / imgWrapperH;
+    console.log({ ...index, realX, realY });
+    return { ...index, realX, realY };
+  }
   markClick = e => {
     let markXY = this.clickXY(e);
     markXY.number = this.props.dot.length;
     markXY.visible = false;
+    this.computeRealXY(markXY);
     this.props.onChange([...this.props.dot, markXY]);
   }
   render() {
     const { style, src } = this.props;
     return (
-      <div style={style} className={styles.imgMark}>
+      <div ref={ref => { this.box = ref }} style={style} className={styles.imgMark}>
         <div
-          className={styles.CurImg}
+          ref={ref => { this.imgWrapper = ref }}
+          // className={styles.CurImg}
           onClick={this.markClick}
         >
           <img
+            ref={ref => { this.img = ref }}
+            // style={this.state.imgSize}
             style={{ width: '100%', height: 'auto' }}
             src={src}
+            // onLoad={this.computeRowCol}
             alt=""
           />
         </div>
@@ -62,7 +107,7 @@ class ImgMark extends Component {
                     <Icon type="close-circle" />
                     </div>
                   }>
-                  <img src={mark} style={{ width: '100%', height: 'auto' }} alt="" />
+                  <img src={v.isMark ? isMark : mark} style={{ width: '100%', height: 'auto' }} alt="" />
                 </Tooltip >
               </div>
             )
@@ -70,6 +115,9 @@ class ImgMark extends Component {
         </div>
       </div>
     );
+  }
+  componentDidMount() {
+    // console.log(this.computeRowCol());
   }
 }
 

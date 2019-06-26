@@ -76,6 +76,11 @@ export default [
                 component: './Project/AddProject/AddSectorName',
               },
               {
+                path: '/project/add-project/add-member-info',
+                name: '添加人员信息',
+                component: './Project/AddProject/AddMemberInfo',
+              },
+              {
                 path: '/project/add-project/add-sector-info',
                 name: '新建区间信息',
                 component: './Project/AddProject/AddSectorInfo',
