@@ -93,7 +93,7 @@ class AddIndexInfo extends Component {
   }
 
   render() {
-    const { form, src, addImgUrl, deleteImgUrl } = this.props;
+    const { form, src, addImg, deleteImgUrl } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     return (
       <Fragment>
@@ -263,19 +263,8 @@ class AddIndexInfo extends Component {
           </Form>
         </div>
         <div style={{ marginBottom: '30px' }}>
-          <input
-            ref={ref => { this.imgSelect = ref }}
-            type="file"
-            style={{ display: 'none' }}
-            onChange={e => {
-              const file = e.target.files.item(0);
-              if (file) {
-                const url = window.URL.createObjectURL(file);
-                addImgUrl(url);
-              }
-            }} />
           <Button style={{ marginRight: '20px' }} type='danger' onClick={_ => { deleteImgUrl(src) }}>删除此布点图</Button>
-          <Button style={{ marginRight: '20px' }} onClick={_ => { this.imgSelect.click() }} type='primary'>继续添加布点图</Button>
+          <Button style={{ marginRight: '20px' }} onClick={addImg} type='primary'>继续添加布点图</Button>
           <Button type='primary'>上传此布点图</Button>
         </div>
       </Fragment>

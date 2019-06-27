@@ -46,27 +46,15 @@ class AddSectorInfo extends Component {
     super(props);
     this.state = {
       uploadVisible: false,
-      imgUrl: []
+      confirmLoading: false,
+      imgId: [],
+      imgUrl: null,
+      imgFile: null
     };
   }
 
-  addImgUrl = (file, url) => {
-    console.log(url);
-    // const body = {
-    //   projectId: projectState.projectId,
-    //   img: file
-    // }
-    // uploadImage(body).then(res => {
-    //   const { code, msg, data } = res.data;
-    //   if (code === 0) {
-
-    //   } else {
-    //     message.info('测点图上传失败: ' + msg);
-    //   }
-    // }).catch(err => {
-    //   message.info('测点图上传失败: ' + err);
-    // })
-    this.setState({ imgUrl: [...this.state.imgUrl, url] });
+  addImg = () => {
+    this.setState({ uploadVisible: true });
   }
 
   deleteImgUrl = v => {
@@ -76,13 +64,42 @@ class AddSectorInfo extends Component {
     this.setState({ imgUrl });
   }
 
+  onSubmit = () => {
+    const { form } = this.props;
+    const { validateFields } = form;
+    validateFields((err, values) => {
+      if (!err) {
+        const imgFile = this.state.imgFile;
+        let result = {
+          sectorId: projectState.sectorId,
+          type: values.type,
+          imageName: values.name,
+          description: values.dec,
+        }
+        this.setState({ confirmLoading: true });
+        uploadImage(imgFile, result).then(res => {
+          const { code, msg, data } = res.data;
+          if (code === 0) {
+            this.setState({ imgId: [...this.state.imgId, { url: this.state.imgUrl, id: data }], uploadVisible: false });
+          } else {
+            message.info(msg);
+          }
+          this.setState({ confirmLoading: false });
+        }).catch(err => {
+          message.info(err);
+          this.setState({ confirmLoading: false });
+        });
+      }
+    });
+  }
+
   render() {
     const { form } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
     return (
       <div className={styles.disabled}>
         <div style={{ paddingTop: '30px', minHeight: '500px' }}>
-          {this.state.imgUrl.length ? null :
+          {this.state.imgId.length ? null :
             <Empty
               image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
               imageStyle={{
@@ -94,7 +111,28 @@ class AddSectorInfo extends Component {
                 </span>
               }
             >
-              {/* <input
+              <Button type="primary" onClick={this.addImg}>
+                选择图片
+              </Button>
+            </Empty>
+          }
+          {this.state.imgId.map(v => {
+            return <IndexInfo key={v.id} src={v.url} addImg={this.addImg} deleteImgUrl={this.deleteImgUrl} />
+          })}
+        </div>
+
+        <Modal
+          title="上传布点图"
+          visible={this.state.uploadVisible}
+          onOk={this.onSubmit}
+          onCancel={_ => { this.setState({ uploadVisible: false }) }}
+          confirmLoading={this.state.confirmLoading}
+          okText="确认"
+          cancelText="取消"
+        >
+          <Form>
+            <Form.Item label="选择图片">
+              <input
                 ref={ref => { this.imgSelect = ref }}
                 type="file"
                 style={{ display: 'none' }}
@@ -102,41 +140,16 @@ class AddSectorInfo extends Component {
                   const file = e.target.files.item(0);
                   if (file) {
                     const url = window.URL.createObjectURL(file);
-                    this.addImgUrl(file, url);
+                    this.setState({ imgUrl: url, imgFile: file });
                   }
                 }} />
-              <Button type="primary" onClick={_ => { this.imgSelect.click() }}>
-                选择图片
-              </Button> */}
-              <Button type="primary" onClick={_ => { this.setState({ uploadVisible: true }) }}>
-                选择图片
-              </Button>
-            </Empty>
-          }
-          {this.state.imgUrl.map((v, i) => {
-            return <IndexInfo key={i} src={v} addImgUrl={this.addImgUrl} deleteImgUrl={this.deleteImgUrl} />
-          })}
-        </div>
-
-        <Modal
-          title="上传布点图"
-          visible={this.state.uploadVisible}
-          // onOk={this.handleOk}
-          onCancel={_ => { this.setState({ uploadVisible: false }) }}
-          okText="确认"
-          cancelText="取消"
-        >
-          <Form >
-            <Form.Item label="选择图片">
-              {/* {getFieldDecorator('dec', {
-                rules: [{ required: true, message: '请输入图片描述' }],
-              })(<Input placeholder="示例: 这是1号布点图" />)} */}
-
-              <div className={styles.addFile}>
-                <div className={styles.plus}>
-                  <Icon type="plus" style={{ fontSize: '32px' }} />
-                  <div className="ant-upload-text">Upload</div>
-                </div>
+              <div className={styles.addFile} onClick={_ => { this.imgSelect.click() }}>
+                {this.state.imgUrl ? <img src={this.state.imgUrl} style={{ width: '100%', height: 'auto' }} alt="" /> :
+                  <div className={styles.plus}>
+                    <Icon type="plus" style={{ fontSize: '32px' }} />
+                    <div>Upload</div>
+                  </div>
+                }
               </div>
             </Form.Item>
             <Form.Item label="图片名称">
@@ -161,7 +174,7 @@ class AddSectorInfo extends Component {
             <Form.Item label="图片描述">
               {getFieldDecorator('dec', {
                 rules: [{ required: true, message: '请输入图片描述' }],
-              })(<Input placeholder="示例: 这是1号布点图" />)}
+              })(<TextArea placeholder="示例: 这是1号布点图" />)}
             </Form.Item>
           </Form>
         </Modal>

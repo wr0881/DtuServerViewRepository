@@ -41,13 +41,10 @@ export async function getMemberType() {
 }
 
 /* 上传测点图 */
-export async function uploadImage(body) {
-    // let param = new URLSearchParams();
+export async function uploadImage(imgFile, params) {
     let param = new FormData();
-    param.append('img', body.img);
-    console.log(param);
-    return axios.post(`http://10.88.89.73:8090/upload/uploadImage?sectorId=137&type=1&imageName=1&description=1`,param);
-    // return axios.post(`http://123.207.88.210:8180/user/updatePassword?sectorId=137&type=1&imageName=1&description=1`,param);
+    param.append('img', imgFile);
+    return axios.post(`http://10.88.89.73:8090/upload/uploadImage?sectorId=${params.sectorId}&type=${params.type}&imageName=${params.imageName}&description=${params.description}`, param);
 }
 
 /* 获取终端编号 */
