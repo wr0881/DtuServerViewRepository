@@ -85,6 +85,14 @@ export default {
   //     pathRewrite: { '^/server': '' },
   //   },
   // },
+  // proxy: {
+  //   // 表格table的使用
+  //   '/table/studentinfo/query' : {
+  //     target:'https://www.easy-mock.com/mock/5d08609a7cbe6d02c420c5bb/serverview/table/studentinfo/query',
+  //     changeOrigin: true,
+  //     pathRewrite: { "^/table/studentinfo/query": "" }
+  //   }
+  // },
   ignoreMomentLocale: true,
   lessLoaderOptions: {
     javascriptEnabled: true,

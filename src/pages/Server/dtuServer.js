@@ -1,3 +1,4 @@
+/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Tabs, Button, Popover, message } from 'antd';
 import axios from '@/services/axios';
@@ -16,6 +17,7 @@ export default class DtuServer extends Component {
     serverDetail: "服务未启动",
     terminalType: 1,
     terminalNumbers: [],
+
   }
 
   componentWillMount() {
@@ -28,7 +30,7 @@ export default class DtuServer extends Component {
     this.initTerminalNumbers();
   }
 
-  //初始化对应button的状态
+  // 初始化对应button的状态
   initButtonStatus() {
     axios.get(`/server/getServer`, {})
       .then(response => {

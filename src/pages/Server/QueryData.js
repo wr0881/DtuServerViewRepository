@@ -152,7 +152,7 @@ class QueryData extends Component {
     });
   }
 
-  // 选择框提供传感器地址供选择
+  // 选择框提供传感器编号供选择
   getSensorNumber = (key) => {
     const sensorInfo = this.state.sensorInfos.filter(item => item.sensorAddress===key);
     this.setState({
@@ -280,6 +280,7 @@ class QueryData extends Component {
   pageSizeOrNumChange = (pageNum, pageSize) => {
     const { form } = this.props;
     const value = form.getFieldsValue();
+    console.log(value);
     const param = {
       pageNum,
       pageSize,
@@ -287,14 +288,13 @@ class QueryData extends Component {
     };
     axios.get(`/data/getDataBySearchData`, { params: param })
       .then(response => {
-        const result = response.data
+        const result = response.data;
+        console.log(result.code,result.msg);
         if (result.code === 0) {
           this.setState({
             measuredData: result.data.list,
             pageTotal: result.data.total,
           });
-          console.log(this.state.measuredData);
-          console.log(this.state.pageTotal);
         } else {
           message.info("暂无数据");
         }

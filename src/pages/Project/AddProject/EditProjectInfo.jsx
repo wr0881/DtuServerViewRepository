@@ -1,3 +1,6 @@
+/* eslint-disable react/jsx-filename-extension */
+/* eslint-disable react/jsx-indent */
+/* eslint-disable lines-between-class-members */
 import React, { Component } from 'react';
 
 class EditProjectInfo extends Component {
