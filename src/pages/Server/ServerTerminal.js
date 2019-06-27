@@ -28,7 +28,7 @@ export default class ServerTerminal extends Component {
 
   //初始化终端Table的数据
   initTerminalTableData() {
-    axios.get(`/terminal/listTerminalInUseByTypeFiled`, { params: { 'terminalType': this.state.terminalType, 'pageNum': this.state.defaultPageNum, 'pageSize': this.state.defaultPageSize} })
+    axios.get(`/terminal/listTerminalInUseByTypeFiled`, { params: { 'terminalType': this.state.terminalType, 'pageNum': this.state.defaultPageNum, 'pageSize': this.state.defaultPageSize } })
       .then(response => {
         let result = response.data
         if (result.code == 0) { //有终端
@@ -115,7 +115,7 @@ export default class ServerTerminal extends Component {
                 style={{ width: '100%' }}
                 allowClear
               >
-                {this.state.terminalNumbers.map(terminalNumber =><Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
+                {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
               </Select>
             )}
           </Form.Item>

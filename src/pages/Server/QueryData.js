@@ -1,19 +1,14 @@
-/* eslint-disable react/no-access-state-in-setstate */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-console */
-/* eslint-disable func-names */
-/* eslint-disable react/destructuring-assignment */
 import React, { Component } from 'react';
 import { Table, Form, Card, Button, Row, Col, Select, message } from 'antd';
-import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import axios from '@/services/axios';
 
 @Form.create()
-class QueryData extends Component {
+export default class QueryData extends Component {
 
   state = {
-    monitorTypes: [],
     terminalNumbers: [],
+    terminalType: 1,
+    monitorTypes: [],
     sensorInfos: [],
     sensorNumber: null,
     sensorAddress: null,
@@ -22,6 +17,11 @@ class QueryData extends Component {
     defaultPageNum: 1,
     defaultPageSize: 10,
     dataColumns: null,
+  }
+
+  componentWillMount() {
+    this.setState({ terminalNumbers: this.props.terminalNumbers })
+    this.setState({ terminalType: this.props.terminalType });
   }
 
   // 表单提交触发事件
@@ -55,41 +55,19 @@ class QueryData extends Component {
     if (this.state.monitorTypes.length !== 0) {
       return
     }
-    axios.get(`/sensor/getMonitorTypes`)
+    axios.get(`/data/getMonitorTypes`)
       .then(response => {
-        const result = response.data
+        let result = response.data
         if (result.code === 0) {
           this.setState({
             monitorTypes: result.data,
           });
-          console.log(this.state.monitorTypes);
         } else {
           message.info("暂无监测类型信息");
         }
       })
       .catch(function (error) {
-        console.log(error);
-      });
-  }
-
-  // 选择框提供终端编号供选择
-  getTerminalNumbers = () => {
-    if (this.state.terminalNumbers.length !== 0) {
-      return
-    }
-    axios.get(`/deviceConfig/listTerminalNumber`)
-      .then(response => {
-        const result = response.data
-        if (result.code === 0) {
-          this.setState({
-            terminalNumbers: result.data,
-          });
-          console.log(this.state.terminalNumbers);
-        } else {
-          message.info("暂无终端编号信息");
-        }
-      })
-      .catch(function (error) {
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -108,27 +86,6 @@ class QueryData extends Component {
           console.log(this.state.sensorInfos);
         } else {
           message.info("暂无已绑定的传感器信息");
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
-  }
-
-  // 选择框提供传感器编号供选择
-  getSensorNumbers = () => {
-    if (this.state.sensorInfos.length !== 0) {
-      return
-    }
-    axios.get(`/deviceConfig/listSensorNumber`)
-      .then(response => {
-        const result = response.data
-        if (result.code === 0) {
-          this.setState({
-            sensorInfos: result.data,
-          });
-        } else {
-          message.info("暂无传感器编号信息");
         }
       })
       .catch(function (error) {
@@ -161,7 +118,7 @@ class QueryData extends Component {
   }
 
   // 搜索框
-  serachDeviceForm = () => {
+  serachDataForm = () => {
     const {
       getFieldDecorator
     } = this.props.form;
@@ -176,7 +133,7 @@ class QueryData extends Component {
         <Row gutter={8}>
           <Col span={5}>
             <Form.Item label="监测类型" {...formItemLayout}>
-              {getFieldDecorator('monitorType', {rules: [{ required: true, message: '请选择监测类型'}]})(
+              {getFieldDecorator('monitorType', { rules: [{ required: true, message: '请选择监测类型' }] })(
                 <Select
                   placeholder="监测类型"
                   showSearch
@@ -184,13 +141,11 @@ class QueryData extends Component {
                   onDropdownVisibleChange={this.getMonitorTypes}
                   onSelect={this.changeTableShow}
                   style={{ width: '100%' }}
-                  
+
                 >
                   {this.state.monitorTypes.map(type => <Select.Option key={type.index}>{type.value}</Select.Option>)}
                 </Select>
-                
               )
-              
               }
             </Form.Item>
           </Col>
@@ -203,10 +158,9 @@ class QueryData extends Component {
                   filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                   onDropdownVisibleChange={this.getTerminalNumbers}
                   onSelect={this.getSensorInfos}
-                  onPopupScroll={(a) => { console.log(a) }}
                   style={{ width: '100%' }}
                 >
-                  {this.state.terminalNumbers.map(device => <Select.Option key={device.terminalNumber}>{device.terminalNumber}</Select.Option>)}
+                  {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
                 </Select>
               )}
             </Form.Item>
@@ -231,7 +185,7 @@ class QueryData extends Component {
           </Col>
           <Col span={5}>
             <Form.Item label="传感器编号" {...formItemLayout}>
-              {getFieldDecorator('sensorNumber', {initialValue:this.state.sensorNumber})(
+              {getFieldDecorator('sensorNumber', { initialValue: this.state.sensorNumber })(
                 <Select
                   placeholder="传感器编号"
                   showSearch
@@ -247,7 +201,7 @@ class QueryData extends Component {
           </Col>
           <Col span={5}>
             <Form.Item label="传感器地址" {...formItemLayout}>
-              {getFieldDecorator('sensorAddress', {initialValue:this.state.sensorAddress})(
+              {getFieldDecorator('sensorAddress', { initialValue: this.state.sensorAddress })(
                 <Select
                   placeholder="传感器地址"
                   showSearch
@@ -266,7 +220,6 @@ class QueryData extends Component {
               <Button
                 type="primary"
                 htmlType="submit"
-                onClick={this.pageSizeOrNumChange}
               >
                 搜索
               </Button>
@@ -286,6 +239,8 @@ class QueryData extends Component {
       pageSize,
       ...value,
     };
+    const { setSpinLoading } = this.props;
+    setSpinLoading(true);
     axios.get(`/data/getDataBySearchData`, { params: param })
       .then(response => {
         const result = response.data;
@@ -298,13 +253,15 @@ class QueryData extends Component {
         } else {
           message.info("暂无数据");
         }
+        setSpinLoading(false);
       })
       .catch(function (error) {
         console.log(error);
+        setSpinLoading(false);
       });
   }
 
-  changeTableShow = (key) =>{
+  changeTableShow = (key) => {
 
     const commonDataColumns = [
       {
@@ -363,49 +320,38 @@ class QueryData extends Component {
         title: '采集时间', dataIndex: 'createDate', key: 'createDate', align: 'center',
       }];
 
-    if(key === 26 || key === 66 || key === 80 || key === 83 || key === 104){
+    if (key === 26 || key === 66 || key === 80 || key === 83 || key === 104) {
       this.setState({
         dataColumns: twoDataColumns,
       })
-    } else if(key === 52){
+    } else if (key === 52) {
       this.setState({
         dataColumns: threeDataColumns,
       })
-    } else{
+    } else {
       this.setState({
         dataColumns: commonDataColumns,
       })
     }
   }
 
-  render() {    
+  render() {
     return (
-      <PageHeaderWrapper title='数据查询'>
+      <div>
+        {this.serachDataForm()}
         <div>
-          <Card title="">
-            {this.serachDeviceForm()}
-            <div>
-              <Table
-                columns={this.state.dataColumns}
-                dataSource={this.state.measuredData}
-                pagination={{
-                  showSizeChanger: true,
-                  pageSizeOptions: ['5', '10', '20', '40', '50'],
-                  defaultCurrent: this.state.defaultPageNum,
-                  defaultPageSize: this.state.defaultPageSize,
-                  total: this.state.pageTotal,
-                  onShowSizeChange: this.pageSizeOrNumChange,
-                  onChange: this.pageSizeOrNumChange,
-                }}
-              />
-            </div>
-          </Card>
+          <Table columns={this.state.dataColumns} dataSource={this.state.measuredData} pagination={{
+            showSizeChanger: true,
+            pageSizeOptions: ['5', '10', '20', '40', '50'],
+            defaultCurrent: this.state.defaultPageNum,
+            defaultPageSize: this.state.defaultPageSize,
+            total: this.state.pageTotal,
+            onShowSizeChange: this.pageSizeOrNumChange,
+            onChange: this.pageSizeOrNumChange,
+          }}
+          />
         </div>
-      </PageHeaderWrapper>
+      </div>
     )
   }
-
-
 }
-
-export default QueryData;

@@ -6,8 +6,9 @@ import axios from '@/services/axios';
 export default class DeviceBinding extends Component {
 
   state = {
-    bindDrawerVisible: false,
-    terminalInfos: [],
+    terminalNumbers: [],
+    terminalType: 1,
+    drawerVisible: false,
     collectionFrequency: null,
     terminalTypes: [],
     sensorInfos: [],
@@ -18,12 +19,12 @@ export default class DeviceBinding extends Component {
   }
 
   componentWillReceiveProps(props) {
-    this.setState({ bindDrawerVisible: props.drawerVisible });
+    this.setState({ drawerVisible: props.drawerVisible });
   }
 
   //关闭设备绑定页面
   closeBindDrawer = () => {
-    this.setState({ bindDrawerVisible: false, sensorAddress: null });
+    this.setState({ drawerVisible: false, sensorAddress: null });
   }
 
   //表单提交触发事件
@@ -50,27 +51,6 @@ export default class DeviceBinding extends Component {
           });
       }
     });
-  }
-
-  //选择框提供终端编号供选择
-  getTerminalNumber = () => {
-    if (this.state.terminalInfos.length != 0) {
-      return
-    }
-    axios.get(`/terminal/listTerminalInUse`)
-      .then(response => {
-        let result = response.data
-        if (result.code == 0) {
-          this.setState({
-            terminalInfos: result.data,
-          });
-        } else {
-          message.info("暂无终端编号信息");
-        }
-      })
-      .catch(function (error) {
-        console.log(error);
-      });
   }
 
   //选择框提供传感器编号供选择
@@ -157,17 +137,6 @@ export default class DeviceBinding extends Component {
       });
   }
 
-  //选择框选中终端编号后填充相应的终端信息
-  fillTerminalInfo = (value) => {
-    let terminalInfos = this.state.terminalInfos
-    for (let terminal of terminalInfos) {
-      if (value == terminal.terminalNumber) {
-        this.setState({ collectionFrequency: terminal.collectionFrequency })
-        break;
-      }
-    }
-  }
-
   //选择框选中传感器编号后填充相应的传感器信息
   fillSensorInfo = (value) => {
     let sensorInfos = this.state.sensorInfos
@@ -245,7 +214,7 @@ export default class DeviceBinding extends Component {
         title="设备绑定"
         width={720}
         onClose={this.closeBindDrawer}
-        visible={this.state.bindDrawerVisible}
+        visible={this.state.drawerVisible}
         destroyOnClose={true}
       >
         <Form layout="horizontal" onSubmit={this.handleSubmit}>
@@ -262,43 +231,11 @@ export default class DeviceBinding extends Component {
                     showSearch={true}
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                     onDropdownVisibleChange={this.getTerminalNumber}
-                    onSelect={this.fillTerminalInfo}
                     onPopupScroll={(a) => { console.log(a) }}
                     style={{ width: '100%' }}
                   >
-                    {this.state.terminalInfos.map(terminal => <Select.Option key={terminal.terminalNumber}>{terminal.terminalNumber}</Select.Option>)}
+                    {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
                   </Select>
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col span={24}>
-              <Form.Item label="终端类型" {...formItemLayout}>
-                {getFieldDecorator('terminalType', {
-                  rules: [{
-                    required: true, message: '请对应终端的类型',
-                  }],
-                })(
-                  <Select
-                    placeholder="终端类型"
-                    showSearch={true}
-                    filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onDropdownVisibleChange={this.getTerminalType}
-                    onPopupScroll={(a) => { console.log(a) }}
-                    style={{ width: '100%' }}
-                  >
-                    {this.state.terminalTypes.map(type => <Select.Option key={type.index}>{type.value}</Select.Option>)}
-                  </Select>
-                )}
-              </Form.Item>
-            </Col>
-          </Row>
-          <Row gutter={8}>
-            <Col span={24}>
-              <Form.Item label="采集频率（分钟/次）" {...formItemLayout}>
-                {getFieldDecorator('collectionFrequency', { initialValue: this.state.collectionFrequency })(
-                  <Input placeholder="采集频率（分钟/次）" disabled />
                 )}
               </Form.Item>
             </Col>
