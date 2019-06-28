@@ -16,8 +16,7 @@ export default class ServerSensor extends Component {
 
   componentWillMount() {
     this.setState({ terminalNumbers: this.props.terminalNumbers })
-    this.setState({ terminalType: this.props.terminalType });
-    this.initSensorTableData();
+    this.setState({ terminalType: this.props.terminalType }, () => {this.initSensorTableData()});
   }
 
   //初始化传感器Table的数据
@@ -89,13 +88,14 @@ export default class ServerSensor extends Component {
           <Form.Item label="终端编号" {...formItemLayout}>
             {getFieldDecorator('terminalNumber')(
               <Select
-                placeholder="终端编号"
-                filterOption={false}
-                style={{ width: '100%' }}
-                allowClear
-              >
-                {this.state.terminalNumbers.map(terminalNumber =><Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
-              </Select>
+              placeholder="终端编号"
+              showSearch={true}
+              filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
+              style={{ width: '100%' }}
+              allowClear
+            >
+              {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
+            </Select>
             )}
           </Form.Item>
         </Col>

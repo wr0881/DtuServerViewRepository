@@ -9,8 +9,6 @@ export default class DeviceBinding extends Component {
     terminalNumbers: [],
     terminalType: 1,
     drawerVisible: false,
-    collectionFrequency: null,
-    terminalTypes: [],
     sensorInfos: [],
     sensorAddress: null,
     timingFactor: null,
@@ -19,12 +17,14 @@ export default class DeviceBinding extends Component {
   }
 
   componentWillReceiveProps(props) {
+    this.setState({ terminalNumbers: props.terminalNumbers })
+    this.setState({ terminalType: props.terminalType });
     this.setState({ drawerVisible: props.drawerVisible });
   }
 
   //关闭设备绑定页面
   closeBindDrawer = () => {
-    this.setState({ drawerVisible: false, sensorAddress: null });
+    this.setState({ drawerVisible: false, sensorAddress: null, timingFactor: null });
   }
 
   //表单提交触发事件
@@ -34,8 +34,8 @@ export default class DeviceBinding extends Component {
       if (!err) {
         const hide = message.loading('绑定中，请稍候', 0);
         var formDate = new URLSearchParams();
-        console.log(values)
         Object.keys(values).map(key => { values[key] ? formDate.append(key, values[key]) : null; });
+        formDate.append("terminalType", terminalType)
         axios.post(`/deviceConfig/addDeviceConfig`, formDate)
           .then(response => {
             let result = response.data
@@ -54,7 +54,7 @@ export default class DeviceBinding extends Component {
   }
 
   //选择框提供传感器编号供选择
-  getSensorNumber = () => {
+  getSensorNumbers = () => {
     if (this.state.sensorInfos.length != 0) {
       return
     }
@@ -70,27 +70,7 @@ export default class DeviceBinding extends Component {
         }
       })
       .catch(function (error) {
-        console.log(error);
-      });
-  }
-
-  //选择框提供终端类型供选择
-  getTerminalType = () => {
-    if (this.state.sensorInfos.length != 0) {
-      return
-    }
-    axios.get(`/terminal/getTerminalTypes`)
-      .then(response => {
-        let result = response.data
-        if (result.code == 0) {
-          this.setState({
-            terminalTypes: result.data,
-          });
-        } else {
-          message.info("暂无终端类型信息");
-        }
-      })
-      .catch(function (error) {
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -100,7 +80,7 @@ export default class DeviceBinding extends Component {
     if (this.state.parserMethods.length != 0) {
       return
     }
-    axios.get(`/sensor/getParserMethods`)
+    axios.get(`/data/getParserMethods`)
       .then(response => {
         let result = response.data
         if (result.code == 0) {
@@ -112,6 +92,7 @@ export default class DeviceBinding extends Component {
         }
       })
       .catch(function (error) {
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -121,7 +102,7 @@ export default class DeviceBinding extends Component {
     if (this.state.monitorTypes.length != 0) {
       return
     }
-    axios.get(`/sensor/getMonitorTypes`)
+    axios.get(`/data/getMonitorTypes`)
       .then(response => {
         let result = response.data
         if (result.code == 0) {
@@ -133,6 +114,7 @@ export default class DeviceBinding extends Component {
         }
       })
       .catch(function (error) {
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -144,7 +126,6 @@ export default class DeviceBinding extends Component {
       if (value == sensor.sensorNumber) {
         let sensorAddressVar = this.state.sensorAddress
         if(sensorAddressVar){
-          console.log(typeof sensorAddressVar)
           if(sensorAddressVar.toString().includes("," + sensor.sensorAddress + ",")){
             message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
           }
@@ -230,8 +211,6 @@ export default class DeviceBinding extends Component {
                     placeholder="终端编号"
                     showSearch={true}
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onDropdownVisibleChange={this.getTerminalNumber}
-                    onPopupScroll={(a) => { console.log(a) }}
                     style={{ width: '100%' }}
                   >
                     {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
@@ -266,7 +245,7 @@ export default class DeviceBinding extends Component {
                     mode="multiple"
                     showSearch={true}
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onDropdownVisibleChange={this.getSensorNumber}
+                    onDropdownVisibleChange={this.getSensorNumbers}
                     onSelect={this.fillSensorInfo}
                     onDeselect={this.removeSensorInfo}
                     style={{ width: '100%' }}
@@ -385,7 +364,3 @@ export default class DeviceBinding extends Component {
     </div>;
   }
 }
-
-
-
-

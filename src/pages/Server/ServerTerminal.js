@@ -18,13 +18,8 @@ export default class ServerTerminal extends Component {
 
   componentWillReceiveProps(props) {
     this.setState({ terminalNumbers: props.terminalNumbers });
-    this.setState({ terminalType: props.terminalType });
+    this.setState({ terminalType: props.terminalType }, () => {this.initTerminalTableData()});
   }
-
-  componentWillMount() {
-    this.initTerminalTableData();
-  }
-
 
   //初始化终端Table的数据
   initTerminalTableData() {

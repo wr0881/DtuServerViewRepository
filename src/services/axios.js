@@ -2,6 +2,7 @@
 import axios from 'axios';
 
 // axios.defaults.baseURL = 'http://123.207.88.210:9093';
+
 // axios.defaults.baseURL = 'http://123.207.88.210:8880'; // 生产划环境，慎用
 // axios.defaults.baseURL = 'http://10.88.89.101:8880';
 // axios.defaults.baseURL = 'http://10.88.89.170:8880';
