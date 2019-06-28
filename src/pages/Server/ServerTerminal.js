@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Form, Input, Modal, Button, Row, Col, Select, message } from 'antd';
+import { Table, Form, Input, Modal, Button, Row, Col, Select, message, Badge } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -209,6 +209,15 @@ export default class ServerTerminal extends Component {
         title: '采集频率', dataIndex: 'collectionFrequency', key: 'collectionFrequency', align: 'center',
       }, {
         title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus', align: 'center',
+        render: (text, record, index) => {
+          let status = 'success';
+          if (text === '上线') {
+            status = 'success';
+          } else if (text === '离线') {
+            status = 'error';
+          }
+          return <Badge status={status} text={text} />;
+        },
       }, {
         title: '项目名称', dataIndex: 'projectName', key: 'projectName', align: 'center',
       }, {

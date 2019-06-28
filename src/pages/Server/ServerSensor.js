@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Table, Form, Input, Button, Row, Col, Select, Drawer, message } from 'antd';
+import React, { Component, useState } from 'react';
+import { Table, Form, Input, Button, Row, Col, Select, Drawer, message, Switch } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -208,6 +208,28 @@ export default class ServerSensor extends Component {
         title: '未传数据次数', dataIndex: 'noDataCount', key: 'noDataCount', align: 'center',
       }, {
         title: '使用状态', dataIndex: 'useStatus', key: 'useStatus', align: 'center',
+        render: (text, record, index) => {
+          const checked = text === "已使用" ? true : false;
+          return (
+            <Switch
+              checkedChildren="已使用"
+              unCheckedChildren="未使用"
+              checked={checked}
+              onChange={e => {
+                let params = { sensorNumber: record.sensorNumber, useStatus: e };
+                axios.put(`/deviceConfig/updateDeviceConfig`, params)
+                .then(response => { 
+                  let result = response.data        
+                  if(result.code == 0){
+                    this.initSensorTableData();
+                  }else{
+                    message.error("修改使用状态失败")
+                  }
+                })
+              }}
+            />
+          )
+        },
       }, {
         title: '操作', dataIndex: 'operation', key: 'manalSend', align: 'center',
         render: (text, item, index) => {
