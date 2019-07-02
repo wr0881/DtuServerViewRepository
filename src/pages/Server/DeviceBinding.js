@@ -32,21 +32,25 @@ export default class DeviceBinding extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const hide = message.loading('绑定中，请稍候', 0);
-        var formDate = new URLSearchParams();
-        Object.keys(values).map(key => { values[key] ? formDate.append(key, values[key]) : null; });
-        formDate.append("terminalType", terminalType)
-        axios.post(`/deviceConfig/addDeviceConfig`, formDate)
+        const { setSpinLoading } = this.props;
+        setSpinLoading(true);
+        values.sensorAddresses =  values.sensorAddresses.split(",")
+        values.timingFactors =  values.timingFactors.split(",")
+        values.monitorPointNumbers =  values.monitorPointNumbers.split(",")
+        values.terminalType = this.state.terminalType
+        axios.post(`/deviceConfig/addDeviceConfig`, values)
           .then(response => {
             let result = response.data
             if (result.code == 0) {
-              hide.then(() => message.info(result.msg));
+              message.info(result.msg)
             } else {
-              hide.then(() => message.error(result.msg));
+              message.error(result.msg)
             }
+            setSpinLoading(false);
           })
           .catch(function (error) {
-            hide.then(() => message.error(error));
+            setSpinLoading(false);
+            message.error(error);
             console.log(error);
           });
       }
@@ -124,22 +128,27 @@ export default class DeviceBinding extends Component {
     let sensorInfos = this.state.sensorInfos
     for (let sensor of sensorInfos) {
       if (value == sensor.sensorNumber) {
-        let sensorAddressVar = this.state.sensorAddress
-        if(sensorAddressVar){
-          if(sensorAddressVar.toString().includes("," + sensor.sensorAddress + ",")){
-            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+        let newSensorAddress
+        let oldSensorAddress = this.state.sensorAddress
+        let newTimingFactor
+        let oldTimingFactor = this.state.timingFactor
+        if(oldSensorAddress || oldSensorAddress == 0){
+          if(oldSensorAddress.toString().includes("," + sensor.sensorAddress + ",")){
+            message.error("所选择的传感器地址与中间选择的重复，请移除刚刚选择的传感器")
           }
-          if(sensorAddressVar.toString().startsWith(sensor.sensorAddress + ",")){
-            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+          if(oldSensorAddress.toString().startsWith(sensor.sensorAddress + ",")){
+            message.error("所选择的传感器地址与第一次选择的重复，请移除刚刚选择的传感器")
           }
-          if(sensorAddressVar.toString().endsWith("," + sensor.sensorAddress + ",")){
-            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+          if(oldSensorAddress.toString().endsWith("," + sensor.sensorAddress)){
+            message.error("所选择的传感器地址与上一次选择的重复，请移除刚刚选择的传感器")
           }
-          sensorAddressVar = sensorAddressVar + "," + sensor.sensorAddress
+          newSensorAddress = oldSensorAddress + "," + sensor.sensorAddress
+          newTimingFactor = oldTimingFactor + "," + sensor.timingFactor
         }else{
-          sensorAddressVar = sensor.sensorAddress
+          newSensorAddress = sensor.sensorAddress
+          newTimingFactor = sensor.timingFactor
         }
-        this.setState({ sensorAddress: sensorAddressVar, timingFactor: sensor.timingFactor })
+        this.setState({ sensorAddress: newSensorAddress, timingFactor: newTimingFactor })
         break;
       }
     }
@@ -150,15 +159,21 @@ export default class DeviceBinding extends Component {
     let sensorInfos = this.state.sensorInfos
     for (let sensor of sensorInfos) {
       if (value == sensor.sensorNumber) {
-        let sensorAddressVar = this.state.sensorAddress
-        if(sensorAddressVar == sensor.sensorAddress){
-          sensorAddressVar = null
-        } else if(sensorAddressVar.endsWith(sensor.sensorAddress)){
-          sensorAddressVar = sensorAddressVar.replace("," + sensor.sensorAddress, "")
+        let newSensorAddress
+        let oldSensorAddress = this.state.sensorAddress
+        let newTimingFactor
+        let oldTimingFactor = this.state.timingFactor
+        if(oldSensorAddress == sensor.sensorAddress){
+          newSensorAddress = null
+          newTimingFactor = null
+        } else if(oldSensorAddress.endsWith(sensor.sensorAddress)){
+          newSensorAddress = oldSensorAddress.substr(0, oldSensorAddress.lastIndexOf(","))
+          newTimingFactor = oldTimingFactor.substr(0, oldTimingFactor.lastIndexOf(","))
         }else{
-          sensorAddressVar = sensorAddressVar.replace(sensor.sensorAddress + ",", "")
+          newSensorAddress = oldSensorAddress.replace(sensor.sensorAddress + ",", "")
+          newTimingFactor = oldTimingFactor.replace(sensor.timingFactor + ",", "")
         }
-        this.setState({ sensorAddress: sensorAddressVar, timingFactor: sensor.timingFactor })
+        this.setState({ sensorAddress: newSensorAddress, timingFactor: newTimingFactor })
         break;
       }
     }
@@ -167,7 +182,7 @@ export default class DeviceBinding extends Component {
   validMonitorPointRule = (rule, value, callback) => {
     if (value) { 
       const form = this.props.form;
-      let sensorNumberArr = form.getFieldValue('sensorNumber')
+      let sensorNumberArr = form.getFieldValue('sensorNumbers')
       if (!sensorNumberArr) {
         callback('请先选择传感器');
       } else {
@@ -235,7 +250,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="传感器编号"  {...formItemLayout}>
-                {getFieldDecorator('sensorNumber', {
+                {getFieldDecorator('sensorNumbers', {
                   rules: [{
                     required: true, message: '请至少选择一个传感器',
                   }],
@@ -259,7 +274,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="传感器地址（十进制）" {...formItemLayout}>
-                {getFieldDecorator('sensorAddress', { initialValue: this.state.sensorAddress })(
+                {getFieldDecorator('sensorAddresses', { initialValue: this.state.sensorAddress })(
                   <Input placeholder="传感器地址" disabled />
                 )}
               </Form.Item>
@@ -268,7 +283,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="标定系数K" {...formItemLayout}>
-                {getFieldDecorator('timingFactor', { initialValue: this.state.timingFactor })(
+                {getFieldDecorator('timingFactors', { initialValue: this.state.timingFactor })(
                   <Input placeholder="标定系数K" disabled />
                 )}
               </Form.Item>
@@ -298,7 +313,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="测点编号" {...formItemLayout}>
-                {getFieldDecorator('monitorPointNumber', {
+                {getFieldDecorator('monitorPointNumbers', {
                   rules: [{
                     required: true, message: '请选择对应设备的测点编号',
                   },{
@@ -340,8 +355,8 @@ export default class DeviceBinding extends Component {
                   }],
                 })(
                   <Select placeholder="选择强制绑定不能确保数据能正常收到，请谨慎操作">
-                    <Option value="0">不强制绑定</Option>
-                    <Option value="1">强制绑定</Option>
+                    <Select.Option value="0">不强制绑定</Select.Option>
+                    <Select.Option value="1">强制绑定</Select.Option>
                   </Select>
                 )}
               </Form.Item>

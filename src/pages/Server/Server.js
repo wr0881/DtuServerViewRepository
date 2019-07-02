@@ -130,7 +130,7 @@ export default class Server extends Component {
             </Tabs.TabPane>
           </Tabs>
         </Spin>
-        <DeviceBinding terminalNumbers={this.state.terminalNumbers} terminalType={this.state.terminalType} drawerVisible={this.state.bindDrawerVisible} />
+        <DeviceBinding terminalNumbers={this.state.terminalNumbers} terminalType={this.state.terminalType} setSpinLoading={this.setSpinLoading} drawerVisible={this.state.bindDrawerVisible} />
       </div>
     )
   }

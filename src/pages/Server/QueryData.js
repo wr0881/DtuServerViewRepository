@@ -109,7 +109,7 @@ export default class QueryData extends Component {
     });
   }
 
-  // 选择框提供传感器编号供选择
+  // 选择框提供传感器地址供选择
   getSensorNumber = (key) => {
     const sensorInfo = this.state.sensorInfos.filter(item => item.sensorAddress===key);
     this.setState({
@@ -189,8 +189,8 @@ export default class QueryData extends Component {
                 <Select
                   placeholder="传感器编号"
                   showSearch
-                  filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                  onDropdownVisibleChange={this.getSensorNumbers}
+                  // filterOption={false}
+                  // onSearch={this.fetchUser}
                   onSelect={this.getSensorAddress}
                   style={{ width: '100%' }}
                 >
@@ -233,7 +233,6 @@ export default class QueryData extends Component {
   pageSizeOrNumChange = (pageNum, pageSize) => {
     const { form } = this.props;
     const value = form.getFieldsValue();
-    console.log(value);
     const param = {
       pageNum,
       pageSize,
@@ -243,8 +242,7 @@ export default class QueryData extends Component {
     setSpinLoading(true);
     axios.get(`/data/getDataBySearchData`, { params: param })
       .then(response => {
-        const result = response.data;
-        console.log(result.code,result.msg);
+        const result = response.data
         if (result.code === 0) {
           this.setState({
             measuredData: result.data.list,
@@ -262,7 +260,6 @@ export default class QueryData extends Component {
   }
 
   changeTableShow = (key) => {
-
     const commonDataColumns = [
       {
         title: '终端编号', dataIndex: 'terminalNumber', key: 'terminalNumber', align: 'center',
@@ -320,11 +317,11 @@ export default class QueryData extends Component {
         title: '采集时间', dataIndex: 'createDate', key: 'createDate', align: 'center',
       }];
 
-    if (key === 26 || key === 66 || key === 80 || key === 83 || key === 104) {
+    if (key == 26 || key == 66 || key == 80 || key == 83 || key == 104) {
       this.setState({
         dataColumns: twoDataColumns,
       })
-    } else if (key === 52) {
+    } else if (key == 52) {
       this.setState({
         dataColumns: threeDataColumns,
       })

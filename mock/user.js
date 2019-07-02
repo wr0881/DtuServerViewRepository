@@ -82,14 +82,6 @@ export default {
       });
       return;
     }
-    if (password === '123456' && userName === 'user') {
-      res.send({
-        status: 'ok',
-        type,
-        currentAuthority: 'user',
-      });
-      return;
-    }
     res.send({
       status: 'error',
       type,

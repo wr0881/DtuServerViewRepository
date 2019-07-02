@@ -249,11 +249,14 @@ export default class ServerSensor extends Component {
         },
       }, {
         title: '操作', dataIndex: 'operation', key: 'manalSend', align: 'center',
-        render: (text, item, index) => {
+        render: (text, item) => {
           return <div><Button onClick={() => {
-            console.log(item)
+            if(this.state.terminalType != 1){
+              message.info("除了DTU外，其他类型终端暂未实现手动触发指令的功能")
+              return
+            }
             const hide = message.loading('正在发送指令，请稍候');
-            // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'00160732012945'} })
+            // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'0304000000027029'} })
             axios.get(`/deviceConfig/manualSend`, { params: item })
               .then(response => {
                 let result = response.data
