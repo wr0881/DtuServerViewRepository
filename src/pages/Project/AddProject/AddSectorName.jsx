@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import router from 'umi/router';
 import { observer } from 'mobx-react';
 import { Form, Input, Button, Select, Divider, Cascader, DatePicker, Slider } from 'antd';
 import moment from 'moment';
@@ -28,7 +29,6 @@ class AddSectorName extends Component {
     this.state = {
       sectorType: [],
       JW: { lng: '', lat: '' },
-
     };
   }
   setJW = v => {
@@ -52,7 +52,6 @@ class AddSectorName extends Component {
           sectorStatus: values.sectorStatus,
           sectorType: values.sectorType
         };
-        console.log(result);
         addSector(result).then(res => {
           const { code, data, msg } = res.data;
           if (code === 0) {
@@ -69,7 +68,6 @@ class AddSectorName extends Component {
     if (sectorType.length === 0) {
       getsectorType().then(res => {
         const { code, data } = res.data;
-        console.log(data);
         if (code === 0) {
           this.setState({ sectorType: data });
         } else {

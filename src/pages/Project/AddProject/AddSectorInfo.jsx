@@ -1,4 +1,5 @@
 import React, { Component, Fragment } from 'react';
+import router from 'umi/router';
 import { observer } from 'mobx-react';
 import {
   Row,
@@ -58,10 +59,11 @@ class AddSectorInfo extends Component {
   }
 
   deleteImgUrl = v => {
-    const { imgUrl } = this.state;
-    const index = imgUrl.findIndex(item => item === v);
-    imgUrl.splice(index, 1);
-    this.setState({ imgUrl });
+    // const { imgUrl } = this.state;
+    // const index = imgUrl.findIndex(item => item === v);
+    // imgUrl.splice(index, 1);
+    // this.setState({ imgUrl });
+    message.info('开发中');
   }
 
   onSubmit = () => {
@@ -91,6 +93,8 @@ class AddSectorInfo extends Component {
         });
       }
     });
+    /* 测试 */
+    // this.setState({ imgId: [{ url: this.state.imgUrl, id: 241 }], uploadVisible: false });
   }
 
   render() {
@@ -98,7 +102,7 @@ class AddSectorInfo extends Component {
     const { getFieldDecorator, getFieldValue } = form;
     return (
       <div className={styles.disabled}>
-        <div style={{ paddingTop: '30px', minHeight: '500px' }}>
+        <div style={{ position: 'relative', paddingTop: '30px', minHeight: '500px' }}>
           {this.state.imgId.length ? null :
             <Empty
               image="https://gw.alipayobjects.com/mdn/miniapp_social/afts/img/A*pevERLJC9v0AAAAAAAAAAABjAQAAAQ/original"
@@ -117,8 +121,21 @@ class AddSectorInfo extends Component {
             </Empty>
           }
           {this.state.imgId.map(v => {
-            return <IndexInfo key={v.id} src={v.url} addImg={this.addImg} deleteImgUrl={this.deleteImgUrl} />
+            return <IndexInfo key={v.id} src={v.url} imgId={v.id} addImg={this.addImg} deleteImgUrl={this.deleteImgUrl} />
           })}
+
+          {this.state.imgId.length > 0 ?
+            <Button
+              type="primary"
+              style={{ position: 'absolute', right: '0px', bottom: '0px' }}
+              onClick={_ => {
+                router.push('/project/add-project/result');
+              }}
+            >
+              下一步
+            </Button>
+            : null
+          }
         </div>
 
         <Modal

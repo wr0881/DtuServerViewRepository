@@ -20,6 +20,11 @@ export async function getsectorType() {
     return axios.get('/sysCode/getsectorType');
 }
 
+/* 获取监测类型 */
+export async function listMonitorType() {
+    return axios.get('/sysCode/listMonitorType');
+}
+
 /* 添加区间 */
 export async function addSector(body) {
     return axios.post('/monitorPoint/addSector', body);
@@ -45,6 +50,14 @@ export async function uploadImage(imgFile, params) {
     let param = new FormData();
     param.append('img', imgFile);
     return axios.post(`http://10.88.89.73:8090/upload/uploadImage?sectorId=${params.sectorId}&type=${params.type}&imageName=${params.imageName}&description=${params.description}`, param);
+}
+
+/* 上传测点信息 */
+export async function addMonitorPoint(json) {
+    return axios.post('/monitorPoint/addMonitorPoint', json, {
+        headers: { 'Content-Type': 'application/json' },
+        // body: json
+    });
 }
 
 /* 获取终端编号 */

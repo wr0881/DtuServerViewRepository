@@ -90,6 +90,11 @@ export default [
                 name: '新建区间信息',
                 component: './Project/AddProject/AddSectorInfo',
               },
+              {
+                path: '/project/add-project/result',
+                name: '新建成功',
+                component: './Project/AddProject/Result',
+              },
             ],
           },
         ],
