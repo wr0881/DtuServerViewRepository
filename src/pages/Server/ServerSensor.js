@@ -1,5 +1,5 @@
-import React, { Component } from 'react';
-import { Table, Form, Input, Button, Row, Col, Select, Drawer, message } from 'antd';
+import React, { Component, useState } from 'react';
+import { Table, Form, Input, Button, Row, Col, Select, Drawer, message, Switch, Popconfirm } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -16,13 +16,12 @@ export default class ServerSensor extends Component {
 
   componentWillMount() {
     this.setState({ terminalNumbers: this.props.terminalNumbers })
-    this.setState({ terminalType: this.props.terminalType });
-    this.initSensorTableData();
+    this.setState({ terminalType: this.props.terminalType }, () => { this.initSensorTableData() });
   }
 
   //初始化传感器Table的数据
   initSensorTableData() {
-    axios.get(`/deviceConfig/listDeviceConfigFiled`, { params: {'terminalType': this.state.terminalType, 'pageNum': this.state.defaultPageNum, 'pageSize': this.state.defaultPageSize} })
+    axios.get(`/deviceConfig/listDeviceConfigFiled`, { params: { 'terminalType': this.state.terminalType, 'pageNum': this.state.defaultPageNum, 'pageSize': this.state.defaultPageSize } })
       .then(response => {
         let result = response.data
         if (result.code == 0) { //有绑定的传感器
@@ -35,7 +34,7 @@ export default class ServerSensor extends Component {
         message.error("系统异常，请联系管理员");
         console.log(error);
       });
-  }    
+  }
 
   handleSubmit = (e) => {
     e.preventDefault();
@@ -44,12 +43,12 @@ export default class ServerSensor extends Component {
         values.pageNum = this.state.defaultPageNum
         values.pageSize = this.state.defaultPageSize
         values.terminalType = this.state.terminalType
-        let sensorNumber = values.sensorNumber === undefined ? '':values.sensorNumber.trim()
-        if(sensorNumber.length == 0){
+        let sensorNumber = values.sensorNumber === undefined ? '' : values.sensorNumber.trim()
+        if (sensorNumber.length == 0) {
           values.sensorNumber = undefined
         }
-        let sensorAddress = values.sensorAddress === undefined ? '':values.sensorAddress.trim()
-        if(sensorAddress.length == 0){
+        let sensorAddress = values.sensorAddress === undefined ? '' : values.sensorAddress.trim()
+        if (sensorAddress.length == 0) {
           values.sensorAddress = undefined
         }
         axios.get(`/deviceConfig/listDeviceConfigFiled`, { params: values })
@@ -90,11 +89,12 @@ export default class ServerSensor extends Component {
             {getFieldDecorator('terminalNumber')(
               <Select
                 placeholder="终端编号"
-                filterOption={false}
+                showSearch={true}
+                filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
                 style={{ width: '100%' }}
                 allowClear
               >
-                {this.state.terminalNumbers.map(terminalNumber =><Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
+                {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
               </Select>
             )}
           </Form.Item>
@@ -152,12 +152,12 @@ export default class ServerSensor extends Component {
   pageSizeOrNumChange = (pageNum, pageSize) => {
     const { form } = this.props;
     const values = form.getFieldsValue();
-    let sensorNumber = values.sensorNumber === undefined ? '':values.sensorNumber.trim()
-    if(sensorNumber.length == 0){
+    let sensorNumber = values.sensorNumber === undefined ? '' : values.sensorNumber.trim()
+    if (sensorNumber.length == 0) {
       values.sensorNumber = undefined
     }
-    let sensorAddress = values.sensorAddress === undefined ? '':values.sensorAddress.trim()
-    if(sensorAddress.length == 0){
+    let sensorAddress = values.sensorAddress === undefined ? '' : values.sensorAddress.trim()
+    if (sensorAddress.length == 0) {
       values.sensorAddress = undefined
     }
     let param = {
@@ -176,6 +176,23 @@ export default class ServerSensor extends Component {
           });
         } else {
           message.info("该服务下暂无绑定的传感器信息");
+        }
+      })
+      .catch(function (error) {
+        message.info("系统异常，请联系管理员");
+        console.log(error);
+      });
+  }
+
+  deleteDC = (sensorNumber) => {
+    axios.delete(`/deviceConfig/removeDeviceConfigBySensor?sensorNumber=${sensorNumber}`)
+      .then(response => {
+        let result = response.data
+        if (result.code == 0) {
+          initSensorTableData();
+          message.info("绑定解除成功");
+        } else {
+          message.error("绑定解除失败");
         }
       })
       .catch(function (error) {
@@ -208,15 +225,40 @@ export default class ServerSensor extends Component {
         title: '未传数据次数', dataIndex: 'noDataCount', key: 'noDataCount', align: 'center',
       }, {
         title: '使用状态', dataIndex: 'useStatus', key: 'useStatus', align: 'center',
+        render: (text, record, index) => {
+          const checked = text === "已使用" ? true : false;
+          return (
+            <Switch
+              checkedChildren="已使用"
+              unCheckedChildren="未使用"
+              checked={checked}
+              onChange={e => {
+                let params = { sensorNumber: record.sensorNumber, useStatus: e };
+                axios.put(`/deviceConfig/updateDeviceConfig`, params)
+                  .then(response => {
+                    let result = response.data
+                    if (result.code == 0) {
+                      this.initSensorTableData();
+                    } else {
+                      message.error("修改使用状态失败")
+                    }
+                  })
+              }}
+            />
+          )
+        },
       }, {
         title: '操作', dataIndex: 'operation', key: 'manalSend', align: 'center',
-        render: (text, item, index) => {
+        render: (text, item) => {
           return <div><Button onClick={() => {
-            console.log(item)
+            if(this.state.terminalType != 1){
+              message.info("除了DTU外，其他类型终端暂未实现手动触发指令的功能")
+              return
+            }
             const hide = message.loading('正在发送指令，请稍候');
-            // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'00160732012945'} })
+            // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'0304000000027029'} })
             axios.get(`/deviceConfig/manualSend`, { params: item })
-              .then(response => {         
+              .then(response => {
                 let result = response.data
                 if (result.code == 0) {
                   hide.then(() => message.info(result.msg));
@@ -229,23 +271,10 @@ export default class ServerSensor extends Component {
                 console.log(error);
               });
           }}>触发指令</Button>
-          <Button onClick={() => {
-            console.log(item)
-            const hide = message.loading('正在发送指令，请稍候');
-            // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'00160732012945'} })
-            axios.get(`/deviceConfig/manualSend`, { params: item })
-              .then(response => {         
-                let result = response.data
-                if (result.code == 0) {
-                  hide.then(() => message.info(result.msg));
-                } else {
-                  hide.then(() => message.error(result.msg));
-                }
-              }).catch(function (error) {
-                hide.then(() => message.error(error));
-                console.log(error);
-              });
-          }}>解除绑定</Button></div>;
+          <Popconfirm placement="top" title={"是否解除绑定"} onConfirm={() => this.deleteDC(item.sensorNumber)} okText="是" cancelText="否">
+          <Button>解除绑定</Button>
+          </Popconfirm>
+        </div>;
         }
       }];
 

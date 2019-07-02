@@ -9,8 +9,6 @@ export default class DeviceBinding extends Component {
     terminalNumbers: [],
     terminalType: 1,
     drawerVisible: false,
-    collectionFrequency: null,
-    terminalTypes: [],
     sensorInfos: [],
     sensorAddress: null,
     timingFactor: null,
@@ -19,12 +17,14 @@ export default class DeviceBinding extends Component {
   }
 
   componentWillReceiveProps(props) {
+    this.setState({ terminalNumbers: props.terminalNumbers })
+    this.setState({ terminalType: props.terminalType });
     this.setState({ drawerVisible: props.drawerVisible });
   }
 
   //关闭设备绑定页面
   closeBindDrawer = () => {
-    this.setState({ drawerVisible: false, sensorAddress: null });
+    this.setState({ drawerVisible: false, sensorAddress: null, timingFactor: null });
   }
 
   //表单提交触发事件
@@ -32,21 +32,25 @@ export default class DeviceBinding extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        const hide = message.loading('绑定中，请稍候', 0);
-        var formDate = new URLSearchParams();
-        console.log(values)
-        Object.keys(values).map(key => { values[key] ? formDate.append(key, values[key]) : null; });
-        axios.post(`/deviceConfig/addDeviceConfig`, formDate)
+        const { setSpinLoading } = this.props;
+        setSpinLoading(true);
+        values.sensorAddresses =  values.sensorAddresses.split(",")
+        values.timingFactors =  values.timingFactors.split(",")
+        values.monitorPointNumbers =  values.monitorPointNumbers.split(",")
+        values.terminalType = this.state.terminalType
+        axios.post(`/deviceConfig/addDeviceConfig`, values)
           .then(response => {
             let result = response.data
             if (result.code == 0) {
-              hide.then(() => message.info(result.msg));
+              message.info(result.msg)
             } else {
-              hide.then(() => message.error(result.msg));
+              message.error(result.msg)
             }
+            setSpinLoading(false);
           })
           .catch(function (error) {
-            hide.then(() => message.error(error));
+            setSpinLoading(false);
+            message.error(error);
             console.log(error);
           });
       }
@@ -54,7 +58,7 @@ export default class DeviceBinding extends Component {
   }
 
   //选择框提供传感器编号供选择
-  getSensorNumber = () => {
+  getSensorNumbers = () => {
     if (this.state.sensorInfos.length != 0) {
       return
     }
@@ -70,27 +74,7 @@ export default class DeviceBinding extends Component {
         }
       })
       .catch(function (error) {
-        console.log(error);
-      });
-  }
-
-  //选择框提供终端类型供选择
-  getTerminalType = () => {
-    if (this.state.sensorInfos.length != 0) {
-      return
-    }
-    axios.get(`/terminal/getTerminalTypes`)
-      .then(response => {
-        let result = response.data
-        if (result.code == 0) {
-          this.setState({
-            terminalTypes: result.data,
-          });
-        } else {
-          message.info("暂无终端类型信息");
-        }
-      })
-      .catch(function (error) {
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -100,7 +84,7 @@ export default class DeviceBinding extends Component {
     if (this.state.parserMethods.length != 0) {
       return
     }
-    axios.get(`/sensor/getParserMethods`)
+    axios.get(`/data/getParserMethods`)
       .then(response => {
         let result = response.data
         if (result.code == 0) {
@@ -112,6 +96,7 @@ export default class DeviceBinding extends Component {
         }
       })
       .catch(function (error) {
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -121,7 +106,7 @@ export default class DeviceBinding extends Component {
     if (this.state.monitorTypes.length != 0) {
       return
     }
-    axios.get(`/sensor/getMonitorTypes`)
+    axios.get(`/data/getMonitorTypes`)
       .then(response => {
         let result = response.data
         if (result.code == 0) {
@@ -133,6 +118,7 @@ export default class DeviceBinding extends Component {
         }
       })
       .catch(function (error) {
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -142,23 +128,27 @@ export default class DeviceBinding extends Component {
     let sensorInfos = this.state.sensorInfos
     for (let sensor of sensorInfos) {
       if (value == sensor.sensorNumber) {
-        let sensorAddressVar = this.state.sensorAddress
-        if(sensorAddressVar){
-          console.log(typeof sensorAddressVar)
-          if(sensorAddressVar.toString().includes("," + sensor.sensorAddress + ",")){
-            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+        let newSensorAddress
+        let oldSensorAddress = this.state.sensorAddress
+        let newTimingFactor
+        let oldTimingFactor = this.state.timingFactor
+        if(oldSensorAddress || oldSensorAddress == 0){
+          if(oldSensorAddress.toString().includes("," + sensor.sensorAddress + ",")){
+            message.error("所选择的传感器地址与中间选择的重复，请移除刚刚选择的传感器")
           }
-          if(sensorAddressVar.toString().startsWith(sensor.sensorAddress + ",")){
-            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+          if(oldSensorAddress.toString().startsWith(sensor.sensorAddress + ",")){
+            message.error("所选择的传感器地址与第一次选择的重复，请移除刚刚选择的传感器")
           }
-          if(sensorAddressVar.toString().endsWith("," + sensor.sensorAddress + ",")){
-            message.error("所选择的传感器地址与之前选择的重复，请移除刚刚选择的传感器")
+          if(oldSensorAddress.toString().endsWith("," + sensor.sensorAddress)){
+            message.error("所选择的传感器地址与上一次选择的重复，请移除刚刚选择的传感器")
           }
-          sensorAddressVar = sensorAddressVar + "," + sensor.sensorAddress
+          newSensorAddress = oldSensorAddress + "," + sensor.sensorAddress
+          newTimingFactor = oldTimingFactor + "," + sensor.timingFactor
         }else{
-          sensorAddressVar = sensor.sensorAddress
+          newSensorAddress = sensor.sensorAddress
+          newTimingFactor = sensor.timingFactor
         }
-        this.setState({ sensorAddress: sensorAddressVar, timingFactor: sensor.timingFactor })
+        this.setState({ sensorAddress: newSensorAddress, timingFactor: newTimingFactor })
         break;
       }
     }
@@ -169,15 +159,21 @@ export default class DeviceBinding extends Component {
     let sensorInfos = this.state.sensorInfos
     for (let sensor of sensorInfos) {
       if (value == sensor.sensorNumber) {
-        let sensorAddressVar = this.state.sensorAddress
-        if(sensorAddressVar == sensor.sensorAddress){
-          sensorAddressVar = null
-        } else if(sensorAddressVar.endsWith(sensor.sensorAddress)){
-          sensorAddressVar = sensorAddressVar.replace("," + sensor.sensorAddress, "")
+        let newSensorAddress
+        let oldSensorAddress = this.state.sensorAddress
+        let newTimingFactor
+        let oldTimingFactor = this.state.timingFactor
+        if(oldSensorAddress == sensor.sensorAddress){
+          newSensorAddress = null
+          newTimingFactor = null
+        } else if(oldSensorAddress.endsWith(sensor.sensorAddress)){
+          newSensorAddress = oldSensorAddress.substr(0, oldSensorAddress.lastIndexOf(","))
+          newTimingFactor = oldTimingFactor.substr(0, oldTimingFactor.lastIndexOf(","))
         }else{
-          sensorAddressVar = sensorAddressVar.replace(sensor.sensorAddress + ",", "")
+          newSensorAddress = oldSensorAddress.replace(sensor.sensorAddress + ",", "")
+          newTimingFactor = oldTimingFactor.replace(sensor.timingFactor + ",", "")
         }
-        this.setState({ sensorAddress: sensorAddressVar, timingFactor: sensor.timingFactor })
+        this.setState({ sensorAddress: newSensorAddress, timingFactor: newTimingFactor })
         break;
       }
     }
@@ -186,7 +182,7 @@ export default class DeviceBinding extends Component {
   validMonitorPointRule = (rule, value, callback) => {
     if (value) { 
       const form = this.props.form;
-      let sensorNumberArr = form.getFieldValue('sensorNumber')
+      let sensorNumberArr = form.getFieldValue('sensorNumbers')
       if (!sensorNumberArr) {
         callback('请先选择传感器');
       } else {
@@ -230,8 +226,6 @@ export default class DeviceBinding extends Component {
                     placeholder="终端编号"
                     showSearch={true}
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onDropdownVisibleChange={this.getTerminalNumber}
-                    onPopupScroll={(a) => { console.log(a) }}
                     style={{ width: '100%' }}
                   >
                     {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
@@ -256,7 +250,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="传感器编号"  {...formItemLayout}>
-                {getFieldDecorator('sensorNumber', {
+                {getFieldDecorator('sensorNumbers', {
                   rules: [{
                     required: true, message: '请至少选择一个传感器',
                   }],
@@ -266,7 +260,7 @@ export default class DeviceBinding extends Component {
                     mode="multiple"
                     showSearch={true}
                     filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                    onDropdownVisibleChange={this.getSensorNumber}
+                    onDropdownVisibleChange={this.getSensorNumbers}
                     onSelect={this.fillSensorInfo}
                     onDeselect={this.removeSensorInfo}
                     style={{ width: '100%' }}
@@ -280,7 +274,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="传感器地址（十进制）" {...formItemLayout}>
-                {getFieldDecorator('sensorAddress', { initialValue: this.state.sensorAddress })(
+                {getFieldDecorator('sensorAddresses', { initialValue: this.state.sensorAddress })(
                   <Input placeholder="传感器地址" disabled />
                 )}
               </Form.Item>
@@ -289,7 +283,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="标定系数K" {...formItemLayout}>
-                {getFieldDecorator('timingFactor', { initialValue: this.state.timingFactor })(
+                {getFieldDecorator('timingFactors', { initialValue: this.state.timingFactor })(
                   <Input placeholder="标定系数K" disabled />
                 )}
               </Form.Item>
@@ -319,7 +313,7 @@ export default class DeviceBinding extends Component {
           <Row gutter={8}>
             <Col span={24}>
               <Form.Item label="测点编号" {...formItemLayout}>
-                {getFieldDecorator('monitorPointNumber', {
+                {getFieldDecorator('monitorPointNumbers', {
                   rules: [{
                     required: true, message: '请选择对应设备的测点编号',
                   },{
@@ -361,8 +355,8 @@ export default class DeviceBinding extends Component {
                   }],
                 })(
                   <Select placeholder="选择强制绑定不能确保数据能正常收到，请谨慎操作">
-                    <Option value="0">不强制绑定</Option>
-                    <Option value="1">强制绑定</Option>
+                    <Select.Option value="0">不强制绑定</Select.Option>
+                    <Select.Option value="1">强制绑定</Select.Option>
                   </Select>
                 )}
               </Form.Item>
@@ -385,7 +379,3 @@ export default class DeviceBinding extends Component {
     </div>;
   }
 }
-
-
-
-

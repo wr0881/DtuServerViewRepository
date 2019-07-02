@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Form, Input, Modal, Button, Row, Col, Select, message } from 'antd';
+import { Table, Form, Input, Modal, Button, Row, Col, Select, message, Badge } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -14,17 +14,14 @@ export default class ServerTerminal extends Component {
     pageTotal: 0,
     defaultPageNum: 1,
     defaultPageSize: 10,
+    terminalNumber: null,
+    collectionFrequency: null,
   }
 
   componentWillReceiveProps(props) {
     this.setState({ terminalNumbers: props.terminalNumbers });
-    this.setState({ terminalType: props.terminalType });
+    this.setState({ terminalType: props.terminalType }, () => {this.initTerminalTableData()});
   }
-
-  componentWillMount() {
-    this.initTerminalTableData();
-  }
-
 
   //初始化终端Table的数据
   initTerminalTableData() {
@@ -163,12 +160,36 @@ export default class ServerTerminal extends Component {
   // 修改采集指令操作  待开发
   showTerminalModal = () => {
     return <Modal
+      destroyOnClose={true}
       visible={this.state.modalVisible}
       title="修改终端采集频率"
-      onOk={() => { this.setState({ modalVisible: false }) }}
+      onOk={() => {
+        let oldCollectionFrequency = this.state.collectionFrequency;
+        let newCollectionFrequency = this.refs.collectionFrequencyInput.state.value;
+        if (oldCollectionFrequency == newCollectionFrequency) {
+          message.warn("终端采集频率的值未修改");
+          return;
+        }
+        let params = { terminalNumber: this.state.terminalNumber, collectionFrequency: newCollectionFrequency };
+        this.setState({ modalVisible: false }),
+          axios.put(`/terminal/updateTerminal`, params)
+            .then(response => {
+              let result = response.data
+              if (result.code == 0) {
+                message.info("修改终端采集频率为 " + newCollectionFrequency + " 成功，如需要是定时任务生效，请点击右边的[ 修改生效 ]按钮");
+                this.initTerminalTableData();
+              } else {
+                message.info("终端采集频率修改失败");
+              }
+            })
+            .catch(function (error) {
+              message.info("系统异常，请联系管理员");
+              console.log(error);
+            });
+      }}
       onCancel={() => { this.setState({ modalVisible: false }) }}
     >
-      <Input addonBefore="采集频率" addonAfter="分钟/次" defaultValue="10" />
+      <Input ref="collectionFrequencyInput" addonBefore="采集频率" addonAfter="分钟/次" defaultValue={this.state.collectionFrequency} />
     </Modal>
   }
 
@@ -209,18 +230,30 @@ export default class ServerTerminal extends Component {
         title: '采集频率', dataIndex: 'collectionFrequency', key: 'collectionFrequency', align: 'center',
       }, {
         title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus', align: 'center',
+        render: (text, record, index) => {
+          let status = 'default';
+          if (text === '上线') {
+            status = 'success';
+          } else if (text === '离线') {
+            status = 'error';
+          }
+          return <Badge status={status} text={text} />;
+        },
       }, {
         title: '项目名称', dataIndex: 'projectName', key: 'projectName', align: 'center',
       }, {
         title: '操作', dataIndex: 'operation', key: 'showSensor', align: 'center',
         render: (text, item, index) => {
           return <div><Button onClick={() => {
-            this.setState({ modalVisible: true })
+            this.setState({
+              modalVisible: true,
+              terminalNumber: item.terminalNumber,
+              collectionFrequency: item.collectionFrequency,
+            })
           }}>修改采集频率</Button><Button onClick={() => {
-            console.log(item)
             const hide = message.loading('正在发送指令，请稍候');
             // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'00160732012945'} })
-            axios.get(`/deviceConfig/manualSend`, { params: item })
+            axios.put(`/quartz/updateByIntegralPoint?taskName=TASK_` + item.terminalNumber + `&intervalInMinutes=` + item.collectionFrequency )
               .then(response => {
                 let result = response.data
                 if (result.code == 0) {
