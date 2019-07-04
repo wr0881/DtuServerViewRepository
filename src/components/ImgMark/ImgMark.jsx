@@ -58,15 +58,15 @@ class ImgMark extends Component {
     const imgHeight = this.img.naturalHeight;
     const realX = imgWidth * index.x / imgWrapperW;
     const realY = imgHeight * index.y / imgWrapperH;
-    console.log({ ...index, realX, realY });
     return { ...index, realX, realY };
   }
   markClick = e => {
     let markXY = this.clickXY(e);
     markXY.number = this.props.dot.length;
     markXY.visible = false;
-    this.computeRealXY(markXY);
-    this.props.onChange([...this.props.dot, markXY]);
+    let result = this.computeRealXY(markXY);
+    console.log(result);
+    this.props.onChange([...this.props.dot, result]);
   }
   render() {
     const { style, src } = this.props;

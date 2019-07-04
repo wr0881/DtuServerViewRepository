@@ -190,6 +190,7 @@ class AddProjectName extends Component {
               showSearch
               placeholder="示例: xxx项目"
               loading={this.state.getAllProjectLoading}
+              notFoundContent={this.state.getAllProjectTypeLoading ? <Spin size="small" /> : null}
               onFocus={this.getAllProject}
               optionFilterProp='children'
               style={{ width: '100%' }}
