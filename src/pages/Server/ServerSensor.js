@@ -12,6 +12,8 @@ export default class ServerSensor extends Component {
     pageTotal: 0,
     defaultPageNum: 1,
     defaultPageSize: 10,
+    currentPageNum: null,
+    currentPageSize: null,
   }
 
   componentWillMount() {
@@ -70,6 +72,49 @@ export default class ServerSensor extends Component {
       }
     });
   }
+
+  flush = () => {
+    let pageNum = this.state.currentPageNum;
+    let pageSize = this.state.currentPageSize;
+    if (this.state.currentPageNum === null) {
+      pageNum = this.state.defaultPageNum;
+    }
+    if (this.state.currentPageSize === null) {
+      pageSize = this.state.defaultPageSize;
+    }
+    const { form } = this.props;
+    const values = form.getFieldsValue();
+    let sensorNumber = values.sensorNumber === undefined ? '' : values.sensorNumber.trim()
+    if (sensorNumber.length == 0) {
+      values.sensorNumber = undefined
+    }
+    let sensorAddress = values.sensorAddress === undefined ? '' : values.sensorAddress.trim()
+    if (sensorAddress.length == 0) {
+      values.sensorAddress = undefined
+    }
+    let param = {
+      pageNum: pageNum,
+      pageSize: pageSize,
+      terminalType: this.state.terminalType,
+      ...values,
+    };
+    axios.get(`/deviceConfig/listDeviceConfigFiled`, { params: param })
+      .then(response => {
+        let result = response.data
+        if (result.code == 0) {
+          this.setState({
+            sensorData: result.data.list,
+            pageTotal: result.data.total,
+          });
+        } else {
+          message.info("该服务下暂无绑定的传感器信息");
+        }
+      })
+      .catch(function (error) {
+        message.info("系统异常，请联系管理员");
+        console.log(error);
+      });
+  }  
 
   //传感器搜索框
   serachSensorForm = () => {
@@ -150,6 +195,10 @@ export default class ServerSensor extends Component {
   }
 
   pageSizeOrNumChange = (pageNum, pageSize) => {
+    this.setState({
+      currentPageNum: pageNum,
+      currentPageSize: pageSize,
+    });
     const { form } = this.props;
     const values = form.getFieldsValue();
     let sensorNumber = values.sensorNumber === undefined ? '' : values.sensorNumber.trim()
@@ -189,7 +238,7 @@ export default class ServerSensor extends Component {
       .then(response => {
         let result = response.data
         if (result.code == 0) {
-          initSensorTableData();
+          this.flush();
           message.info("绑定解除成功");
         } else {
           message.error("绑定解除失败");
@@ -238,7 +287,7 @@ export default class ServerSensor extends Component {
                   .then(response => {
                     let result = response.data
                     if (result.code == 0) {
-                      this.initSensorTableData();
+                      this.flush();
                     } else {
                       message.error("修改使用状态失败")
                     }
