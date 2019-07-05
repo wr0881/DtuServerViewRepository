@@ -34,6 +34,11 @@ export default [
             name: '传感器仓库',
             component: './InOutLibrary/index',
           },
+          {
+            path: '/in-out-library/terminal',
+            name: '终端仓库',
+            component: './InOutLibrary/Terminal',
+          }
         ],
       },
       // 服务管理

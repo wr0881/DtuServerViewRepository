@@ -142,6 +142,11 @@ export default class ServerTerminal extends Component {
       wrapperCol: { sm: { span: 18 }, xs: { span: 24 } },
     };
 
+    const formItemLayout1 = {
+      labelCol: { sm: { span: 3 }, xs: { span: 24 }, },
+      wrapperCol: { sm: { span: 21 }, xs: { span: 24 } },
+    };
+
     return (<Form onSubmit={this.handleSubmit} style={{ marginTop: -5 }}>
       <Row gutter={8}>
         <Col span={5}>
@@ -171,7 +176,7 @@ export default class ServerTerminal extends Component {
           </Form.Item>
         </Col>
         <Col span={12} >
-          <Form.Item label="项目名称"  {...formItemLayout}>
+          <Form.Item label="项目名称"  {...formItemLayout1}>
             {getFieldDecorator('projectId')(
               <Select
                 placeholder="项目名称"
@@ -190,6 +195,7 @@ export default class ServerTerminal extends Component {
           <Form.Item >
             <Button
               type="primary"
+              style={{width:'100%',paddingLeft:'8px',paddingRight:'8px'}}
               htmlType="submit">
               搜索
             </Button>

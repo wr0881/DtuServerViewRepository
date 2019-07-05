@@ -127,9 +127,14 @@ export default class ServerSensor extends Component {
       wrapperCol: { sm: { span: 18 }, xs: { span: 24 } },
     };
 
+    const formItemLayout1 = {
+      labelCol: { sm: { span: 7 }, xs: { span: 24 }, },
+      wrapperCol: { sm: { span: 17 }, xs: { span: 24 } },
+    };
+
     return (<Form onSubmit={this.handleSubmit} style={{ marginTop: -5 }}>
       <Row gutter={8}>
-        <Col span={5}>
+        <Col span={4}>
           <Form.Item label="终端编号" {...formItemLayout}>
             {getFieldDecorator('terminalNumber')(
               <Select
@@ -151,7 +156,7 @@ export default class ServerSensor extends Component {
             )}
           </Form.Item>
         </Col>
-        <Col span={4}>
+        <Col span={5}>
           <Form.Item label="传感器地址" {...formItemLayout}>
             {getFieldDecorator('sensorAddress')
               (
@@ -160,7 +165,7 @@ export default class ServerSensor extends Component {
           </Form.Item>
         </Col>
         <Col span={5}>
-          <Form.Item label="未传数据次数"  {...formItemLayout}>
+          <Form.Item label="未传数据次数"  {...formItemLayout1}>
             {getFieldDecorator('noDataCount')
               (
                 <Select placeholder="未传数据次数" allowClear>
@@ -185,6 +190,7 @@ export default class ServerSensor extends Component {
           <Form.Item >
             <Button
               type="primary"
+              style={{width:'100%',paddingLeft:'8px',paddingRight:'8px'}}
               htmlType="submit">
               搜索
             </Button>

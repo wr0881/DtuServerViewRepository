@@ -1,6 +1,6 @@
-/* eslint-disable react/destructuring-assignment */
+/* eslint-disable */
 import React, { Component } from 'react';
-import { Tabs, Spin, Button, Popover, message } from 'antd';
+import { Tabs, Spin, Button, Popover, message, Card } from 'antd';
 import axios from '@/services/axios';
 import DeviceBinding from './DeviceBinding';
 import ServerTerminal from './ServerTerminal';
@@ -114,6 +114,7 @@ export default class Server extends Component {
 
   render() {
     return (
+      <Card bordered={false}>
       <div>
         <Spin spinning={this.state.spinLoading}>
           <Tabs defaultActiveKey={"1"} tabBarExtraContent={<div><span>有人DTU服务<Popover content={this.state.serverDetail} title="服务各参数详细信息"><Button icon="info-circle"></Button></Popover></span>
@@ -139,6 +140,7 @@ export default class Server extends Component {
         </Spin>
         <DeviceBinding visible={this.state.bindDrawerVisible} setBindDrawerVisible={this.setBindDrawerVisible} terminalNumbers={this.state.terminalNumbers} terminalType={this.state.terminalType} />
       </div>
+      </Card>
     )
   }
 }

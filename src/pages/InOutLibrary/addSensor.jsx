@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React, { Component } from 'react';
 import { insertSensors, sensorNumberCount } from '@/services/in-out-library';
 import {
