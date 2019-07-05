@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Form, Input, Modal, Button, Row, Col, Select, message, Badge, Popconfirm } from 'antd';
+import { Table, Form, Input, Modal, Button, Row, Col, Select, message, Badge, Popconfirm, Typography } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -318,6 +318,18 @@ export default class ServerTerminal extends Component {
         title: '终端类型', dataIndex: 'terminalType', key: 'terminalType', align: 'center',
       }, {
         title: '采集频率', dataIndex: 'collectionFrequency', key: 'collectionFrequency', align: 'center',
+        render: (text, item, index) => {
+          return <div><Typography.Paragraph
+            editable={{
+              onChange: (textx) => {
+
+                item.collectionFrequency = textx;
+                let arr = this.state.terminalData;
+                arr[index] = item;
+                this.setState({ terminalData: arr })
+              }
+            }}>{text + ""}</Typography.Paragraph></div>
+        }
       }, {
         title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus', align: 'center',
         render: (text, record, index) => {
@@ -372,7 +384,6 @@ export default class ServerTerminal extends Component {
               const params = new URLSearchParams();
               params.append('taskName', item.terminalNumber);
               params.append('intervalInMinutes', item.collectionFrequency);
-              // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'00160732012945'} })
               // axios.put(`/quartz/updateByIntegralPoint?taskName=${item.terminalNumber}&intervalInMinutes=${item.collectionFrequency}`)
               // PUT 方式用下面的格式不可行
               // axios.put(`/quartz/updateByIntegralPoint`, {params: {'taskName':item.terminalNumber, 'intervalInMinutes': item.collectionFrequency}})
