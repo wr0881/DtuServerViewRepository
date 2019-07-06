@@ -102,14 +102,15 @@ class addTerminal extends Component {
       //const values = { ...fieldsValue };
       console.log(values);
       addTerminals(values).then(res => {
-        const { data, msg } = res.data;
-        console.log(res.data.data);
+        const { code, data, msg } = res.data;
+        console.log(data);
         if (data) {
           console.log('添加终端成功');
           message.success('添加终端成功');
           this.props.handleDrawerAddTerminalVisible(false);
           this.props.queryDataSource(false);
         } else {
+          console.log(code,msg);
           message.info(msg);
         }
       }).catch(err => {
@@ -268,7 +269,7 @@ class addTerminal extends Component {
               </Col>
             </Row>
             <Row gutter={16}>
-            <Col span={12}>
+              <Col span={12}>
                 <Form.Item label="采集频率">
                   {getFieldDecorator('collectionFrequency', {
                     rules: [
@@ -284,7 +285,21 @@ class addTerminal extends Component {
                     />
                   )}
                 </Form.Item>
-              </Col>             
+              </Col> 
+              <Col span={12}>
+                <Form.Item label="终端状态">
+                  {getFieldDecorator('terminalStatus', {
+                    rules: [{ required: true, message: '不允许为空' }],
+                    initialValue: '1',
+                  })(
+                    <Select>
+                      <Option value="1">未使用</Option>
+                      <Option value="2">使用中</Option>
+                      <Option value="3">已损坏</Option>
+                    </Select>
+                  )}
+                </Form.Item>
+              </Col>            
             </Row>
             <Row gutter={16}>
              <Col span={12}>
@@ -303,23 +318,6 @@ class addTerminal extends Component {
                   })(<DatePicker style={{ width: '100%' }} placeholder="选择日期" />)}
                 </Form.Item>
               </Col>
-            </Row>
-            <Row gutter={16}>
-              <Col span={12}>
-                <Form.Item label="终端状态">
-                  {getFieldDecorator('terminalStatus', {
-                    rules: [{ required: true, message: '不允许为空' }],
-                    initialValue: '1',
-                  })(
-                    <Select>
-                      <Option value="1">未使用</Option>
-                      <Option value="2">使用中</Option>
-                      <Option value="3">已损坏</Option>
-                    </Select>
-                  )}
-                </Form.Item>
-              </Col>
-              
             </Row>
             < div
               style={{

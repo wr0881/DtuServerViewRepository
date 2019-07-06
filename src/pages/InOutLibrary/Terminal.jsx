@@ -239,11 +239,17 @@ class Terminal extends Component {
         title: '生产日期',
         dataIndex: 'productDate',
         align: 'center',
+        render: (v) => {
+          return v = v.substring(0,10);
+        }
       },
       {
         title: '结束日期',
         dataIndex: 'endDate',
         align: 'center',
+        render: (v) => {
+          return v = v.substring(0,10);
+        }
       },
       {
         title: '终端状态',
