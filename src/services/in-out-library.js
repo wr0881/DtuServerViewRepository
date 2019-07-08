@@ -16,7 +16,7 @@ export async function getTerminalType(params) {
 
 // 添加终端
 export async function addTerminals(params) {
-    return axios.post('/terminal/addTerminal', { params });
+    return axios.post('/terminal/batchAddTerminal', params);
 }
 
 export async function updateInAndOut(params) {

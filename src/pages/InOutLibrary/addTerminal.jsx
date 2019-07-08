@@ -65,52 +65,41 @@ class addTerminal extends Component {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
-      // let terminalNumber = [];
-      // for (let item in fieldsValue) {
-      //   if (item.indexOf('terminalNumber') > -1) {
-      //     const itemAry = item.split('_');
-      //     // if (this.state.cancelTerminalNum.includes(Number(itemAry[1]))) {
+      let terminalNumbers = [];
+      for (let item in fieldsValue) {
+        if (item.indexOf('terminalNumbers') > -1) {
+          const itemAry = item.split('_');
+          // if (this.state.cancelTerminalNum.includes(Number(itemAry[1]))) {
 
-      //     // } else {
-      //     const itemVal = fieldsValue[item];
-      //     terminalNumber[itemAry[1]] = itemVal;
-      //     // }
-      //     delete fieldsValue[item];
-      //     console.log(fieldsValue);
-      //     console.log(itemVal);
-      //   }
-      // }
+          // } else {
+          const itemVal = fieldsValue[item];
+          terminalNumbers[itemAry[1]] = itemVal;
+          // }
+          delete fieldsValue[item];
+          console.log(fieldsValue);
+          console.log(itemVal);
+        }
+      }
 
-      // if (terminalNumber.findIndex(item => item === undefined) > -1) {
-      //   terminalNumber.splice(terminalNumber.findIndex(item => item === undefined), 1);
-      // }
+      if (terminalNumbers.findIndex(item => item === undefined) > -1) {
+        terminalNumbers.splice(terminalNumbers.findIndex(item => item === undefined), 1);
+      }
       const values = {
-        channelNumber: fieldsValue.channelNumber,
-        collectionFrequency: fieldsValue.collectionFrequency,
-        // connectStatus: true,
-        endDate: fieldsValue.endDate,
-        manufacturer: fieldsValue.manufacturer,
-        productDate: fieldsValue.productDate,
-        // terminalId: 1,
-        terminalModel: fieldsValue.terminalModel,
-        terminalName: fieldsValue.terminalName,
-        terminalNumber: fieldsValue.terminalNumber,
-        terminalStatus: fieldsValue.terminalStatus,
-        terminalType: fieldsValue.terminalType,
-        voltage: fieldsValue.voltage
+        ...fieldsValue,terminalNumbers
       }
       //const values = { ...fieldsValue };
       console.log(values);
       addTerminals(values).then(res => {
-        const { code, data, msg } = res.data;
-        console.log(data);
-        if (data) {
+        const { code, msg } = res.data;
+        console.log(code)
+        console.log(res.data.code);
+        if (code === 0) {
           console.log('添加终端成功');
           message.success('添加终端成功');
           this.props.handleDrawerAddTerminalVisible(false);
           this.props.queryDataSource(false);
         } else {
-          console.log(code,msg);
+          console.log(res.msg);
           message.info(msg);
         }
       }).catch(err => {
@@ -152,11 +141,11 @@ class addTerminal extends Component {
                 return (
                   <Row gutter={16} key={i}>
                     <Col span={10}>
-                      <Form.Item label='终端编号'>
-                        {getFieldDecorator(`terminalNumber`, {
-                          // rules: [
-                          //   { validator: this.terminalNumberRules },
-                          // ],
+                      <Form.Item label={i > 0 ? '' : '终端编号'}>
+                        {getFieldDecorator(`terminalNumbers_${i}`, {
+                          rules: [
+                            { validator: this.sensorNumberRules },
+                          ],
                         })(<Input placeholder="示例：test01" />)}
                       </Form.Item>
                     </Col>
