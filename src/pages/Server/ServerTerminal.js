@@ -384,10 +384,10 @@ export default class ServerTerminal extends Component {
             status = 'default';
             text = '未启动';
           } else if (text === 'PAUSED') {
-            status = 'processing';
+            status = 'warning';
             text = '已暂停';
           } else if (text === 'BLOCKED') {
-            status = 'error';
+            status = 'processing';
             text = '阻塞';
           } else if (text === 'ERROR') {
             status = 'error';
@@ -479,6 +479,8 @@ export default class ServerTerminal extends Component {
                     });
                 } else if (taskStatus === 'PAUSED') {
                   message.warn("该任务已暂停，暂停任务失败");
+                } else if (taskStatus === 'BLOCKED') {
+                  message.warn("该任务正在与终端交互中，请等待交互结束再操作，暂停任务失败");
                 } else {
                   message.warn("该任务异常，暂停任务失败");
                 }

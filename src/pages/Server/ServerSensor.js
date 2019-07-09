@@ -240,19 +240,21 @@ export default class ServerSensor extends Component {
       });
   }
 
-  deleteDC = (sensorNumber) => {
-    axios.delete(`/deviceConfig/removeDeviceConfigBySensor?sensorNumber=${sensorNumber}`)
+  deleteDC = (terminalNumber, sensorNumber) => {
+    axios.delete(`/deviceConfig/removeDeviceConfigBySensor`, {
+      params: { 'terminalNumber': terminalNumber, 'sensorNumber': sensorNumber }
+    })
       .then(response => {
         let result = response.data
         if (result.code == 0) {
           this.flush();
-          message.info("绑定解除成功");
+          message.info(result.msg);
         } else {
-          message.error("绑定解除失败");
+          message.error(result.msg);
         }
       })
       .catch(function (error) {
-        message.info("系统异常，请联系管理员");
+        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -352,7 +354,7 @@ export default class ServerSensor extends Component {
                 console.log(error);
               });
           }}>触发指令</Button>
-            <Popconfirm placement="top" title={"是否解除绑定"} onConfirm={() => this.deleteDC(item.sensorNumber)} okText="是" cancelText="否">
+            <Popconfirm placement="top" title={"是否解除绑定"} onConfirm={() => this.deleteDC(item.terminalNumber, item.sensorNumber)} okText="是" cancelText="否">
               <Button>解除绑定</Button>
             </Popconfirm>
           </div>;

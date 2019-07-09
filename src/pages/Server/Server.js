@@ -6,6 +6,7 @@ import DeviceBinding from './DeviceBinding';
 import ServerTerminal from './ServerTerminal';
 import ServerSensor from './ServerSensor';
 import QueryData from './QueryData';
+import ReplaceDevice from './ReplaceDevice';
 
 export default class Server extends Component {
 
@@ -134,7 +135,7 @@ export default class Server extends Component {
               <p>待开发</p>
             </Tabs.TabPane>
             <Tabs.TabPane tab="替换设备" key="5">
-              <p>待开发</p>
+              <ReplaceDevice terminalNumbers={this.state.terminalNumbers} terminalType={this.state.terminalType} />
             </Tabs.TabPane>
           </Tabs>
         </Spin>
