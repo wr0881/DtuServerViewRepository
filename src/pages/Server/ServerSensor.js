@@ -1,5 +1,5 @@
 import React, { Component, useState } from 'react';
-import { Table, Form, Input, Button, Row, Col, Select, Drawer, message, Switch, Popconfirm } from 'antd';
+import { Table, Form, Input, Button, Row, Col, Select, Drawer, message, Switch, Popconfirm, Modal } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -60,6 +60,7 @@ export default class ServerSensor extends Component {
               this.setState({
                 sensorData: result.data.list,
                 pageTotal: result.data.total,
+                currentPageNum: 1,
               });
             } else {
               message.info("该服务下暂无绑定的传感器信息");
@@ -114,7 +115,7 @@ export default class ServerSensor extends Component {
         message.info("系统异常，请联系管理员");
         console.log(error);
       });
-  }  
+  }
 
   //传感器搜索框
   serachSensorForm = () => {
@@ -256,6 +257,40 @@ export default class ServerSensor extends Component {
       });
   }
 
+  changeUseStatus = (record, e, obj) => {
+    //const { confirm } = Modal;
+    Modal.confirm({
+      title: '是否修改使用状态',
+      content: '成功修改使用状态后，将同步修改定时任务相关信息',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        let params = {
+        'terminalNumber': record.terminalNumber,
+        'sensorNumber': record.sensorNumber,
+        'useStatus': e,
+      };
+        axios.put(`/deviceConfig/updateDeviceConfig`, params)
+          .then(response => {
+            let result = response.data
+            if (result.code == 0) {
+              message.info(result.msg)
+            } else {
+              message.error(result.msg)
+            }
+            obj.flush();
+          })
+          .catch(function (error) {
+            message.info("系统异常，请联系管理员");
+            console.log(error);
+          });
+      },
+      onCancel() {
+        message.warn("修改未生效");
+      },
+    });
+  }
+
   render() {
     const sensorColumns = [
       {
@@ -288,16 +323,7 @@ export default class ServerSensor extends Component {
               unCheckedChildren="未使用"
               checked={checked}
               onChange={e => {
-                let params = { sensorNumber: record.sensorNumber, useStatus: e };
-                axios.put(`/deviceConfig/updateDeviceConfig`, params)
-                  .then(response => {
-                    let result = response.data
-                    if (result.code == 0) {
-                      this.flush();
-                    } else {
-                      message.error("修改使用状态失败")
-                    }
-                  })
+                this.changeUseStatus(record, e, this);
               }}
             />
           )
@@ -306,7 +332,7 @@ export default class ServerSensor extends Component {
         title: '操作', dataIndex: 'operation', key: 'manalSend', align: 'center',
         render: (text, item) => {
           return <div><Button onClick={() => {
-            if(this.state.terminalType != 1){
+            if (this.state.terminalType != 1) {
               message.info("除了DTU外，其他类型终端暂未实现手动触发指令的功能")
               return
             }
@@ -326,26 +352,28 @@ export default class ServerSensor extends Component {
                 console.log(error);
               });
           }}>触发指令</Button>
-          <Popconfirm placement="top" title={"是否解除绑定"} onConfirm={() => this.deleteDC(item.sensorNumber)} okText="是" cancelText="否">
-          <Button>解除绑定</Button>
-          </Popconfirm>
-        </div>;
+            <Popconfirm placement="top" title={"是否解除绑定"} onConfirm={() => this.deleteDC(item.sensorNumber)} okText="是" cancelText="否">
+              <Button>解除绑定</Button>
+            </Popconfirm>
+          </div>;
         }
       }];
 
     return (
       <div>
-        {this.serachSensorForm()}
+          {this.serachSensorForm()}
         <div>
           <Table columns={sensorColumns} dataSource={this.state.sensorData} pagination={{
+            current: this.state.currentPageNum,
             showSizeChanger: true,
             pageSizeOptions: ['5', '10', '20', '40', '50'],
             defaultCurrent: this.state.defaultPageNum,
             defaultPageSize: this.state.defaultPageSize,
             total: this.state.pageTotal,
-            onShowSizeChange: this.pageSizeOrNumChange,
+            // onShowSizeChange: this.pageSizeOrNumChange,
             onChange: this.pageSizeOrNumChange,
-          }} />
+          }} >
+          </Table>
         </div>
       </div>
     )

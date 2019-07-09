@@ -59,6 +59,7 @@ export default class ServerTerminal extends Component {
               this.setState({
                 terminalData: result.data.list,
                 pageTotal: result.data.total,
+                currentPageNum: 1,
               });
             } else {
               message.info("该服务下暂无终端");
@@ -205,39 +206,37 @@ export default class ServerTerminal extends Component {
     </Form>)
   }
 
-  // 修改采集指令操作  待开发
+  // 修改采集频率
   showTerminalModal = () => {
+    let changedValue = this.state.collectionFrequency;
     return <Modal
-      destroyOnClose={true}
+      //destroyOnClose={true}
       visible={this.state.modalVisible}
-      title="修改终端采集频率"
+      title={"是否修改采集频率为 " + changedValue}
       onOk={() => {
-        let oldCollectionFrequency = this.state.collectionFrequency;
-        let newCollectionFrequency = this.refs.collectionFrequencyInput.state.value;
-        if (oldCollectionFrequency == newCollectionFrequency) {
-          message.warn("终端采集频率的值未修改");
-          return;
-        }
-        let params = { terminalNumber: this.state.terminalNumber, collectionFrequency: newCollectionFrequency };
+        let params = { terminalNumber: this.state.terminalNumber, collectionFrequency: changedValue };
         this.setState({ modalVisible: false }),
           axios.put(`/terminal/updateTerminal`, params)
             .then(response => {
               let result = response.data
               if (result.code == 0) {
-                message.info("修改终端采集频率为 " + newCollectionFrequency + " 成功，如需要是定时任务生效，请点击右边的[ 修改生效 ]按钮");
-                this.flush();
+                message.info("修改终端采集频率为 " + changedValue + " 成功，如需要使定时任务生效，请点击操作中的[ 修改生效 ]按钮");
               } else {
                 message.info("终端采集频率修改失败");
               }
+              this.flush();
             })
             .catch(function (error) {
               message.info("系统异常，请联系管理员");
               console.log(error);
             });
       }}
-      onCancel={() => { this.setState({ modalVisible: false }) }}
+      onCancel={() => {
+        this.setState({ modalVisible: false });
+        message.warn("修改未生效");
+      }}
     >
-      <Input ref="collectionFrequencyInput" addonBefore="采集频率" addonAfter="分钟/次" defaultValue={this.state.collectionFrequency} />
+      修改采集频率成功后，如需要使定时任务生效，请点击操作中的[ 修改生效 ]按钮
     </Modal>
   }
 
@@ -304,7 +303,7 @@ export default class ServerTerminal extends Component {
     axios.get(`/quartz/getTaskStatus`, { params: { 'taskName': terminalNumber } })
       .then(response => {
         let result = response.data.msg
-        console.log(result);
+        // console.log(result);
         this.setState({
           taskStatus: result,
         })
@@ -316,6 +315,26 @@ export default class ServerTerminal extends Component {
       });
   }
 
+  changeCollectionFrequency = (str, item, index, obj) => {
+    console.log("改变事件发生了")
+    const { confirm } = Modal;
+    confirm({
+      title: '是否修改采集频率为 ' + str,
+      content: '修改采集频率成功后，如需要使定时任务生效，请点击操作中的[ 修改生效 ]按钮',
+      okText: '确认',
+      cancelText: '取消',
+      onOk() {
+        item.collectionFrequency = str;
+        let arr = obj.state.terminalData;
+        arr[index] = item;
+        obj.setState({ terminalData: arr })
+      },
+      onCancel() {
+        message.warn("修改未生效");
+      },
+    });
+  }
+
   render() {
     const terminalColumns = [
       {
@@ -325,16 +344,23 @@ export default class ServerTerminal extends Component {
       }, {
         title: '采集频率', dataIndex: 'collectionFrequency', key: 'collectionFrequency', align: 'center',
         render: (text, item, index) => {
-          return <div><Typography.Paragraph
-            editable={{
-              onChange: (textx) => {
-
-                item.collectionFrequency = textx;
-                let arr = this.state.terminalData;
-                arr[index] = item;
-                this.setState({ terminalData: arr })
-              }
-            }}>{text + ""}</Typography.Paragraph></div>
+          return <div>
+            <Typography.Paragraph
+              editable={{
+                onChange: (changedValue) => {
+                  if ((text + "") === changedValue) {
+                    message.warn("修改未生效");
+                  } else {
+                    // this.changeCollectionFrequency(changedValue, item, index, this);
+                    this.setState({
+                        modalVisible: true,
+                        terminalNumber: item.terminalNumber,
+                        collectionFrequency: changedValue,
+                      })
+                  }
+                  console.log("123")
+                }
+              }}>{text + ""}</Typography.Paragraph></div>
         }
       }, {
         title: '连接状态', dataIndex: 'connectStatus', key: 'connectStatus', align: 'center',
@@ -379,13 +405,6 @@ export default class ServerTerminal extends Component {
         render: (text, item, index) => {
           return <div>
             <Button onClick={() => {
-              this.setState({
-                modalVisible: true,
-                terminalNumber: item.terminalNumber,
-                collectionFrequency: item.collectionFrequency,
-              })
-            }}>修改采集频率</Button>
-            <Button onClick={() => {
               const hide = message.loading('正在按照新采集频率重启任务，请稍候', 1);
               const params = new URLSearchParams();
               params.append('taskName', item.terminalNumber);
@@ -416,7 +435,7 @@ export default class ServerTerminal extends Component {
                 } else {
                   const params = new URLSearchParams();
                   params.append('terminalNumber', terminalNumber);
-                  params.append('collectionFrequency', item.collectionFrequency);
+                  params.append('intervalInMinutes', item.collectionFrequency);
                   axios.post(`/quartz/newSimpleTask`, params)
                     .then(response => {
                       let result = response.data
@@ -434,36 +453,6 @@ export default class ServerTerminal extends Component {
                 }
               })
             }}>新建任务</Button>
-            <Button onClick={() => {
-              let taskName = item.terminalNumber;
-              this.checkTaskStatus(taskName, () => {
-                let taskStatus = this.state.taskStatus;
-                if (taskStatus === 'NONE') {
-                  message.warn("该任务已删除，启动任务失败");
-                } else if (taskStatus === 'PAUSED') {
-                  message.warn("该任务已暂停，启动任务失败，如需重启，请点击恢复任务");
-                } else if (taskStatus === 'NORMAL' || taskStatus === 'BLOCKED' || taskStatus === 'COMPLETE') {
-                  const params = new URLSearchParams();
-                  params.append('taskName', taskName);
-                  axios.put(`/quartz/runTask`, params)
-                    .then(response => {
-                      let result = response.data
-                      if (result.code == 0) {
-                        message.info(result.msg);
-                      } else {
-                        message.error(result.msg);
-                      }
-                      this.flush();
-                    })
-                    .catch(function (error) {
-                      message.error(error);
-                      console.log(error);
-                    });
-                } else {
-                  message.warn("该任务异常，启动任务失败，请联系管理员");
-                }
-              })
-            }}>启动任务</Button>
             <Button onClick={() => {
               let taskName = item.terminalNumber;
               this.checkTaskStatus(taskName, () => {
@@ -525,10 +514,21 @@ export default class ServerTerminal extends Component {
               <Button>删除任务</Button>
             </Popconfirm>
             <Button onClick={() => {
-              this.checkTaskStatus(item.terminalNumber, () => {
-                console.log("taskStatus = " + this.state.taskStatus)
-              })
-            }}>测试</Button>
+              axios.get(`/quartz/getSimpleTaskInterval`, {params: {'taskName': item.terminalNumber}})
+                .then(response => {
+                  let result = response.data
+                  console.log(result.msg);
+                  if (result.code == 0) {
+                    message.info(result.msg);
+                  } else {
+                    message.error(result.msg);
+                  }
+                })
+                .catch(function (error) {
+                  message.error(error);
+                  console.log(error);
+                });
+            }}>任务信息</Button>
           </div>;
         }
       }];
@@ -539,6 +539,7 @@ export default class ServerTerminal extends Component {
         {this.showTerminalModal()}
         <div>
           <Table columns={terminalColumns} dataSource={this.state.terminalData} pagination={{
+            current: this.state.currentPageNum,
             showSizeChanger: true,
             pageSizeOptions: ['5', '10', '20', '40', '50'],
             defaultCurrent: this.state.defaultPageNum,
