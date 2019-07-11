@@ -9,7 +9,8 @@ export default class ReplaceDevice extends Component {
     terminalType: 1,
     oldTerminalNumber: null,
     newTerminalNumber: null,
-    sensorNumbers: [],
+    oldSensorNumbers: [],
+    newSensorNumbers: [],
     oldSensorNumber: null,
     newSensorNumber: null,
     terminalVisible: false,
@@ -20,6 +21,28 @@ export default class ReplaceDevice extends Component {
     this.setState({ terminalNumbers: this.props.terminalNumbers })
     this.setState({ terminalType: this.props.terminalType });
     // 初始化传感器
+    this.inintOldSensorNumbers();
+    this.inintNewSensorNumbers();
+  }
+
+  inintOldSensorNumbers = () => {}
+
+  inintNewSensorNumbers = () => {
+    axios.get(`/sensor/listSensorInUseAndNotBind`)
+            .then(response => {
+              let result = response.data;
+              if (result.code == 0) {
+                this.setState({
+                  newSensorNumbers: result.data
+                })
+              } else {
+                message.error("已使用且未绑定的传感器（新的）获取失败，请联系管理员");
+              }
+            })
+            .catch(function (error) {
+              message.error("已使用且未绑定的传感器（新的）获取失败，请联系管理员");
+              console.log(error);
+            });
   }
 
   oldTerminalNumberFun = (selectValue) => {
@@ -99,6 +122,9 @@ export default class ReplaceDevice extends Component {
               if (oldTerminalNumber === newTerminalNumber) {
                 message.warn("终端编号未改变，请重选终端编号");
                 return;
+              } else if (oldTerminalNumber === null || newTerminalNumber === null) {
+                message.warn("终端编号不允许为空值，请重选终端编号");
+                return;
               } else {
                 // 发送请求与后端交互
                 const params = new URLSearchParams();
@@ -133,7 +159,7 @@ export default class ReplaceDevice extends Component {
             allowClear={true}
             onSelect={this.oldSensorNumberFun}
           >
-            {this.state.sensorNumbers.map(sensorNumber => <Select.Option key={sensorNumber}>{sensorNumber}</Select.Option>)}
+            {this.state.oldSensorNumbers.map(sensor => <Select.Option key={sensor.sensorNumber}>{sensor.sensorNumber}</Select.Option>)}
           </Select>
         </Col>
         <Col span={4} offset={3}>
@@ -145,7 +171,7 @@ export default class ReplaceDevice extends Component {
             allowClear={true}
             onSelect={this.newSensorNumberFun}
           >
-            {this.state.sensorNumbers.map(sensorNumber => <Select.Option key={sensorNumber}>{sensorNumber}</Select.Option>)}
+            {this.state.newSensorNumbers.map(sensor => <Select.Option key={sensor.sensorNumber}>{sensor.sensorNumber}</Select.Option>)}
           </Select>
         </Col>
         <Col span={4} offset={3}>
@@ -156,11 +182,53 @@ export default class ReplaceDevice extends Component {
               if (oldSensorNumber === newSensorNumber) {
                 message.warn("传感器编号未改变，请重选传感器编号");
                 return;
+              } else if (oldSensorNumber === null || newSensorNumber === null) {
+                message.warn("传感器编号不允许为空值，请重选终端编号");
+                return;
               } else {
                 // 发送请求与后端交互
+                const params = new URLSearchParams();
+                params.append('oldSensorNumber', oldSensorNumber);
+                params.append('newSensorNumber', newSensorNumber);
+                const hide = message.loading('正在发送指令，请稍候，最多等待 90 秒');
+                axios.put(`/deviceConfig/replaceSensor`, params)
+                  .then(response => {
+                    let result = response.data
+                    if (result.code == 0) {
+                      hide.then(() => message.info(result.msg));
+                    } else {
+                      hide.then(() => message.error(result.msg));
+                    }
+                  })
+                  .catch(function (error) {
+                    hide.then(() => message.error(error));
+                    console.log(error);
+                  });
               }
             }}>替换传感器</Button>
           </Tooltip>
+        </Col>
+      </Row>
+      <Row style={{ marginTop: '15px' }}>
+        <Col>
+          <Button onClick={() => {
+            axios.get(`/sensor/listSensorInUseAndNotBind`)
+            .then(response => {
+              let result = response.data;
+              if (result.code == 0) {
+                this.setState({
+                  newSensorNumbers: result.data
+                })
+              } else {
+                message.error("已使用且未绑定的传感器（新的）获取失败，请联系管理员");
+              }
+            })
+            .catch(function (error) {
+              message.error("已使用且未绑定的传感器（新的）获取失败，请联系管理员");
+              console.log(error);
+            });
+          }}
+          >测试</Button>
         </Col>
       </Row>
     </div>

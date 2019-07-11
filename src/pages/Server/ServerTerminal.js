@@ -30,6 +30,7 @@ export default class ServerTerminal extends Component {
   initTerminalTableData() {
     axios.get(`/terminal/listTerminalInUseByTypeFiled`, { params: { 'terminalType': this.state.terminalType, 'pageNum': this.state.defaultPageNum, 'pageSize': this.state.defaultPageSize } })
       .then(response => {
+        console.log(response);
         let result = response.data
         if (result.code == 0) { //有终端
           this.setState({ terminalData: result.data.list, pageTotal: result.data.total });
@@ -50,6 +51,7 @@ export default class ServerTerminal extends Component {
         values.pageNum = this.state.defaultPageNum
         values.pageSize = this.state.defaultPageSize
         values.terminalType = this.state.terminalType
+        console.log(values);
         axios.get(`/terminal/listTerminalInUseByTypeFiled`, { params: values })
           .then(response => {
             // console.log("handleSubmit 返回值");
@@ -150,7 +152,7 @@ export default class ServerTerminal extends Component {
 
     return (<Form onSubmit={this.handleSubmit} style={{ marginTop: -5 }}>
       <Row gutter={8}>
-        <Col span={5}>
+        <Col span={4}>
           <Form.Item label="终端编号" {...formItemLayout}>
             {getFieldDecorator('terminalNumber')(
               <Select
@@ -165,7 +167,7 @@ export default class ServerTerminal extends Component {
             )}
           </Form.Item>
         </Col>
-        <Col span={6}>
+        <Col span={4}>
           <Form.Item label="连接状态" {...formItemLayout}>
             {getFieldDecorator('connectStatus')
               (
@@ -176,7 +178,22 @@ export default class ServerTerminal extends Component {
               )}
           </Form.Item>
         </Col>
-        <Col span={12} >
+        <Col span={4}>
+          <Form.Item label="任务状态" {...formItemLayout}>
+            {getFieldDecorator('theTaskStatus')
+              (
+                <Select placeholder="任务状态" allowClear>
+                  <Select.Option value="NORMAL">已启动</Select.Option>
+                  <Select.Option value="NONE">未启动</Select.Option>
+                  <Select.Option value="PAUSED">已暂停</Select.Option>
+                  <Select.Option value="BLOCKED">与终端交互中</Select.Option>
+                  <Select.Option value="ERROR">异常</Select.Option>
+                  <Select.Option value="COMPLETE">已完成</Select.Option>
+                </Select>
+              )}
+          </Form.Item>
+        </Col>
+        <Col span={10} >
           <Form.Item label="项目名称"  {...formItemLayout1}>
             {getFieldDecorator('projectId')(
               <Select
@@ -302,8 +319,8 @@ export default class ServerTerminal extends Component {
   checkTaskStatus = (terminalNumber, callCheckTaskStatus) => {
     axios.get(`/quartz/getTaskStatus`, { params: { 'taskName': terminalNumber } })
       .then(response => {
+        // console.log(response);
         let result = response.data.msg
-        // console.log(result);
         this.setState({
           taskStatus: result,
         })
@@ -358,7 +375,6 @@ export default class ServerTerminal extends Component {
                         collectionFrequency: changedValue,
                       })
                   }
-                  console.log("123")
                 }
               }}>{text + ""}</Typography.Paragraph></div>
         }
@@ -388,13 +404,13 @@ export default class ServerTerminal extends Component {
             text = '已暂停';
           } else if (text === 'BLOCKED') {
             status = 'processing';
-            text = '阻塞';
+            text = '与终端交互中';
           } else if (text === 'ERROR') {
             status = 'error';
-            text = '错误';
+            text = '异常';
           } else if (text === 'COMPLETE') {
             status = 'default';
-            text = '完成';
+            text = '已完成';
           }
           return <Badge status={status} text={text} />;
         },
