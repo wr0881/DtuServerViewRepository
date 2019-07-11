@@ -5,12 +5,10 @@ import axios from '@/services/axios';
 export default class ReplaceDevice extends Component {
 
   state = {
-    // 所有已使用的终端
     terminalNumbers: [],
     terminalType: 1,
     oldTerminalNumber: null,
     newTerminalNumber: null,
-    // 所有已使用的传感器
     sensorNumbers: [],
     oldSensorNumber: null,
     newSensorNumber: null,
@@ -39,15 +37,14 @@ export default class ReplaceDevice extends Component {
     console.log(selectValue);
     this.setState({ newTerminalNumber: selectValue })
     let oldTerminalNumber = this.state.oldTerminalNumber;
-      if (oldTerminalNumber != null && selectValue === oldTerminalNumber) {
-        this.setState({ terminalVisible: true })
-      } else {
-        this.setState({ terminalVisible: false })
-      }
+    if (oldTerminalNumber != null && selectValue === oldTerminalNumber) {
+      this.setState({ terminalVisible: true })
+    } else {
+      this.setState({ terminalVisible: false })
+    }
   }
 
   oldSensorNumberFun = (selectValue) => {
-    console.log(selectValue);
     this.setState({ oldSensorNumber: selectValue })
     let newSensorNumber = this.state.newSensorNumber;
     if (newSensorNumber != null && selectValue === newSensorNumber) {
@@ -58,14 +55,13 @@ export default class ReplaceDevice extends Component {
   }
 
   newSensorNumberFun = (selectValue) => {
-    console.log(selectValue);
     this.setState({ newSensorNumber: selectValue })
     let oldSensorNumber = this.state.oldSensorNumber;
-      if (oldSensorNumber != null && selectValue === oldSensorNumber) {
-        this.setState({ sensorVisible: true })
-      } else {
-        this.setState({ sensorVisible: false })
-      }
+    if (oldSensorNumber != null && selectValue === oldSensorNumber) {
+      this.setState({ sensorVisible: true })
+    } else {
+      this.setState({ sensorVisible: false })
+    }
   }
 
   showSelect = () => {
@@ -96,18 +92,35 @@ export default class ReplaceDevice extends Component {
           </Select>
         </Col>
         <Col span={4} offset={3}>
-        <Tooltip title="终端编号未改变，请重选终端编号" trigger={'click'} visible={this.state.terminalVisible} placement={'right'}>
-          <Button type="primary" onClick={() => {
-            let oldTerminalNumber = this.state.oldTerminalNumber;
-            let newTerminalNumber = this.state.newTerminalNumber;
-            if (oldTerminalNumber === newTerminalNumber) {
-              message.warn("终端编号未改变，请重选终端编号");
-              return;
-            } else {
-
-            }
-          }}>替换终端</Button>
-        </Tooltip>
+          <Tooltip title="终端编号未改变，请重选终端编号" trigger={'click'} visible={this.state.terminalVisible} placement={'right'}>
+            <Button type="primary" onClick={() => {
+              let oldTerminalNumber = this.state.oldTerminalNumber;
+              let newTerminalNumber = this.state.newTerminalNumber;
+              if (oldTerminalNumber === newTerminalNumber) {
+                message.warn("终端编号未改变，请重选终端编号");
+                return;
+              } else {
+                // 发送请求与后端交互
+                const params = new URLSearchParams();
+                params.append('oldTerminalNumber', oldTerminalNumber);
+                params.append('newTerminalNumber', newTerminalNumber);
+                const hide = message.loading('正在发送指令，请稍候，最多等待 90 秒');
+                axios.put(`/deviceConfig/replaceTerminal`, params)
+                  .then(response => {
+                    let result = response.data
+                    if (result.code == 0) {
+                      hide.then(() => message.info(result.msg));
+                    } else {
+                      hide.then(() => message.error(result.msg));
+                    }
+                  })
+                  .catch(function (error) {
+                    hide.then(() => message.error(error));
+                    console.log(error);
+                  });
+              }
+            }}>替换终端</Button>
+          </Tooltip>
         </Col>
       </Row>
       <Row style={{ marginTop: '15px' }}>
@@ -136,18 +149,18 @@ export default class ReplaceDevice extends Component {
           </Select>
         </Col>
         <Col span={4} offset={3}>
-        <Tooltip title="传感器编号未改变，请重选传感器编号" trigger={'click'} visible={this.state.sensorVisible} placement={'right'}>
-          <Button type="primary" onClick={() => {
+          <Tooltip title="传感器编号未改变，请重选传感器编号" trigger={'click'} visible={this.state.sensorVisible} placement={'right'}>
+            <Button type="primary" onClick={() => {
               let oldSensorNumber = this.state.oldSensorNumber;
               let newSensorNumber = this.state.newSensorNumber;
               if (oldSensorNumber === newSensorNumber) {
                 message.warn("传感器编号未改变，请重选传感器编号");
                 return;
               } else {
-
+                // 发送请求与后端交互
               }
-          }}>替换传感器</Button>
-        </Tooltip>
+            }}>替换传感器</Button>
+          </Tooltip>
         </Col>
       </Row>
     </div>
