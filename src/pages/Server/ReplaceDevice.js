@@ -98,6 +98,7 @@ export default class ReplaceDevice extends Component {
             style={{ width: '100%' }}
             allowClear={true}
             onSelect={this.oldTerminalNumberFun}
+            
           >
             {this.state.terminalNumbers.map(terminalNumber => <Select.Option key={terminalNumber}>{terminalNumber}</Select.Option>)}
           </Select>
@@ -241,4 +242,5 @@ export default class ReplaceDevice extends Component {
       </div>
     )
   }
+
 }

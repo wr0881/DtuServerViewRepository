@@ -30,7 +30,7 @@ export default class ServerTerminal extends Component {
   initTerminalTableData() {
     axios.get(`/terminal/listTerminalInUseByTypeFiled`, { params: { 'terminalType': this.state.terminalType, 'pageNum': this.state.defaultPageNum, 'pageSize': this.state.defaultPageSize } })
       .then(response => {
-        console.log(response);
+        // console.log(response);
         let result = response.data
         if (result.code == 0) { //有终端
           this.setState({ terminalData: result.data.list, pageTotal: result.data.total });
@@ -51,7 +51,7 @@ export default class ServerTerminal extends Component {
         values.pageNum = this.state.defaultPageNum
         values.pageSize = this.state.defaultPageSize
         values.terminalType = this.state.terminalType
-        console.log(values);
+        // console.log(values);
         axios.get(`/terminal/listTerminalInUseByTypeFiled`, { params: values })
           .then(response => {
             // console.log("handleSubmit 返回值");

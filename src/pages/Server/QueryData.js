@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Form, Card, Button, Row, Col, Select, message } from 'antd';
+import { Table, Form, Card, Button, Row, Col, Select, message, List } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -108,7 +108,7 @@ export default class QueryData extends Component {
 
   // 选择框提供传感器地址供选择
   getSensorAddress = (key) => {
-    const sensorInfo = this.state.sensorInfos.filter(item => item.sensorNumber===key);
+    const sensorInfo = this.state.sensorInfos.filter(item => item.sensorNumber === key);
     this.setState({
       sensorAddress: sensorInfo[0].sensorAddress,
     });
@@ -116,7 +116,7 @@ export default class QueryData extends Component {
 
   // 选择框提供传感器地址供选择
   getSensorNumber = (key) => {
-    const sensorInfo = this.state.sensorInfos.filter(item => item.sensorAddress===key);
+    const sensorInfo = this.state.sensorInfos.filter(item => item.sensorAddress === key);
     this.setState({
       sensorNumber: sensorInfo[0].sensorNumber,
     });

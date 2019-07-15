@@ -7,6 +7,7 @@ import ServerTerminal from './ServerTerminal';
 import ServerSensor from './ServerSensor';
 import QueryData from './QueryData';
 import ReplaceDevice from './ReplaceDevice';
+import LogInfo from './LogInfo';
 
 export default class Server extends Component {
 
@@ -132,7 +133,7 @@ export default class Server extends Component {
               <QueryData terminalNumbers={this.state.terminalNumbers} terminalType={this.state.terminalType} setSpinLoading={this.setSpinLoading} />
             </Tabs.TabPane>
             <Tabs.TabPane tab="日志信息" key="4">
-              <p>待开发</p>
+              <LogInfo terminalNumbers={this.state.terminalNumbers} terminalType={this.state.terminalType} />
             </Tabs.TabPane>
             <Tabs.TabPane tab="替换设备" key="5">
               <ReplaceDevice terminalNumbers={this.state.terminalNumbers} terminalType={this.state.terminalType} />
