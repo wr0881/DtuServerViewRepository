@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Table, Form, Card, Button, Row, Col, Select, message, Tooltip, BackTop, Input, Icon, List } from 'antd';
+import { Table, Form, Card, Button, Row, Col, Select, message, Tooltip, BackTop, Input, Icon, List, Typography } from 'antd';
 import axios from '@/services/axios';
 
 @Form.create()
@@ -11,6 +11,7 @@ export default class LogInfo extends Component {
         logDateList: [],
         logFileNameList: [],
         logContent: [],
+        logKeyword: null,
     }
 
     componentWillMount() {
@@ -38,6 +39,7 @@ export default class LogInfo extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                this.setState({logKeyword: values.keyword})
                 axios.get(`/sysLog/selectLogByKeyword`, { params: values })
                     .then(response => {
                         // console.log(response)
@@ -163,6 +165,10 @@ export default class LogInfo extends Component {
         </div>
     }
 
+    changeHtml = (item) => {
+        return <div dangerouslySetInnerHTML = {{ __html:item }}></div>
+    }
+
     render() {
         return (
             <div>
@@ -174,7 +180,7 @@ export default class LogInfo extends Component {
                         }}
                         header={'查询结果'}
                         dataSource={this.state.logContent}
-                        renderItem={(item) => <List.Item>{item}</List.Item>}
+                        renderItem={(item) => <List.Item>{this.changeHtml(item)}</List.Item>}
                     />
                 </div>
                 <div>
