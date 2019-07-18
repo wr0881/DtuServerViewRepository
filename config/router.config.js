@@ -106,7 +106,8 @@ export default [
       },
       // // dashboard
       // { path: '/', redirect: '/in-out-library/sensor', authority: ['admin', 'user'] },
-      { path: '/', redirect: '/in-out-library/sensor' },
+      // { path: '/', redirect: '/in-out-library/sensor' },
+      { path: '/', redirect: '/user/login' },
       // {
       //   path: '/dashboard',
       //   name: 'dashboard',

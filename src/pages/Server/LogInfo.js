@@ -39,22 +39,23 @@ export default class LogInfo extends Component {
         e.preventDefault();
         this.props.form.validateFields((err, values) => {
             if (!err) {
+                const hide = message.loading('正在发送指令，请稍候');
                 this.setState({logKeyword: values.keyword})
                 axios.get(`/sysLog/selectLogByKeyword`, { params: values })
                     .then(response => {
                         // console.log(response)
                         let result = response.data
                         if (result.code == 0) {
-                            message.info(result.msg);
+                            hide.then(() => message.info(result.msg));
                             this.setState({
                                 logContent: result.data,
                             });
                         } else {
-                            message.warn(result.msg);
+                            hide.then(() => message.warn(result.msg));
                         }
                     })
                     .catch(function (error) {
-                        message.error(error);
+                        hide.then(() => message.error(error));
                         console.log(error);
                     });
             }

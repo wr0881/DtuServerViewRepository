@@ -1,12 +1,13 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Form, Tabs } from 'antd';
-import classNames from 'classnames';
+import { Form, Tabs, Icon, Input, Button, Checkbox, Row, Col, message } from 'antd';
 import LoginItem from './LoginItem';
 import LoginTab from './LoginTab';
 import LoginSubmit from './LoginSubmit';
 import styles from './index.less';
 import LoginContext from './loginContext';
+import axios from '@/services/axios';
+import router from 'umi/router';
 
 class Login extends Component {
   static propTypes = {
@@ -19,8 +20,8 @@ class Login extends Component {
   static defaultProps = {
     className: '',
     defaultActiveKey: '',
-    onTabChange: () => {},
-    onSubmit: () => {},
+    onTabChange: () => { },
+    onSubmit: () => { },
   };
 
   constructor(props) {
@@ -32,95 +33,73 @@ class Login extends Component {
     };
   }
 
-  onSwitch = type => {
-    this.setState({
-      type,
-    });
-    const { onTabChange } = this.props;
-    onTabChange(type);
-  };
-
-  getContext = () => {
-    const { tabs } = this.state;
-    const { form } = this.props;
-    return {
-      tabUtil: {
-        addTab: id => {
-          this.setState({
-            tabs: [...tabs, id],
-          });
-        },
-        removeTab: id => {
-          this.setState({
-            tabs: tabs.filter(currentId => currentId !== id),
-          });
-        },
-      },
-      form: {
-        ...form,
-      },
-      updateActive: activeItem => {
-        const { type, active } = this.state;
-        if (active[type]) {
-          active[type].push(activeItem);
-        } else {
-          active[type] = [activeItem];
-        }
-        this.setState({
-          active,
-        });
-      },
-    };
-  };
-
   handleSubmit = e => {
     e.preventDefault();
-    const { active, type } = this.state;
-    const { form, onSubmit } = this.props;
-    const activeFileds = active[type];
-    form.validateFields(activeFileds, { force: true }, (err, values) => {
-      onSubmit(err, values);
+    this.props.form.validateFields((err, values) => {
+      if (!err) {
+        console.log('Received values of form: ', values);
+        const params = new URLSearchParams();
+        params.append('userName', values.username);
+        params.append('password', values.password);
+        axios.post(`/token/login`, params)
+          .then(response => {
+            console.log(response)
+            let result = response.data
+            if (result.code == 0) {
+              console.log(result.data)
+              axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data;
+              router.push('/server/youren');
+            } else {
+              message.warn(result.msg);
+            }
+          })
+          .catch(function (error) {
+            message.error(error);
+            console.log(error);
+          });
+      }
     });
   };
 
   render() {
-    const { className, children } = this.props;
-    const { type, tabs } = this.state;
-    const TabChildren = [];
-    const otherChildren = [];
-    React.Children.forEach(children, item => {
-      if (!item) {
-        return;
-      }
-      // eslint-disable-next-line
-      if (item.type.typeName === 'LoginTab') {
-        TabChildren.push(item);
-      } else {
-        otherChildren.push(item);
-      }
-    });
+    const { getFieldDecorator } = this.props.form;
     return (
-      <LoginContext.Provider value={this.getContext()}>
-        <div className={classNames(className, styles.login)}>
-          <Form onSubmit={this.handleSubmit}>
-            {tabs.length ? (
-              <React.Fragment>
-                <Tabs
-                  animated={false}
-                  className={styles.tabs}
-                  activeKey={type}
-                  onChange={this.onSwitch}
-                >
-                  {TabChildren}
-                </Tabs>
-                {otherChildren}
-              </React.Fragment>
-            ) : (
-              children
+      <Form onSubmit={this.handleSubmit} className="login-form">
+        <Row>
+          <Form.Item>
+            {getFieldDecorator('username', {
+              rules: [{ required: true, message: '请输入账号' }],
+            })(
+              <Input
+                prefix={<Icon type="user" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                placeholder="账号"
+                size="large"
+              />,
             )}
-          </Form>
-        </div>
-      </LoginContext.Provider>
+          </Form.Item>
+        </Row>
+        <Row>
+          <Form.Item>
+            {getFieldDecorator('password', {
+              rules: [{ required: true, message: '请输入密码' }],
+            })(
+              <Input
+                prefix={<Icon type="lock" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                type="password"
+                placeholder="密码"
+                size="large"
+              />,
+            )}
+          </Form.Item>
+        </Row>
+        <Row>
+          <Form.Item>
+            <Button type="primary" htmlType="submit" className="login-form-button" style={{ width: '100%', height: '40px', fontSize: '18px' }}>
+              登录
+          </Button>
+          </Form.Item>
+        </Row>
+      </Form>
     );
   }
 }
