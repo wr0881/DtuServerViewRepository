@@ -53,7 +53,7 @@ export default {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
-      console.log("sadsadsad13213")
+      // console.log("sadsadsad13213")
       setAuthority(payload.currentAuthority);
       return {
         ...state,

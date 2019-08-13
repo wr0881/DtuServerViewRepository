@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { getSensorInfo, updateInAndOut } from '@/services/in-out-library';
+import { getSensorInfo, updateInAndOut, handleDelSensor } from '@/services/in-out-library';
 import {
   Row,
   Col,
@@ -20,9 +20,14 @@ import {
   Radio,
   Icon,
   Tooltip,
+  Popconfirm,
+  Modal,
+  message
 } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import AddSensor from './addSensor';
+import ModifySensor from './modifySensor';
+import SensorDetail from './sensorDetail';
 import styles from './index.less';
 
 const FormItem = Form.Item;
@@ -49,7 +54,9 @@ class index extends Component {
         showSizeChanger: true,
         showQuickJumper: true
       },
-      tableLoading: false
+      tableLoading: false,
+      sensorDetailsVisible: false,
+      sensorDetail: {},
     };
   }
 
@@ -257,6 +264,7 @@ class index extends Component {
       const { code, data } = res.data;
       if (code === 0) {
         this.setState({ dataSource: data.list });
+        console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });
@@ -266,6 +274,52 @@ class index extends Component {
       console.log(`/sensor/SensorInfo code is catch`);
     })
   };
+
+  //批量操作
+  //批量入库
+  handleSelectedInStatus = (record) => {
+    if(this.state.selectedRowKeys.length>0){
+      message.success('批量入库！！！');
+      console.log('批量入库数据:',[...this.state.selectedRows]);
+      //let params = { "sensorNumber": record.sensorNumber }
+    }else{
+
+    }
+  }
+  //批量出库
+  handleSelectedOutStatus(){
+    if(this.state.selectedRowKeys.length>0){
+      message.success('批量出库！！！');
+      console.log('批量出库数据:',[...this.state.selectedRows]);
+    }
+  }
+  //清空所选
+  handleSelectedDel(){
+    if(this.state.selectedRowKeys.length>0){
+      message.success('清空所选！！！');
+      console.log('批量出库数据:',[...this.state.selectedRows]);
+      location.reload();
+    }
+  }
+
+  //删除
+  handleDel = (record) => {
+    console.log(record);
+    //转换为json格式
+    let params = { "sensorNumber": record.sensorNumber };
+    handleDelSensor(params).then(res => {
+      console.log(res);
+      let result = res.data;
+      if(result.code === 0){
+        console.log(result.msg);
+        this.queryDataSource();
+      }else{
+        console.log(result.msg);
+      }
+    }).catch(err => {
+      console.log(err);
+    })
+  }
 
   table = () => {
     const columns = [
@@ -336,11 +390,24 @@ class index extends Component {
         align: 'center',
         render: (text, record) => (
           <div>
-            <a>编辑</a>
+            <ModifySensor className="sensor_modify" modifypass={record} />
             <Divider type="vertical" />
-            <a>删除</a>
+            <Popconfirm
+              title="确定删除此传感器？"
+              onConfirm={()=>this.handleDel(record)}
+            >
+              <a>删除</a>
+            </Popconfirm>
+            {/* <Divider type="vertical" />
+            <a 
+              onClick={
+                this.handleDetails
+              }
+            >
+              详情
+            </a> */}
             <Divider type="vertical" />
-            <a>详情</a>
+            <SensorDetail className="sensor_detail" pass={record}/>
           </div>
         ),
       },
@@ -351,6 +418,9 @@ class index extends Component {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         this.setState({ selectedRowKeys, selectedRows });
       },
+      // onSelect:(record, selected, selectedRowKeys, selectedRows) => {
+
+      // },
       getCheckboxProps: record => ({
         // disabled: record.name === 'Disabled User', // Column configuration not to be checked
         // name: record.name,
@@ -369,7 +439,10 @@ class index extends Component {
       />
     )
   }
-
+  //批量入库
+  inStatusBatch = () =>{
+    const { selectedRows } = this.state;
+  }
   render() {
     return (
       <PageHeaderWrapper title='传感器仓库'>
@@ -390,15 +463,15 @@ class index extends Component {
                   <div>
                     已选择 <a style={{ fontWeight: 600 }}>{this.state.selectedRowKeys.length}</a> 项&nbsp;&nbsp;
                     全选为选择当前页的所有传感器
-                    <a style={{ marginLeft: 24 }}>
+                    <a style={{ marginLeft: 24 }} onClick={_=>{this.handleSelectedInStatus()}}>
                       批量入库
                     </a>
                     <Divider type="vertical" />
-                    <a style={{ marginLeft: 0 }}>
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedOutStatus()}}>
                       批量出库
                     </a>
                     <Divider type="vertical" />
-                    <a style={{ marginLeft: 0 }} onClick={_ => { this.setState({ selectedRowKeys: [] }) }}>
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedDel()}}>
                       清空所选
                     </a>
                   </div>

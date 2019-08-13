@@ -37,16 +37,16 @@ class Login extends Component {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
       if (!err) {
-        console.log('Received values of form: ', values);
+        //console.log('Received values of form: ', values);
         const params = new URLSearchParams();
         params.append('userName', values.username);
         params.append('password', values.password);
         axios.post(`/token/login`, params)
           .then(response => {
-            console.log(response)
+            //console.log(response)
             let result = response.data
             if (result.code == 0) {
-              console.log(result.data)
+              //console.log(result.data)
               axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data;
               router.push('/server/youren');
             } else {
