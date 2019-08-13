@@ -1,4 +1,3 @@
-/* eslint-disable no-unused-vars */
 import React, { Suspense } from 'react';
 import { Layout } from 'antd';
 import DocumentTitle from 'react-document-title';
@@ -158,8 +157,7 @@ class BasicLayout extends React.Component {
             )}
           </ContainerQuery>
         </DocumentTitle>
-        {/* <Suspense fallback={null}>{this.renderSettingDrawer()}</Suspense> */}
-        
+        <Suspense fallback={null}>{this.renderSettingDrawer()}</Suspense>
       </React.Fragment>
     );
   }

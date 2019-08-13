@@ -28,7 +28,7 @@ const FooterView = () => (
       // ]}
       copyright={
         <Fragment>
-          Copyright <Icon type="copyright" /> 2019 湖南中大检测
+          Copyright <Icon type="copyright" /> 2019 中大检测
         </Fragment>
       }
     />

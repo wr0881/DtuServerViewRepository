@@ -1,14 +1,6 @@
-/* eslint-disable no-unneeded-ternary */
-/* eslint-disable no-console */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable react/no-access-state-in-setstate */
-/* eslint-disable react/sort-comp */
-/* eslint-disable react/jsx-first-prop-new-line */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable react/no-unused-state */
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 import React, { Component } from 'react';
-import { getSensorInfo, updateInAndOut } from '@/services/in-out-library';
+import { getSensorInfo, updateInAndOut, handleDelSensor } from '@/services/in-out-library';
 import {
   Row,
   Col,
@@ -28,6 +20,8 @@ import {
   Radio,
   Icon,
   Tooltip,
+  Popconfirm,
+  Modal,
 } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import AddSensor from './addSensor';
@@ -57,7 +51,8 @@ class index extends Component {
         showSizeChanger: true,
         showQuickJumper: true
       },
-      tableLoading: false
+      tableLoading: false,
+      sensorDetailsVisible: false,
     };
   }
 
@@ -70,12 +65,12 @@ class index extends Component {
         <Row gutter={{ md: 8, lg: 24, xl: 48 }}>
           <Col md={8} sm={24}>
             <FormItem label="编号">
-              {getFieldDecorator('sensorNumber')(<Input placeholder="请输入编号" />)}
+              {getFieldDecorator('sensorNumber')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
             <FormItem label="地址">
-              {getFieldDecorator('sensorAddress')(<Input placeholder="请输入地址" />)}
+              {getFieldDecorator('sensorAddress')(<Input placeholder="请输入" />)}
             </FormItem>
           </Col>
           <Col md={8} sm={24}>
@@ -83,20 +78,16 @@ class index extends Component {
               <Button type="primary" htmlType="submit">
                 查询
               </Button>
-              <Button style={{ marginLeft: 8 }}
-                onClick={e => {
+              <Button style={{ marginLeft: 8 }} onClick={e => {
                 e.preventDefault();
                 this.handleFormReset();
-              }}
-              >
+              }}>
                 重置
               </Button>
-              <a style={{ marginLeft: 8 }}
-                onClick={e => {
+              <a style={{ marginLeft: 8 }} onClick={e => {
                 e.preventDefault();
                 this.toggleForm();
-              }}
-              >
+              }}>
                 展开 <Icon type="down" />
               </a>
             </span>
@@ -228,12 +219,11 @@ class index extends Component {
         productDate: fieldsValue.productDate ? fieldsValue.productDate.format('YYYY-MM-DD') : undefined,
         endDate: fieldsValue.endDate ? fieldsValue.endDate.format('YYYY-MM-DD') : undefined,
       };
-      console.log(fieldsValue);
-      console.log(values);
+
       this.setState({
         formValues: values,
       }, _ => { this.queryDataSource() });
-      console.log(this.state.formValues);
+
       // dispatch({
       //   type: 'rule/fetch',
       //   payload: values,
@@ -260,7 +250,7 @@ class index extends Component {
   queryDataSource = (loading = true) => {
     this.setState({ tableLoading: true && loading });
     const { formValues, pagination } = this.state;
-    const param = {
+    let param = {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
       ...formValues,
@@ -280,6 +270,54 @@ class index extends Component {
       console.log(`/sensor/SensorInfo code is catch`);
     })
   };
+
+  //批量操作
+  //批量入库
+  handleSelectedInStatus = (record) => {
+    if(this.state.selectedRowKeys.length>0){
+      console.log(...this.state.selectedRowKeys);
+      console.log([...this.state.selectedRows]);
+      let params = { "sensorNumber": record.sensorNumber }
+    }else{
+
+    }
+  }
+  //批量出库
+  handleSelectedOutStatus(){
+    if(this.state.selectedRowKeys.length>0){
+
+    }
+  }
+  //清空所选
+  handleSelectedDel(){
+
+  }
+
+  //删除
+  handleDel = (record) => {
+    console.log(record);
+    //转换为json格式
+    let params = {"sensorNumber": record.sensorNumber};
+    handleDelSensor(params).then(res => {
+      console.log(res);
+      let result = res.data;
+      if(result.code === 0){
+        console.log(result.msg);
+        this.queryDataSource();
+      }else{
+        console.log(result.msg);
+      }
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+
+  //详情
+  handleDetails = () => {
+    this.setState({
+      sensorDetailsVisible: true
+    })
+  }
 
   table = () => {
     const columns = [
@@ -302,7 +340,7 @@ class index extends Component {
         title: '状态',
         dataIndex: 'status',
         align: 'center',
-        render: (text, record) => {
+        render: (text, record, index) => {
           let status = 'success';
           if (text === '未使用') {
             status = 'default';
@@ -326,7 +364,7 @@ class index extends Component {
         title: '出入库操作',
         dataIndex: 'inAndOutStatus',
         align: 'center',
-        render: (text, record) => {
+        render: (text, record, index) => {
           const checked = text === '入库' ? true : false;
           return (
             <Switch
@@ -352,9 +390,20 @@ class index extends Component {
           <div>
             <a>编辑</a>
             <Divider type="vertical" />
-            <a>删除</a>
+            <Popconfirm
+              title="确定删除？"
+              onConfirm={()=>this.handleDel(record)}
+            >
+              <a>删除</a>
+            </Popconfirm>
             <Divider type="vertical" />
-            <a>详情</a>
+            <a 
+              onClick={
+                this.handleDetails
+              }
+            >
+              详情
+            </a>
           </div>
         ),
       },
@@ -365,6 +414,9 @@ class index extends Component {
         console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         this.setState({ selectedRowKeys, selectedRows });
       },
+      // onSelect:(record, selected, selectedRowKeys, selectedRows) => {
+
+      // },
       getCheckboxProps: record => ({
         // disabled: record.name === 'Disabled User', // Column configuration not to be checked
         // name: record.name,
@@ -383,7 +435,10 @@ class index extends Component {
       />
     )
   }
-
+  //批量入库
+  inStatusBatch = () =>{
+    const { selectedRows } = this.state;
+  }
   render() {
     return (
       <PageHeaderWrapper title='传感器仓库'>
@@ -391,13 +446,10 @@ class index extends Component {
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderForm()}</div>
             <div className={styles.tableListOperator}>
-              <Button icon="plus"
-                type="primary"
-                onClick={e => {
+              <Button icon="plus" type="primary" onClick={e => {
                 e.preventDefault();
                 this.handleDrawerAddSensorVisible(true);
-              }}
-              >
+              }}>
                 添加传感器
               </Button>
             </div>
@@ -407,15 +459,15 @@ class index extends Component {
                   <div>
                     已选择 <a style={{ fontWeight: 600 }}>{this.state.selectedRowKeys.length}</a> 项&nbsp;&nbsp;
                     全选为选择当前页的所有传感器
-                    <a style={{ marginLeft: 24 }}>
+                    <a style={{ marginLeft: 24 }} onClick={_=>{this.handleSelectedInStatus()}}>
                       批量入库
                     </a>
                     <Divider type="vertical" />
-                    <a style={{ marginLeft: 0 }}>
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedOutStatus()}}>
                       批量出库
                     </a>
                     <Divider type="vertical" />
-                    <a style={{ marginLeft: 0 }} onClick={_ => { this.setState({ selectedRowKeys: [] }) }}>
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedDel()}}>
                       清空所选
                     </a>
                   </div>
@@ -427,6 +479,28 @@ class index extends Component {
             {this.table()}
           </div>
         </Card>
+        <Modal
+          key="sensorDetails"
+          title={<div>传感器详情</div>}
+          visible={this.state.sensorDetailsVisible}
+          destroyOnClose={true}
+          footer={null}
+          width='800px'
+          onOk={_=>{this.setState({sensorDetailsVisible:false})}}
+          onCancel={_=>{this.setState({sensorDetailsVisible:false})}}
+        >
+          <p>传感器编号:</p>
+          <p>传感器地址:</p>
+          <p>厂家:</p>
+          <p>传感器型号:</p>
+          <p>传感器名称:</p>
+          <p>传感器量程:</p>
+          <p>传感器精度:</p>
+          <p>传感器标定系数K:</p>
+          <p>传感器状态:</p>
+          <p>生产日期:</p>
+          <p>结束日期:</p>
+        </Modal>
         <AddSensor
           drawerAddSensorVisible={this.state.drawerAddSensorVisible}
           handleDrawerAddSensorVisible={this.handleDrawerAddSensorVisible}

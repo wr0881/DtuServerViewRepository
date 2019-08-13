@@ -1,12 +1,4 @@
-/* eslint-disable react/no-access-state-in-setstate */
-/* eslint-disable prefer-destructuring */
-/* eslint-disable react/jsx-filename-extension */
-/* eslint-disable no-shadow */
-/* eslint-disable react/destructuring-assignment */
-/* eslint-disable no-param-reassign */
-/* eslint-disable no-restricted-syntax */
-/* eslint-disable react/no-unused-state */
-/* eslint-disable no-unused-vars */
+/* eslint-disable */
 import React, { Component } from 'react';
 import { insertSensors, sensorNumberCount } from '@/services/in-out-library';
 import {
@@ -46,7 +38,6 @@ class addSensor extends Component {
       cancelSensorNum: []
     };
   }
-
   sensorNumberRules = (rule, value, callback) => {
     if (value) {
       sensorNumberCount({ sensorNumber: value }).then(res => {
@@ -63,7 +54,6 @@ class addSensor extends Component {
       callback('请输入传感器');
     }
   }
-
   handleSubmit = e => {
     e.preventDefault();
 
@@ -72,9 +62,9 @@ class addSensor extends Component {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
-      const sensorNumber = [];
-      const sensorAddress = [];
-      for (const item in fieldsValue) {
+      let sensorNumber = [];
+      let sensorAddress = [];
+      for (let item in fieldsValue) {
         if (item.indexOf('sensorNumber') > -1) {
           const itemAry = item.split('_');
           // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
@@ -86,7 +76,7 @@ class addSensor extends Component {
           delete fieldsValue[item];
         }
       }
-      for (const item in fieldsValue) {
+      for (let item in fieldsValue) {
         if (item.indexOf('sensorAddress') > -1) {
           const itemAry = item.split('_');
           // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
@@ -176,15 +166,14 @@ class addSensor extends Component {
                             addSensorNum[i] = undefined;
                             this.setState({ addSensorNum });
                           }}
-                        >删除
-                        </Button>
+                        >删除</Button>
                       </Form.Item>
                     </Col>
                   </Row>
                 )
-              } 
+              } else {
                 return null
-              
+              }
             })}
             <Row gutter={16}>
               <Col span={24}>
@@ -280,7 +269,7 @@ class addSensor extends Component {
                     <InputNumber
                       min={0}
                       max={50}
-                      step="0.01"
+                      step={'0.01'}
                       style={{ width: '100%' }}
                       placeholder="示例：1.0000000"
                     />
@@ -322,7 +311,7 @@ class addSensor extends Component {
                 </Form.Item>
               </Col>
             </Row>
-            <div
+            < div
               style={{
                 position: 'absolute',
                 left: 0,
@@ -343,7 +332,7 @@ class addSensor extends Component {
             </div>
           </Form>
         </Drawer>
-      </div>
+      </div >
     );
   }
 

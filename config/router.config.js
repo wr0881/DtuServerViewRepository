@@ -34,19 +34,11 @@ export default [
             name: '传感器仓库',
             component: './InOutLibrary/index',
           },
-        ],
-      },
-      // 设备管理
-      {
-        path: '/device',
-        name: '设备管理',
-        icon: 'inbox',
-        routes: [
           {
-            path: '/device/device-bind',
-            name: '设备绑定',
-            component: './Device/DeviceBindList',
-          },
+            path: '/in-out-library/terminal',
+            name: '终端仓库',
+            component: './InOutLibrary/Terminal',
+          }
         ],
       },
       // 服务管理
@@ -67,43 +59,184 @@ export default [
           },
         ],
       },
-      // 数据管理
+      // 项目管理
       {
-        path: '/data',
-        name: '数据管理',
-        icon: 'database',
+        path: '/project',
+        name: '项目管理',
+        icon: 'yuque',
         routes: [
           {
-            path: '/data/querydata',
-            name: '数据查询',
-            component: './Data/QueryData',
+            path: '/project/add-project',
+            name: '新建项目',
+            component: './Project/AddProject/AddProject',
+            hideChildrenInMenu: true,
+            routes: [
+              {
+                path: '/project/add-project',
+                redirect: '/project/add-project/add-project-name',
+              },
+              {
+                path: '/project/add-project/add-project-name',
+                name: '新建项目名',
+                component: './Project/AddProject/AddProjectName',
+              },
+              {
+                path: '/project/add-project/add-sector-name',
+                name: '新建区间名',
+                component: './Project/AddProject/AddSectorName',
+              },
+              {
+                path: '/project/add-project/add-member-info',
+                name: '添加人员信息',
+                component: './Project/AddProject/AddMemberInfo',
+              },
+              {
+                path: '/project/add-project/add-sector-info',
+                name: '新建区间信息',
+                component: './Project/AddProject/AddSectorInfo',
+              },
+              {
+                path: '/project/add-project/result',
+                name: '新建成功',
+                component: './Project/AddProject/Result',
+              },
+            ],
           },
         ],
       },
-      // list
       {
-        path: '/list',
-        icon: 'table',
-        name: '表格',
-        routes: [
+        path: '/device',
+        name: '设备管理',
+        icon: 'yuque',
+        routes:[
           {
-            path: '/list/table-list',
-            name: '查询表格',
-            component: './List/TableList',
-          },
-          {
-            path: '/list/basic-list',
-            name: '标准列表',
-            component: './List/BasicList',
-          },
-          {
-            path: '/list/card-list',
-            name: '卡片列表',
-            component: './List/CardList',
-          },
-          
-        ],
+            path: '/device/device',
+            name: '设备绑定',
+            component: './Device/Device'
+          }
+        ]
       },
+      // // dashboard
+      // { path: '/', redirect: '/in-out-library/sensor', authority: ['admin', 'user'] },
+      // { path: '/', redirect: '/in-out-library/sensor' },
+      { path: '/', redirect: '/user/login' },
+      // {
+      //   path: '/dashboard',
+      //   name: 'dashboard',
+      //   icon: 'dashboard',
+      //   routes: [
+      //     {
+      //       path: '/dashboard/analysis',
+      //       name: 'analysis',
+      //       component: './Dashboard/Analysis',
+      //     },
+      //     {
+      //       path: '/dashboard/monitor',
+      //       name: 'monitor',
+      //       component: './Dashboard/Monitor',
+      //     },
+      //     {
+      //       path: '/dashboard/workplace',
+      //       name: 'workplace',
+      //       component: './Dashboard/Workplace',
+      //     },
+      //   ],
+      // },
+      // // forms
+      // {
+      //   path: '/form',
+      //   icon: 'form',
+      //   name: 'form',
+      //   routes: [
+      //     {
+      //       path: '/form/basic-form',
+      //       name: 'basicform',
+      //       component: './Forms/BasicForm',
+      //     },
+      //     {
+      //       path: '/form/step-form',
+      //       name: 'stepform',
+      //       component: './Forms/StepForm',
+      //       hideChildrenInMenu: true,
+      //       routes: [
+      //         {
+      //           path: '/form/step-form',
+      //           redirect: '/form/step-form/info',
+      //         },
+      //         {
+      //           path: '/form/step-form/info',
+      //           name: 'info',
+      //           component: './Forms/StepForm/Step1',
+      //         },
+      //         {
+      //           path: '/form/step-form/confirm',
+      //           name: 'confirm',
+      //           component: './Forms/StepForm/Step2',
+      //         },
+      //         {
+      //           path: '/form/step-form/result',
+      //           name: 'result',
+      //           component: './Forms/StepForm/Step3',
+      //         },
+      //       ],
+      //     },
+      //     {
+      //       path: '/form/advanced-form',
+      //       name: 'advancedform',
+      //       authority: ['admin'],
+      //       component: './Forms/AdvancedForm',
+      //     },
+      //   ],
+      // },
+      // // list
+      // {
+      //   path: '/list',
+      //   icon: 'table',
+      //   name: 'list',
+      //   routes: [
+      //     {
+      //       path: '/list/table-list',
+      //       name: 'searchtable',
+      //       component: './List/TableList',
+      //     },
+      //     {
+      //       path: '/list/basic-list',
+      //       name: 'basiclist',
+      //       component: './List/BasicList',
+      //     },
+      //     {
+      //       path: '/list/card-list',
+      //       name: 'cardlist',
+      //       component: './List/CardList',
+      //     },
+      //     {
+      //       path: '/list/search',
+      //       name: 'searchlist',
+      //       component: './List/List',
+      //       routes: [
+      //         {
+      //           path: '/list/search',
+      //           redirect: '/list/search/articles',
+      //         },
+      //         {
+      //           path: '/list/search/articles',
+      //           name: 'articles',
+      //           component: './List/Articles',
+      //         },
+      //         {
+      //           path: '/list/search/projects',
+      //           name: 'projects',
+      //           component: './List/Projects',
+      //         },
+      //         {
+      //           path: '/list/search/applications',
+      //           name: 'applications',
+      //           component: './List/Applications',
+      //         },
+      //       ],
+      //     },
+      //   ],
+      // },
       // {
       //   path: '/profile',
       //   name: 'profile',
@@ -140,6 +273,35 @@ export default [
       //       component: './Result/Success',
       //     },
       //     { path: '/result/fail', name: 'fail', component: './Result/Error' },
+      //   ],
+      // },
+      // {
+      //   name: 'exception',
+      //   icon: 'warning',
+      //   path: '/exception',
+      //   routes: [
+      //     // exception
+      //     {
+      //       path: '/exception/403',
+      //       name: 'not-permission',
+      //       component: './Exception/403',
+      //     },
+      //     {
+      //       path: '/exception/404',
+      //       name: 'not-find',
+      //       component: './Exception/404',
+      //     },
+      //     {
+      //       path: '/exception/500',
+      //       name: 'server-error',
+      //       component: './Exception/500',
+      //     },
+      //     {
+      //       path: '/exception/trigger',
+      //       name: 'trigger',
+      //       hideInMenu: true,
+      //       component: './Exception/TriggerException',
+      //     },
       //   ],
       // },
       // {
@@ -222,9 +384,9 @@ export default [
       //     },
       //   ],
       // },
-      // {
-      //   component: '404',
-      // },
+      {
+        component: '404',
+      },
     ],
   },
 ];

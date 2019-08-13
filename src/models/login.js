@@ -14,31 +14,14 @@ export default {
 
   effects: {
     *login({ payload }, { call, put }) {
-      const response = yield call(fakeAccountLogin, payload);
+      console.log(13213)
       yield put({
         type: 'changeLoginStatus',
-        payload: response,
+        payload: { status: "ok", type: "account", currentAuthority: "admin" },
       });
-      // Login successfully
-      if (response.status === 'ok') {
-        reloadAuthorized();
-        const urlParams = new URL(window.location.href);
-        const params = getPageQuery();
-        let { redirect } = params;
-        if (redirect) {
-          const redirectUrlParams = new URL(redirect);
-          if (redirectUrlParams.origin === urlParams.origin) {
-            redirect = redirect.substr(urlParams.origin.length);
-            if (redirect.match(/^\/.*#/)) {
-              redirect = redirect.substr(redirect.indexOf('#') + 1);
-            }
-          } else {
-            redirect = null;
-          }
-        }
-        yield put(routerRedux.replace(redirect || '/'));
-      }
+      yield put(routerRedux.replace( '/'));
     },
+
 
     *getCaptcha({ payload }, { call }) {
       yield call(getFakeCaptcha, payload);
@@ -70,6 +53,7 @@ export default {
 
   reducers: {
     changeLoginStatus(state, { payload }) {
+      // console.log("sadsadsad13213")
       setAuthority(payload.currentAuthority);
       return {
         ...state,
