@@ -293,12 +293,20 @@ class index extends Component {
       console.log('批量出库数据:',[...this.state.selectedRows]);
     }
   }
-  //清空所选
+  //批量删除
   handleSelectedDel(){
     if(this.state.selectedRowKeys.length>0){
+      message.success('批量删除！！！');
+      console.log('批量删除数据:',[...this.state.selectedRows]);
+    }
+  }
+  //清空所选
+  handleSelectedEmpty(){
+    if(this.state.selectedRowKeys.length>0){
       message.success('清空所选！！！');
-      console.log('批量出库数据:',[...this.state.selectedRows]);
-      location.reload();
+      console.log('清空所选数据:',[...this.state.selectedRows]);
+      this.queryDataSource();
+      this.state.selectedRowKeys=[];
     }
   }
 
@@ -472,6 +480,10 @@ class index extends Component {
                     </a>
                     <Divider type="vertical" />
                     <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedDel()}}>
+                      批量删除
+                    </a>
+                    <Divider type="vertical" />
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedEmpty()}}>
                       清空所选
                     </a>
                   </div>

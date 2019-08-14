@@ -22,6 +22,7 @@ import {
   Tooltip,
   Modal,
   Popconfirm,
+  message,
 } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import AddTerminal from './addTerminal';
@@ -216,10 +217,12 @@ class Terminal extends Component {
     }
   }
   //清空所选
-  handleSelectedDel(){
+  handleSelectedEmpty(){
     if(this.state.selectedRowKeys.length>0){
       message.success('清空所选！！！');
-      console.log('批量出库数据:',[...this.state.selectedRows]);
+      console.log('清空所选数据:',[...this.state.selectedRows]);
+      this.queryDataSource();
+      this.state.selectedRowKeys=[];
     }
   }
 
@@ -387,15 +390,19 @@ class Terminal extends Component {
                   <div>
                     已选择 <a style={{ fontWeight: 600 }}>{this.state.selectedRowKeys.length}</a> 项&nbsp;&nbsp;
                     全选为选择当前页的所有终端
-                    <a style={{ marginLeft: 24 }}>
+                    <a style={{ marginLeft: 24 }} onClick={_=>{this.handleSelectedInStatus()}}>
                       批量入库
                     </a>
                     <Divider type="vertical" />
-                    <a style={{ marginLeft: 0 }}>
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedOutStatus()}}>
                       批量出库
                     </a>
                     <Divider type="vertical" />
-                    <a style={{ marginLeft: 0 }} onClick={_ => { this.setState({ selectedRowKeys: [] }) }}>
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedDel()}}>
+                      批量删除
+                    </a>
+                    <Divider type="vertical" />
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedEmpty()}}>
                       清空所选
                     </a>
                   </div>
