@@ -109,9 +109,9 @@ class addSensor extends Component {
         message.error('服务器错误');
       })
 
-      // this.setState({
-      //   formValues: values,
-      // }, _ => { this.queryDataSource() });
+      this.setState({
+        formValues: values,
+      }, _ => { this.queryDataSource });
     });
   };
 

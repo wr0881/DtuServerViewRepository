@@ -22,9 +22,12 @@ import {
   Tooltip,
   Popconfirm,
   Modal,
+  message
 } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import AddSensor from './addSensor';
+import ModifySensor from './modifySensor';
+import SensorDetail from './sensorDetail';
 import styles from './index.less';
 
 const FormItem = Form.Item;
@@ -53,6 +56,7 @@ class index extends Component {
       },
       tableLoading: false,
       sensorDetailsVisible: false,
+      sensorDetail: {},
     };
   }
 
@@ -275,9 +279,9 @@ class index extends Component {
   //批量入库
   handleSelectedInStatus = (record) => {
     if(this.state.selectedRowKeys.length>0){
-      console.log(...this.state.selectedRowKeys);
-      console.log([...this.state.selectedRows]);
-      let params = { "sensorNumber": record.sensorNumber }
+      message.success('批量入库！！！');
+      console.log('批量入库数据:',[...this.state.selectedRows]);
+      //let params = { "sensorNumber": record.sensorNumber }
     }else{
 
     }
@@ -285,19 +289,32 @@ class index extends Component {
   //批量出库
   handleSelectedOutStatus(){
     if(this.state.selectedRowKeys.length>0){
-
+      message.success('批量出库！！！');
+      console.log('批量出库数据:',[...this.state.selectedRows]);
+    }
+  }
+  //批量删除
+  handleSelectedDel(){
+    if(this.state.selectedRowKeys.length>0){
+      message.success('批量删除！！！');
+      console.log('批量删除数据:',[...this.state.selectedRows]);
     }
   }
   //清空所选
-  handleSelectedDel(){
-
+  handleSelectedEmpty(){
+    if(this.state.selectedRowKeys.length>0){
+      message.success('清空所选！！！');
+      console.log('清空所选数据:',[...this.state.selectedRows]);
+      this.queryDataSource();
+      this.state.selectedRowKeys=[];
+    }
   }
 
   //删除
   handleDel = (record) => {
     console.log(record);
     //转换为json格式
-    let params = {"sensorNumber": record.sensorNumber};
+    let params = { "sensorNumber": record.sensorNumber };
     handleDelSensor(params).then(res => {
       console.log(res);
       let result = res.data;
@@ -309,13 +326,6 @@ class index extends Component {
       }
     }).catch(err => {
       console.log(err);
-    })
-  }
-
-  //详情
-  handleDetails = () => {
-    this.setState({
-      sensorDetailsVisible: true
     })
   }
 
@@ -388,22 +398,24 @@ class index extends Component {
         align: 'center',
         render: (text, record) => (
           <div>
-            <a>编辑</a>
+            <ModifySensor className="sensor_modify" modifypass={record} />
             <Divider type="vertical" />
             <Popconfirm
-              title="确定删除？"
+              title="确定删除此传感器？"
               onConfirm={()=>this.handleDel(record)}
             >
               <a>删除</a>
             </Popconfirm>
-            <Divider type="vertical" />
+            {/* <Divider type="vertical" />
             <a 
               onClick={
                 this.handleDetails
               }
             >
               详情
-            </a>
+            </a> */}
+            <Divider type="vertical" />
+            <SensorDetail className="sensor_detail" pass={record}/>
           </div>
         ),
       },
@@ -468,6 +480,10 @@ class index extends Component {
                     </a>
                     <Divider type="vertical" />
                     <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedDel()}}>
+                      批量删除
+                    </a>
+                    <Divider type="vertical" />
+                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedEmpty()}}>
                       清空所选
                     </a>
                   </div>
@@ -479,28 +495,6 @@ class index extends Component {
             {this.table()}
           </div>
         </Card>
-        <Modal
-          key="sensorDetails"
-          title={<div>传感器详情</div>}
-          visible={this.state.sensorDetailsVisible}
-          destroyOnClose={true}
-          footer={null}
-          width='800px'
-          onOk={_=>{this.setState({sensorDetailsVisible:false})}}
-          onCancel={_=>{this.setState({sensorDetailsVisible:false})}}
-        >
-          <p>传感器编号:</p>
-          <p>传感器地址:</p>
-          <p>厂家:</p>
-          <p>传感器型号:</p>
-          <p>传感器名称:</p>
-          <p>传感器量程:</p>
-          <p>传感器精度:</p>
-          <p>传感器标定系数K:</p>
-          <p>传感器状态:</p>
-          <p>生产日期:</p>
-          <p>结束日期:</p>
-        </Modal>
         <AddSensor
           drawerAddSensorVisible={this.state.drawerAddSensorVisible}
           handleDrawerAddSensorVisible={this.handleDrawerAddSensorVisible}
