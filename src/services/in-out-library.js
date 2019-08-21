@@ -22,6 +22,10 @@ export async function getTerminalDetail(params) {
 export async function handleDelTerminal(params) {
     return axios.delete('/terminal/removeTerminal', { data: params });
 }
+// 修改终端
+export async function handleModifyTerminal(params) {
+    return axios.put('/terminal/modifyTerminal',  params);
+}
 
 /* 传感器 */
 //获取传感器信息
@@ -33,8 +37,8 @@ export async function getSensorDetail(params) {
     return axios.get('/sensor/SensorDetail', { params });
 }
 // 传感器出入库操作
-export async function updateInAndOut(params) {
-    return axios.put('/sensor/updateSensorPro', params);
+export async function updateInAndOut(param1,params) {
+    return axios.put('/sensor/updateBatchInAndOutStatus?inAndOutStatus='+param1, params);   
 }
 // 批量添加传感器
 export async function insertSensors(params) {
@@ -46,7 +50,7 @@ export async function handleDelSensor(params) {
 }
 // 修改传感器
 export async function handleModifySensor(params) {
-    return axios.put('/sensor/modifySensor', { params });
+    return axios.put('/sensor/modifySensor',  params);
 }
 
 export async function sensorNumberCount(params) {

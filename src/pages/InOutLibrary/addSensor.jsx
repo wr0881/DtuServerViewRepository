@@ -95,7 +95,7 @@ class addSensor extends Component {
       }
 
       const values = { ...fieldsValue, sensorNumber, sensorAddress };
-
+      console.log(values);
       insertSensors(values).then(res => {
         const { data, msg } = res.data;
         if (data) {
