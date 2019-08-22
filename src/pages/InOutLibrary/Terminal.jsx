@@ -199,6 +199,8 @@ class Terminal extends Component {
     if(this.state.selectedRowKeys.length>0){
       this.queryDataSource();
       this.state.selectedRowKeys=[];
+    }else{
+      message.error('请先选择！');
     }
   }
 

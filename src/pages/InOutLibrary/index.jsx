@@ -389,11 +389,16 @@ class index extends Component {
               checkedChildren="已入库"
               unCheckedChildren="未入库"
               checked={checked}
-              onChange={e => {
-                const inAndOutStatus = e ? '入库' : '出库';
-                updateInAndOut({ inAndOutStatus, sensorId: record.key }).then(res => {
-                  if (res) {
-                    this.queryDataSource(false);
+              onChange={checked => {
+                const inAndOutStatus = checked ? '入库' : '出库';
+                const sensorId = [record.key];
+                console.log(inAndOutStatus,sensorId);
+                updateInAndOut(inAndOutStatus,sensorId).then(res => {
+                  console.log(res.data);
+                  console.log(record.key);
+                  const { code, msg } = res.data;
+                  if (code === 0) {
+                    this.queryDataSource();
                   }
                 })
               }}
