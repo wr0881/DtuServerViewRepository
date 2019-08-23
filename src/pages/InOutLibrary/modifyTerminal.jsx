@@ -24,15 +24,15 @@ class modifyTerminal extends Component {
         })
         this.terminalType();
         //console.log(this.props.modifypass.terminalStatus);
-        if(this.props.modifypass.terminalStatus === 1){
-            this.setState({terminalStatusValue:'未使用'})
-        }
-        if(this.props.modifypass.terminalStatus === 2){
-            this.setState({terminalStatusValue:'使用中'})
-        }
-        if(this.props.modifypass.terminalStatus === 3){
-            this.setState({terminalStatusValue:'已损坏'})
-        }
+        // if(this.props.modifypass.terminalStatus === 1){
+        //     this.setState({terminalStatusValue:'未使用'})
+        // }
+        // if(this.props.modifypass.terminalStatus === 2){
+        //     this.setState({terminalStatusValue:'使用中'})
+        // }
+        // if(this.props.modifypass.terminalStatus === 3){
+        //     this.setState({terminalStatusValue:'已损坏'})
+        // }
     }
     handleOkOrCancel() {
         this.setState({
@@ -212,12 +212,12 @@ class modifyTerminal extends Component {
                                         rules: [
                                             { required:true, message:'不允许为空' }
                                         ],
-                                        initialValue:this.state.terminalStatusValue
+                                        initialValue:this.props.modifypass.terminalStatus
                                     })(
                                         <Select style={{width:'210px'}}>
-                                            <Option value="1">未使用</Option>
-                                            <Option value="2">使用中</Option>
-                                            <Option value="3">已损坏</Option>
+                                            <Option value="未使用">未使用</Option>
+                                            <Option value="使用中">使用中</Option>
+                                            <Option value="已损坏">已损坏</Option>
                                         </Select>
                                     )}
                                     

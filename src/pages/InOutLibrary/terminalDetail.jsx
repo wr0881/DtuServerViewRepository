@@ -24,7 +24,7 @@ class terminalDetail extends Component {
     }
     render(){
         const status = this.props.pass.terminalStatus;
-        if(status===1){
+        if(status==="未使用"){
             return(
                 <div style={{display:'inline-block'}}>
                     <a onClick={this.handlePopup}>详情</a>
@@ -51,7 +51,7 @@ class terminalDetail extends Component {
                     </Modal>
                 </div>
             )
-        }else if(status===2){
+        }else if(status==="使用中"){
             return(
                 <div style={{display:'inline-block'}}>
                     <a onClick={this.handlePopup}>详情</a>
@@ -78,7 +78,7 @@ class terminalDetail extends Component {
                     </Modal>
                 </div>
             )
-        }else if(status===3){
+        }else if(status==="已损坏"){
             return(
                 <div style={{display:'inline-block'}}>
                     <a onClick={this.handlePopup}>详情</a>

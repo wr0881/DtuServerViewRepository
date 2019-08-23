@@ -182,7 +182,6 @@ class Terminal extends Component {
       const { code, data } = res.data;
       if (code === 0) {
         this.setState({ dataSource: data.list });
-        //console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });
@@ -290,12 +289,15 @@ class Terminal extends Component {
         title: '终端状态',
         dataIndex: 'terminalStatus',
         align: 'center',
-        render: (text, value, index) => {          
-          switch(text){
-            case 1:text="未使用";status="default";break;
-            case 2:text="使用中";status="success";break;
-            case 3:text="已损坏";status="error";break;
-          }
+        render: (text, value, index) => {  
+          let status = 'default';
+          if (text === '未使用') {
+            status = 'default';
+          } else if (text === '使用中') {
+            status = 'success';
+          } else if (text === '已损坏') {
+            status = 'error';
+          }     
           return <Badge status={status} text={text} />
         }
       },
