@@ -94,7 +94,13 @@ class addSensor extends Component {
         sensorAddress.splice(sensorAddress.findIndex(item => item === undefined), 1);
       }
 
-      const values = { ...fieldsValue, sensorNumber, sensorAddress };
+      const values = { 
+        ...fieldsValue,
+        productDate: fieldsValue.productDate.format('YYYY-MM-DD'),
+        endDate: fieldsValue.endDate.format('YYYY-MM-DD'),
+        sensorNumber, 
+        sensorAddress 
+      };
       console.log(values);
       insertSensors(values).then(res => {
         const { data, msg } = res.data;

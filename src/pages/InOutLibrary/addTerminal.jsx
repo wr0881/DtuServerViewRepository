@@ -76,8 +76,6 @@ class addTerminal extends Component {
           terminalNumbers[itemAry[1]] = itemVal;
           // }
           delete fieldsValue[item];
-          console.log(fieldsValue);
-          console.log(itemVal);
         }
       }
 
@@ -85,16 +83,14 @@ class addTerminal extends Component {
         terminalNumbers.splice(terminalNumbers.findIndex(item => item === undefined), 1);
       }
       const values = {
-        ...fieldsValue,terminalNumbers
+        ...fieldsValue,
+        productDate: fieldsValue.productDate.format('YYYY-MM-DD'),
+        endDate: fieldsValue.endDate.format('YYYY-MM-DD'),
+        terminalNumbers
       }
-      //const values = { ...fieldsValue };
-      console.log(values);
       addTerminals(values).then(res => {
         const { code, msg } = res.data;
-        console.log(code)
-        console.log(res.data.code);
         if (code === 0) {
-          console.log('添加终端成功');
           message.success('添加终端成功');
           this.props.handleDrawerAddTerminalVisible(false);
           this.props.queryDataSource(false);

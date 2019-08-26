@@ -46,6 +46,8 @@ class modifySensor extends Component {
             
             const params = { 
                 ...fieldsValue,
+                productDate: fieldsValue.productDate.format('YYYY-MM-DD'),
+                endDate: fieldsValue.endDate.format('YYYY-MM-DD'),
                 sensorId:this.props.modifypass.key
             };
             //console.log('参数：',params);
