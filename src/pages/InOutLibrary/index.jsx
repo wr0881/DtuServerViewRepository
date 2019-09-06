@@ -225,7 +225,7 @@ class index extends Component {
         productDate: fieldsValue.productDate ? fieldsValue.productDate.format('YYYY-MM-DD') : undefined,
         endDate: fieldsValue.endDate ? fieldsValue.endDate.format('YYYY-MM-DD') : undefined,
       };
-
+      console.log(values);
       this.setState({
         formValues: values,
       }, _ => { this.queryDataSource() });
@@ -264,9 +264,10 @@ class index extends Component {
     getSensorInfo(param).then(res => {
       this.setState({ tableLoading: false });
       const { code, data } = res.data;
+      //console.log('传感器数据:',data);
       if (code === 0) {
         this.setState({ dataSource: data.list });
-        //console.log(this.state.dataSource);
+        //console.log('传感器第一页:',this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });
@@ -438,6 +439,7 @@ class index extends Component {
       onChange: (selectedRowKeys, selectedRows) => {
         //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         this.setState({ selectedRowKeys, selectedRows });
+        //console.log(this.state.selectedRowKeys);
       },
       // onSelect:(record, selected, selectedRowKeys, selectedRows) => {
 
