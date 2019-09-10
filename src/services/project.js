@@ -40,6 +40,16 @@ export async function getInstrMemberInfo(params) {
     return axios.get('/monitorPoint/getInstrMemberInfo', { params });
 }
 
+/* 添加联系人 */
+export async function addMember(body) {
+    return axios.post('/member/addMember', body);
+}
+
+/* 查看联系人是否存在 */
+export async function getCountMemberInfo(params) {
+    return axios.get('/monitorPoint/getCountMemberInfo', { params });
+}
+
 /* 获取职位信息 */
 export async function getMemberType() {
     return axios.get('/sysCode/getMemberType');
