@@ -29,7 +29,7 @@ import {
 import debounce from 'lodash/debounce';
 import IndexInfo from './AddIndexInfo';
 import ImgMark from '@/components/ImgMark/ImgMark';
-import { getInstrMemberInfo, getMemberType, addSectorMember } from '@/services/project';
+import { getInstrMemberInfo, getMemberType, addSectorMember, getCountMemberInfo, addMember } from '@/services/project';
 import projectState from './project';
 import styles from './style.less';
 
@@ -527,7 +527,7 @@ class AddMemberInfo extends Component {
                 <Form.Item>
                   <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addJcUnit: [...this.state.addJcUnit, this.state.addJcUnit.length] }) }}>
                     <Icon type="plus" /> 批量增加单位信息
-                      </Button>
+                  </Button>
                 </Form.Item>
               </Col>
             </Row>
@@ -539,7 +539,7 @@ class AddMemberInfo extends Component {
               message={
                 <div>
                   如没有所选联系人, 请先<a onClick={_ => { this.setState({ addMemberInfoModal: true }) }}>添加人员信息</a>。添加完毕后再选择联系人
-              </div>
+                </div>
               }
               type="info"
               showIcon
@@ -681,6 +681,39 @@ class MemberForm extends Component {
 
     };
   }
+  handleSubmit = () => {
+    const { form, setVisible } = this.props;
+    const { validateFields } = form;
+    validateFields((err, values) => {
+      if (!err) {
+        let result = {
+          memberName: values.memberName,
+          memberCompany: values.memberCompany,
+          memberPhone: values.memberPhone,
+          memberEmail: values.memberEmail,
+        };
+        getCountMemberInfo(result).then(res => {
+          const { code, msg, data } = res.data;
+          if (code === 0) {
+            addMember(result).then(res => {
+              const { code, msg, data } = res.data;
+              if (code === 0) {
+                setVisible(false);
+              } else {
+                message.info(msg);
+              }
+            }).catch(err => {
+              message.error(err);
+            })
+          } else {
+            message.info(msg);
+          }
+        }).catch(err => {
+          message.error(err);
+        })
+      }
+    })
+  }
   render() {
     const { setVisible, visible, form } = this.props;
     const { getFieldDecorator } = form;
@@ -688,7 +721,7 @@ class MemberForm extends Component {
       <Modal
         title="添加人员信息"
         visible={visible}
-        // onOk={this.hideModal}
+        onOk={this.handleSubmit}
         onCancel={_ => { setVisible(false) }}
         okText="确认"
         cancelText="取消"
@@ -700,17 +733,17 @@ class MemberForm extends Component {
             })(<Input placeholder="示例: 李四" />)}
           </Form.Item>
           <Form.Item label="公司">
-            {getFieldDecorator('memberName', {
+            {getFieldDecorator('memberCompany', {
               rules: [{ required: true, message: '请输入人员所在公司' }],
             })(<Input placeholder="示例: 中大检测" />)}
           </Form.Item>
           <Form.Item label="电话">
-            {getFieldDecorator('memberName', {
+            {getFieldDecorator('memberPhone', {
               rules: [{ required: true, message: '请输入人员电话' }],
             })(<Input placeholder="示例: 12312345678" />)}
           </Form.Item>
           <Form.Item label="邮箱">
-            {getFieldDecorator('memberName', {
+            {getFieldDecorator('memberEmail', {
               rules: [{ required: true, message: '请输入人员邮箱' }],
             })(<Input placeholder="示例: 123456@qq.com" />)}
           </Form.Item>
