@@ -3,7 +3,6 @@ import React, { Component } from 'react';
 import { Modal, Col, Form, Input, Row, Select, DatePicker, message, Button, Transfer } from 'antd';
 import { getBindSector, unbindSector } from '@/services/project'
 
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
 
 const { Option } = Select;
 
@@ -29,7 +28,6 @@ class UnbindSector extends Component {
         })
         //this.terminalType();
         this.getMock();
-        console.log(this.props.unbindSector.key);
     }
     handleOkOrCancel() {
         this.setState({
@@ -113,7 +111,7 @@ class UnbindSector extends Component {
                             height:300
                         }}
                         render={item => item.title}
-                        titles={['已绑定区间','需解绑的区间']}
+                        titles={['已绑定的区间','需解绑的区间']}
                         dataSource={this.state.bindData}
                         targetKeys={targetKeys}
                         onChange={this.onChange}

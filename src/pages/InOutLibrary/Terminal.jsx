@@ -181,7 +181,9 @@ class Terminal extends Component {
       this.setState({ tableLoading: false });
       const { code, data } = res.data;
       if (code === 0) {
+        console.log(data.list);
         this.setState({ dataSource: data.list });
+        console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });

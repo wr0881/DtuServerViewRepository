@@ -1,9 +1,7 @@
 /* eslint-disable */
 import React, { Component } from 'react';
 import { Modal, Col, Form, Input, Row, Select, DatePicker, message, Button, Transfer } from 'antd';
-import { getUnbindSector, bindingSector } from '@/services/project'
-
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
+import { getUnbindSector, bindingSector } from '@/services/project';
 
 const { Option } = Select;
 
@@ -48,10 +46,34 @@ class bindSector extends Component {
             userId: 19
         }
         //console.log(params);
+        /* 模拟数据 */
+        // let unbindData = [];
+        // const unbindList = [
+        //     {sectorId:1,sectorName:'长丰路站'},
+        //     {sectorId:2,sectorName:'檀木桥站'},
+        //     {sectorId:3,sectorName:'黄土岭站'},
+        //     {sectorId:4,sectorName:'五一广场站'},
+        //     {sectorId:5,sectorName:'长丰路站'},
+        //     {sectorId:6,sectorName:'檀木桥站'},
+        //     {sectorId:7,sectorName:'黄土岭站'},
+        //     {sectorId:8,sectorName:'五一广场站'},
+        //     {sectorId:9,sectorName:'长丰路站'},
+        //     {sectorId:10,sectorName:'檀木桥站'},
+        //     {sectorId:11,sectorName:'黄土岭站'},
+        //     {sectorId:12,sectorName:'五一广场站'},
+        // ];
+        // unbindList.forEach(v => {
+        //     unbindData.push({
+        //         key:v.sectorId,
+        //         title:` ${v.sectorName} `,
+        //         description:`${v.sectorName}`
+        //     });
+        //     this.setState({unbindData});
+        // });
         getUnbindSector(params).then(res => {
             const { code, msg, data } = res.data;
             let unbindData = [];
-            //console.log(code,msg);
+            //console.log(code,msg);            
             if(code === 0){
                 //console.log(data.list);
                 const unbindList = data.list;
@@ -113,7 +135,7 @@ class bindSector extends Component {
                             height:300
                         }}
                         render={item => item.title}
-                        titles={['未绑定区间','需绑定的区间']}
+                        titles={['未绑定的区间','需绑定的区间']}
                         dataSource={this.state.unbindData}
                         targetKeys={targetKeys}
                         onChange={this.onChange}
