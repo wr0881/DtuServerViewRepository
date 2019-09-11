@@ -65,7 +65,7 @@ class ImgMark extends Component {
     // markXY.number = this.props.dot.length;
     // markXY.visible = false;
     let realXY = this.computeRealXY(markXY);
-    this.props.onChange([...this.props.dot, { ...markXY, ...realXY }]);
+    this.props.onChange([...this.props.dot, { ...markXY, ...realXY, id: Date.now().toString(36) }]);
   }
   render() {
     const { style, src } = this.props;
@@ -95,16 +95,7 @@ class ImgMark extends Component {
                 <Tooltip
                   // visible={v.visible}
                   title={
-                    // <div onClick={_ => {
-                    //   let dot = this.props.dot;
-                    //   dot.splice(i, 1);
-                    //   this.props.onChange(dot);
-                    // }}>
-                    //   {v.indexName ? v.indexName : `编号${i}`}
-                    //   &nbsp;&nbsp;
-                    //   <Icon type="close-circle" />
-                    // </div>
-                    'SL03'
+                    v.indexName ? v.indexName : `在下面表格填写测点名称`
                   }>
                   <img src={v.isMark ? isMark : mark} style={{ width: '100%', height: 'auto' }} alt="" />
                 </Tooltip >

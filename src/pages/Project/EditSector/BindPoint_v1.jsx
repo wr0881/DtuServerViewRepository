@@ -1,5 +1,4 @@
 import React, { Component, Fragment } from 'react';
-import axios from 'axios';
 import {
   Row,
   Col,
@@ -26,9 +25,7 @@ import {
   Avatar,
   Upload
 } from 'antd';
-import PointList from './PointList';
-import { observer } from 'mobx-react';
-import sectorModel from './sectorModel';
+import AddPointImg from './AddPointImg';
 import styles from './style.less';
 
 const FormItem = Form.Item;
@@ -58,23 +55,21 @@ const data = [
   },
 ];
 
-@observer
 @Form.create()
 class BindPoint extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      handlePointListVisible: false,
+      formValues: {},
+      previewUrl: '',
+
+      drawerVisible: false,
       previewVisible: false,
-
-      PointImageList: [],
-
-      getPointImageListLoading: false,
     };
   }
 
-  handlePointListVisible = flag => {
-    this.setState({ handlePointListVisible: flag });
+  handleDrawerVisible = flag => {
+    this.setState({ drawerVisible: flag });
   }
 
   handleSearch = e => {
@@ -128,7 +123,7 @@ class BindPoint extends Component {
         <FormItem>
           <Button icon="plus" type="dashd" onClick={e => {
             e.preventDefault();
-            // this.handleDrawerVisible(true);
+            this.handleDrawerVisible(true);
           }}>
             添加布点图
           </Button>
@@ -136,27 +131,11 @@ class BindPoint extends Component {
       </Form>
     );
   }
-
-  delectPointImage = id => {
-    // axios.delete('/monitorPoint/removeMonitorPointImage', {
-    //   params: {
-    //     sectorId: sectorModel.sectorId,
-    //     imageId: id
-    //   }
-    // }).then(res => {
-    //   const { code, msg, data } = res.data;
-    //   if (code === 0) {
-    //     message.info('删除成功');
-    //   }
-    // })
-    message.info(`删除${id}布点图`);
-  }
-
   render() {
     const columns = [
       {
         title: '图片',
-        dataIndex: 'imageUrl',
+        dataIndex: 'url',
         key: 'url',
         render: text => (
           <Upload
@@ -166,7 +145,7 @@ class BindPoint extends Component {
               uid: '-1',
               name: 'image.png',
               status: 'done',
-              url: window.imgAddress + text,
+              url: text,
             },]}
             onPreview={_ => { this.setState({ previewVisible: 'true', previewUrl: text }) }}
           // onChange={this.handleChange}
@@ -177,25 +156,30 @@ class BindPoint extends Component {
       },
       {
         title: '名称',
-        dataIndex: 'imageName',
+        dataIndex: 'name',
         key: 'name',
       },
       {
-        title: '图片描述',
-        dataIndex: 'imageDes',
+        title: '描述',
+        dataIndex: 'des',
         key: 'des',
+      },
+      {
+        title: '测点',
+        key: 'point',
+        dataIndex: 'point',
+        render: text => (
+          <div>{text.join(', ')}</div>
+        )
       },
       {
         title: '操作',
         key: 'action',
         render: (text, record) => (
           <span>
-            <a onClick={_ => {
-              this.handlePointListVisible(true);
-              sectorModel.selectImageId = text.imageId;
-            }}>详情</a>
+            <a>编辑</a>
             <Divider type="vertical" />
-            <a onClick={this.delectPointImage.bind(this, text.imageId)}>删除</a>
+            <a>删除</a>
             <Divider type="vertical" />
             <a>替换</a>
           </span>
@@ -208,46 +192,20 @@ class BindPoint extends Component {
         <Card bordered={false}>
           {this.renderSimpleForm()}
           <Divider />
-          <Table loading={this.state.getPointImageListLoading} columns={columns} dataSource={this.state.PointImageList} />
+          <Table columns={columns} dataSource={data} />
         </Card>
 
-        {/* 添加布点图 */}
-
-        {/* 布点图测点信息 */}
-        <PointList
-          visible={this.state.handlePointListVisible}
-          handlePointListVisible={this.handlePointListVisible}
+        <AddPointImg
+          drawerVisible={this.state.drawerVisible}
+          handleDrawerVisible={this.handleDrawerVisible}
+        // queryDataSource={this.queryDataSource}
         />
 
         <Modal visible={this.state.previewVisible} footer={null} onCancel={_ => { this.setState({ previewVisible: false }) }}>
-          <img alt="example" style={{ width: '100%' }} src={window.imgAddress + this.state.previewUrl} />
+          <img alt="example" style={{ width: '100%' }} src={this.state.previewUrl} />
         </Modal>
       </Fragment>
     );
-  }
-  componentDidMount() {
-    this.getPointImageList();
-  }
-  getPointImageList() {
-    this.setState({ getPointImageListLoading: true });
-    axios.get('/image/listMonitorPointImage', {
-      params: {
-        sectorId: sectorModel.sectorId
-      }
-    }).then(res => {
-      const { code, msg, data } = res.data;
-      if (code === 0) {
-        console.log(data);
-        this.setState({ PointImageList: data });
-      } else {
-        this.setState({ PointImageList: [] });
-      }
-      this.setState({ getPointImageListLoading: false });
-    }).catch(err => {
-      this.setState({ PointImageList: [] });
-      this.setState({ getPointImageListLoading: false });
-      console.log(err);
-    });
   }
 }
 

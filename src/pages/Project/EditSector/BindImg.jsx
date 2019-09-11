@@ -106,7 +106,7 @@ class BindImg extends Component {
           {getFieldDecorator('type')(
             <Select placeholder="请选择图片类型" style={{ width: '200px' }}>
               <Select.Option value="全部">全部</Select.Option>
-              <Select.Option value="布点图">布点图</Select.Option>
+              <Select.Option value="布点图">剖面图</Select.Option>
               <Select.Option value="现场图">现场图</Select.Option>
             </Select>
           )}
@@ -298,7 +298,6 @@ class AddImg extends Component {
               <Select
                 placeholder="请选择图片类型"
               >
-                <Option key={1}>布点图</Option>
                 <Option key={2}>现场图</Option>
                 <Option key={3}>剖面图</Option>
               </Select>
