@@ -87,7 +87,7 @@ class BindMonitorBasis extends Component {
       const values = {
         ...fieldsValue,
       };
-      console.log(values);
+      //console.log(values);
       this.setState({
         formValues: values,
       }, _ => { this.queryDataSource() });
@@ -104,10 +104,10 @@ class BindMonitorBasis extends Component {
   handleDelBasis = (record) => {
     //key
     let body = [record.key];
-    console.log(body);
+    //console.log(body);
     removeBindingMoniBas(body).then(res => {
       let result = res.data;
-      console.log(result.code);
+      //console.log(result.code);
       if(result.code === 0){
         message.success(result.msg);
         this.queryDataSource();
@@ -228,8 +228,6 @@ class AddMonitorBasis extends Component {
       const sectorId = sectormodel.sectorId;
       const values = fieldsValue;
       const params = Object.values(values);
-      console.log(values);
-      console.log(params);
       addSectorMoniBas(sectorId,params).then(res => {
         const { code, data, msg } = res.data;
         if(code === 0){

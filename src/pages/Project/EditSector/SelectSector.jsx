@@ -22,10 +22,10 @@ class SelectSector extends Component {
   getAllProject = () => {
     getAllProject().then(res => {
       const { code,msg,data } = res.data;
-      console.log(res.data);
+      //console.log(res.data);
       if(code === 0){
         this.setState({ ProjectData:data });
-        console.log(this.state.ProjectData);
+        //console.log(this.state.ProjectData);
         //this.getProjectSector();
       }else{
         this.setState({ ProjectData:[] });
@@ -38,13 +38,13 @@ class SelectSector extends Component {
   //获取项目下区间
   getProjectSector = () => {
     let projectId = this.projectId;
-    console.log(this.projectId);
+    //console.log(this.projectId);
     getProjectSector(projectId).then(res => {
       const {code,msg,data} = res.data;
-      console.log(res.data);
+      //console.log(res.data);
       if(code === 0){
         this.setState({ ProjectSectorData:data });
-        console.log(this.state.ProjectSectorData);
+        //console.log(this.state.ProjectSectorData);
       }else{
         this.setState({ ProjectSectorData:[] });
       }
@@ -92,7 +92,7 @@ class SelectSector extends Component {
               style={{ width: '200px' }} 
               options={options}  
               placeholder="选择项目" 
-              onChange={e => {this.projectId=JSON.parse(e);console.log(this.projectId);this.getProjectSector();}}
+              onChange={e => {this.projectId=JSON.parse(e);this.getProjectSector();}}
               //value={this.projectId}
             >
               {this.state.ProjectData.map(v => <Select.Option key={v.projectId} value={v.projectId}>{v.projectName}</Select.Option>)}
@@ -102,7 +102,7 @@ class SelectSector extends Component {
               style={{ width: '200px',marginLeft: '20px' }} 
               options={options}  
               placeholder="选择区间"
-              onChange={e => {this.sectorId=JSON.parse(e);console.log(this.sectorId);}} 
+              onChange={e => {this.sectorId=JSON.parse(e);}} 
             >
               {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v.sectorId}>{v.sectorName}</Select.Option>)}
             </Select>

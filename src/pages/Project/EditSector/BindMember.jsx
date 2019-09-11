@@ -88,7 +88,7 @@ class BindMember extends Component {
       const values = {
         ...fieldsValue,
       };
-      console.log(values);
+      //console.log(values);
       this.setState({
         formValues: values,
       }, _ => { this.queryDataSource() });
@@ -106,7 +106,7 @@ class BindMember extends Component {
   handleDelMember = (record) => {
     // key值
     let body = [record.key];
-    console.log(body);
+    //console.log(body);
     removeSectorMember(body).then(res => {
       let result = res.data;
       if(result.code === 0){
@@ -313,7 +313,7 @@ class AddMember extends Component {
         // memberType,
         // sectorRole 
       }];
-      console.log(values);
+      //console.log(values);
       addUnbindMember(sectorId,values).then(res => {
         const { code, data, msg } = res.data;
         //console.log(res.data);
