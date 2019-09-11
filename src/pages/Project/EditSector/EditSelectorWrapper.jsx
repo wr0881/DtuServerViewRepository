@@ -21,6 +21,9 @@ class EditSelectorWrapper extends Component {
       case 'bindPoint':
         router.push(`${match.url}/bindPoint`);
         break;
+      case 'bindBenchmark':
+        router.push(`${match.url}/bindBenchmark`);
+        break;
       default:
         break;
     }
@@ -43,6 +46,10 @@ class EditSelectorWrapper extends Component {
       {
         key: 'bindPoint',
         tab: '绑定测点',
+      },
+      {
+        key: 'bindBenchmark',
+        tab: '绑定基准点',
       },
     ];
 

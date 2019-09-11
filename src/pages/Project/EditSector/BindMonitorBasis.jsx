@@ -25,6 +25,7 @@ import {
   message,
   Tag
 } from 'antd';
+import sectormodel from './sectorModel';
 
 const FormItem = Form.Item;
 
@@ -59,7 +60,7 @@ class BindMonitorBasis extends Component {
     let params = {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
-      sectorId: 9,
+      sectorId: sectormodel.sectorId,
       ...formValues,
     };
     getBindingMonitorBasis(params).then(res => {
@@ -172,10 +173,10 @@ class BindMonitorBasis extends Component {
             {/* <a>编辑</a>
             <Divider type="vertical" /> */}
             <Popconfirm
-              title="确定删除?"
+              title="确定解除绑定关系?"
               onConfirm={()=>this.handleDelBasis(record)}
             >
-              <a>删除</a>
+              <a>解绑</a>
             </Popconfirm>
           </span>
         ),
@@ -224,7 +225,7 @@ class AddMonitorBasis extends Component {
     const { dispatch, form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-      const sectorId = 9;
+      const sectorId = sectormodel.sectorId;
       const values = fieldsValue;
       const params = Object.values(values);
       console.log(values);
@@ -250,7 +251,7 @@ class AddMonitorBasis extends Component {
 
   // 区间下没有绑定的监测依据
   NotSectorMoniBas = () =>{
-    let params = { sectorId:9 }
+    let params = { sectorId:sectormodel.sectorId }
     notSectorMoniBas(params).then(res => {
       const { code, msg, data } = res.data;
       if(code === 0) {
@@ -270,7 +271,7 @@ class AddMonitorBasis extends Component {
     return (
       <Drawer
         title="添加监测依据"
-        width={720}
+        width={360}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
       >
@@ -280,7 +281,7 @@ class AddMonitorBasis extends Component {
           onSubmit={this.handleSubmit}
         >
           <Row gutter={16}>
-            <Col span={12}>
+            <Col span={24}>
               <FormItem label="文件名称">
                 {getFieldDecorator('fileName')(
                   <Select 
@@ -309,7 +310,7 @@ class AddMonitorBasis extends Component {
               取消
             </Button>
             <Button type="primary" htmlType='submit'>
-              提交
+              绑定
             </Button>
           </div>
         </Form>

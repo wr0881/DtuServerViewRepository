@@ -4,7 +4,10 @@ import { toJS } from 'mobx';
 import { Cascader, Card, Button, Select } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { getAllProject,getProjectSector } from '@/services/project';
+import { observer } from 'mobx-react';
+import sectorModel from './sectorModel';
 
+@observer
 class SelectSector extends Component {
   constructor(props) {
     super(props);
@@ -111,7 +114,8 @@ class SelectSector extends Component {
   }
   onOk() {
     const { match } = this.props;
-
+    const sectorId = this.sectorId;
+    sectorModel.sectorId = sectorId;
     router.push('/project/editSector');
   }
   componentDidMount(){

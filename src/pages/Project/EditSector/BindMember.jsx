@@ -25,6 +25,7 @@ import {
   message,
   Tag
 } from 'antd';
+import sectormodel from './sectorModel';
 
 const FormItem = Form.Item;
 
@@ -60,7 +61,7 @@ class BindMember extends Component {
     let params = {
       pageNum: pagination.current,
       pageSize: pagination.pageSize,
-      sectorId: 9,
+      sectorId: sectormodel.sectorId,
       ...formValues,
     };
     getBindingMember(params).then(res => {
@@ -203,10 +204,10 @@ class BindMember extends Component {
             {/* <a>编辑</a>
             <Divider type="vertical" /> */}
             <Popconfirm
-              title="确定删除绑定关系?"
+              title="确定解除绑定关系?"
               onConfirm={()=>this.handleDelMember(record)}
             >
-              <a>删除</a>
+              <a>解绑</a>
             </Popconfirm>
           </span>
         ),
@@ -305,7 +306,7 @@ class AddMember extends Component {
         // memberType.splice(memberType.findIndex(item => item === undefined), 1);
         // sectorRole.splice(sectorRole.findIndex(item => item === undefined), 1);
       //}
-      const sectorId = 9;
+      const sectorId = sectormodel.sectorId;
       const values = [{
         ...fieldsValue,
         // memberName, 
@@ -315,7 +316,7 @@ class AddMember extends Component {
       console.log(values);
       addUnbindMember(sectorId,values).then(res => {
         const { code, data, msg } = res.data;
-        console.log(res.data);
+        //console.log(res.data);
         if (code === 0) {
           message.success('添加绑定成功');
           this.props.handleDrawerVisible(false);
@@ -336,12 +337,12 @@ class AddMember extends Component {
 
   // 区间下没有绑定的人员
   NotSectorMember = () => {
-    let params = { sectorId:9 }
+    let params = { sectorId:sectormodel.sectorId }
     notSectorMember(params).then(res => {
       const { code, msg, data } = res.data;
       if(code === 0) {
         this.setState({ notBindMemberData:data });
-        console.log(this.state.notBindMemberData);
+        //console.log(this.state.notBindMemberData);
       }else{
         this.setState({ notBindMemberData:[] });
       }
@@ -354,7 +355,7 @@ class AddMember extends Component {
   getSectorRole = () => {
     getMemberType().then(res => {
       const { code, msg, data } = res.data;
-      console.log(code);
+      //console.log(code);
       if(code === 0) {
         this.setState({memberType:data})
       }else{
@@ -494,7 +495,7 @@ class AddMember extends Component {
               取消
             </Button>
             <Button type="primary" htmlType='submit'>
-              提交
+              绑定
             </Button>
           </div>
         </Form>

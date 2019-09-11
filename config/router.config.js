@@ -139,6 +139,11 @@ export default [
                 name: '绑定测点',
                 component: './Project/EditSector/BindPoint',
               },
+              {
+                path: '/project/editSector/bindBenchmark',
+                name: '绑定基准点',
+                component: './Project/EditSector/bindBenchmark',
+              },
             ],
           },
           {
