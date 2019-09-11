@@ -103,7 +103,6 @@ export default [
             ],
           },
           {
-<<<<<<< HEAD
             path: '/project/selectSector',
             name: '区间管理',
             component: './Project/EditSector/SelectSector',
@@ -141,6 +140,21 @@ export default [
                 component: './Project/EditSector/BindPoint',
               },
             ],
+          },
+          {
+            path: '/project/memberinfo',
+            name: '人员管理',
+            component: './Project/MemberInfo/MemberInfo',
+          },
+          {
+            path: '/project/userinfo',
+            name: '用户管理',
+            component: './Project/UserInfo/UserInfo',
+          },
+          {
+            path: '/project/monitorbasis',
+            name: '监测依据',
+            component: './Project/MonitorBasis/MonitorBasis',
           },
           // {
           //   path: '/project/selectSector',
@@ -181,22 +195,6 @@ export default [
           //     }
           //   ],
           // },
-=======
-            path: '/project/memberinfo',
-            name: '人员管理',
-            component: './Project/MemberInfo/MemberInfo',
-          },
-          {
-            path: '/project/userinfo',
-            name: '用户管理',
-            component: './Project/UserInfo/UserInfo',
-          },
-          {
-            path: '/project/monitorbasis',
-            name: '监测依据',
-            component: './Project/MonitorBasis/MonitorBasis',
-          }
->>>>>>> 8d7ddf08e2c72d25a0889f2fae060df2aaae27b2
         ],
       },
       // // dashboard

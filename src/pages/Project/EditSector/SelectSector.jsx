@@ -1,41 +1,80 @@
 import React, { Component } from 'react';
 import router from 'umi/router';
-import { Cascader, Card, Button } from 'antd';
+import { toJS } from 'mobx';
+import { Cascader, Card, Button, Select } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-
-const options = [
-  {
-    value: 'zhejiang',
-    label: '焦柳铁路怀化至塘豹段电气化改造工程质量第三方检测服务',
-    children: [
-      {
-        value: 'hangzhou',
-        label: '海南省万宁至洋浦、文昌至琼海高速公路工程涉铁工程',
-      },
-    ],
-  },
-  {
-    value: 'jiangsu',
-    label: 'Jiangsu',
-    children: [
-      {
-        value: 'nanjing',
-        label: 'Nanjing',
-      },
-    ],
-  },
-];
-
-function onChange(value) {
-  console.log(value);
-}
+import { getAllProject,getProjectSector } from '@/services/project';
 
 class SelectSector extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      ProjectData:[],
+      projectList:[],
+      sectorList:[],
+      ProjectSectorData:[]
+    };
   }
+  //获取所有项目
+  getAllProject = () => {
+    getAllProject().then(res => {
+      const { code,msg,data } = res.data;
+      console.log(res.data);
+      if(code === 0){
+        this.setState({ ProjectData:data });
+        console.log(this.state.ProjectData);
+        //this.getProjectSector();
+      }else{
+        this.setState({ ProjectData:[] });
+      }
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+  
+  //获取项目下区间
+  getProjectSector = () => {
+    let projectId = this.projectId;
+    console.log(this.projectId);
+    getProjectSector(projectId).then(res => {
+      const {code,msg,data} = res.data;
+      console.log(res.data);
+      if(code === 0){
+        this.setState({ ProjectSectorData:data });
+        console.log(this.state.ProjectSectorData);
+      }else{
+        this.setState({ ProjectSectorData:[] });
+      }
+    }).catch(err => {
+      console.log(err);
+    })
+  }
+  
   render() {
+    const options = [];
+
+    // const options = [
+    //   {
+    //     value: '',
+    //     label: '焦柳铁路怀化至塘豹段电气化改造工程质量第三方检测服务',
+    //     children: [
+    //       {
+    //         value: 'hangzhou',
+    //         label: '海南省万宁至洋浦、文昌至琼海高速公路工程涉铁工程',
+    //       },
+    //     ],
+    //   },
+    //   {
+    //     value: 'jiangsu',
+    //     label: 'Jiangsu',
+    //     children: [
+    //       {
+    //         value: 'nanjing',
+    //         label: 'Nanjing',
+    //       },
+    //     ],
+    //   },
+    // ];
     return (
       <PageHeaderWrapper title='选择区间'>
         <Card bordered={false}>
@@ -45,7 +84,25 @@ class SelectSector extends Component {
             justifyContent: 'center',
             alignItems: 'center',
           }}>
-            <Cascader size="large" style={{ width: '500px' }} options={options} onChange={onChange} placeholder="选择区间" />
+            <Select
+              size="large" 
+              style={{ width: '200px' }} 
+              options={options}  
+              placeholder="选择项目" 
+              onChange={e => {this.projectId=JSON.parse(e);console.log(this.projectId);this.getProjectSector();}}
+              //value={this.projectId}
+            >
+              {this.state.ProjectData.map(v => <Select.Option key={v.projectId} value={v.projectId}>{v.projectName}</Select.Option>)}
+            </Select>
+            <Select
+              size="large" 
+              style={{ width: '200px',marginLeft: '20px' }} 
+              options={options}  
+              placeholder="选择区间"
+              onChange={e => {this.sectorId=JSON.parse(e);console.log(this.sectorId);}} 
+            >
+              {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v.sectorId}>{v.sectorName}</Select.Option>)}
+            </Select>
             <div style={{ paddingLeft: '25px' }}><Button size="large" type='primary' onClick={this.onOk.bind(this)}>确认</Button></div>
           </div>
         </Card>
@@ -56,6 +113,9 @@ class SelectSector extends Component {
     const { match } = this.props;
 
     router.push('/project/editSector');
+  }
+  componentDidMount(){
+    this.getAllProject();
   }
 }
 
