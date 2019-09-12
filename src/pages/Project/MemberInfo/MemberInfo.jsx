@@ -74,7 +74,7 @@ class MemberInfo extends Component {
     getMemberInfo(param).then(res => {
       this.setState({ tableLoading: false });
       const { code, data } = res.data;
-      console.log('人员信息数据:',data);
+      //console.log('人员信息数据:',data);
       if (code === 0) {
         this.setState({ dataSource: data.list });
         //console.log('人员信息第一页',this.state.dataSource);
@@ -257,7 +257,7 @@ class MemberInfo extends Component {
 
   render() {
     return (
-      <PageHeaderWrapper title='人员信息'>
+      <PageHeaderWrapper title='人员管理'>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>

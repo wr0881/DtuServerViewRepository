@@ -1,4 +1,6 @@
+/* eslint-disable */
 import React, { Component, Fragment } from 'react';
+import { getBindingMember,removeSectorMember,notSectorMember,addUnbindMember,getMemberType } from '@/services/project';
 import {
   Row,
   Col,
@@ -23,69 +25,9 @@ import {
   message,
   Tag
 } from 'antd';
+import sectormodel from './sectorModel';
 
 const FormItem = Form.Item;
-
-const columns = [
-  {
-    title: '名字',
-    dataIndex: 'name',
-    key: 'name',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: '年龄',
-    dataIndex: 'age',
-    key: 'age',
-  },
-  {
-    title: '地址',
-    dataIndex: 'address',
-    key: 'address',
-  },
-  {
-    title: '类型',
-    key: 'tags',
-    dataIndex: 'tags',
-  },
-  {
-    title: '操作',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-        <a>编辑</a>
-        <Divider type="vertical" />
-        <a>删除</a>
-        <Divider type="vertical" />
-        <a>详情</a>
-      </span>
-    ),
-  },
-];
-
-const data = [
-  {
-    key: '1',
-    name: '张三',
-    age: 32,
-    address: 'New York No. 1 Lake Park',
-    tags: '施工单位',
-  },
-  {
-    key: '2',
-    name: '李四',
-    age: 42,
-    address: 'London No. 1 Lake Park',
-    tags: '监理单位',
-  },
-  {
-    key: '3',
-    name: '王五',
-    age: 32,
-    address: 'Sidney No. 1 Lake Park',
-    tags: '建设单位',
-  },
-];
 
 @Form.create()
 class BindMember extends Component {
@@ -93,8 +35,18 @@ class BindMember extends Component {
     super(props);
     this.state = {
       formValues: {},
-
-      drawerVisible: false
+      dataSource: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        size: 'midden',
+        total: 0,
+        showSizeChanger: true,
+        showQuickJumper: true
+      },
+      drawerVisible: false,
+      tableLoading: false,
+      
     };
   }
 
@@ -102,22 +54,47 @@ class BindMember extends Component {
     this.setState({ drawerVisible: flag });
   }
 
+  // 获取绑定人员表格
+  queryDataSource = (loading = true) => {
+    this.setState({tableLoading:true && loading});
+    const { formValues, pagination } = this.state;
+    let params = {
+      pageNum: pagination.current,
+      pageSize: pagination.pageSize,
+      sectorId: sectormodel.sectorId,
+      ...formValues,
+    };
+    getBindingMember(params).then(res => {
+      this.setState({ tableLoading: false });
+      const { code, data } = res.data;
+      if(code === 0 ){
+        this.setState({ dataSource: data.list });
+        this.setState({ pagination: { ...this.state.pagination, total: data.total } });
+      }else{
+        this.setState({ dataSource: [] });
+      }
+    }).catch(err => {
+      this.setState({ tableLoading: false });
+      console.log(`BindingMember code is catch`);
+    })
+  }; 
+  //查询
   handleSearch = e => {
     e.preventDefault();
-
     const { dispatch, form } = this.props;
-
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
-      // this.setState({
-      //   formValues: fieldsValue,
-      // }, _ => { this.queryDataSource() });
-      console.log(fieldsValue);
-
+      const values = {
+        ...fieldsValue,
+      };
+      //console.log(values);
+      this.setState({
+        formValues: values,
+      }, _ => { this.queryDataSource() });
     });
   };
-
+  // 重置
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
@@ -125,6 +102,23 @@ class BindMember extends Component {
       formValues: {},
     });
   };
+  // 删除绑定关系
+  handleDelMember = (record) => {
+    // key值
+    let body = [record.key];
+    //console.log(body);
+    removeSectorMember(body).then(res => {
+      let result = res.data;
+      if(result.code === 0){
+        message.success(result.msg);
+        this.queryDataSource();
+      }else{
+        message.info(result.msg);
+      }
+    }).catch(err => {
+      message.error(err);
+    })
+  }
 
   renderSimpleForm() {
     const {
@@ -133,12 +127,12 @@ class BindMember extends Component {
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <FormItem label="人员姓名">
-          {getFieldDecorator('name')(<Input placeholder="请输入人员姓名" style={{ width: '200px' }} />)}
+          {getFieldDecorator('memberName')(<Input placeholder="请输入人员姓名" style={{ width: '200px' }} />)}
         </FormItem>
         <FormItem label="人员类型">
-          {getFieldDecorator('type')(
+          {getFieldDecorator('memberType')(
             <Select placeholder="请选择人员类型" style={{ width: '200px' }}>
-              <Select.Option value="全部">全部</Select.Option>
+              <Select.Option value="">全部</Select.Option>
               <Select.Option value="建设单位">建设单位</Select.Option>
               <Select.Option value="施工单位">施工单位</Select.Option>
               <Select.Option value="监测单位">监测单位</Select.Option>
@@ -169,22 +163,82 @@ class BindMember extends Component {
       </Form>
     );
   }
+  
   render() {
+    const columns = [
+      {
+        title: '姓名',
+        dataIndex: 'memeberName',
+        align: 'center',
+      },
+      {
+        title: '公司',
+        dataIndex: 'memberCompany',
+        align: 'center',
+      },
+      {
+        title: '邮箱',
+        dataIndex: 'memberEmail',
+        align: 'center',
+      },
+      {
+        title: '电话',
+        dataIndex: 'memberPhone',
+        align: 'center',
+      },
+      {
+        title: '人员类型',
+        dataIndex: 'memberType',
+        align: 'center',
+      },
+      {
+        title: '职位',
+        dataIndex: 'sectorRole',
+        align: 'center',
+      },
+      {
+        title: '操作',
+        align: 'center',
+        render: (text, record) => (
+          <span>
+            {/* <a>编辑</a>
+            <Divider type="vertical" /> */}
+            <Popconfirm
+              title="确定解除绑定关系?"
+              onConfirm={()=>this.handleDelMember(record)}
+            >
+              <a>解绑</a>
+            </Popconfirm>
+          </span>
+        ),
+      },
+    ];
     return (
       <Fragment>
         <Card bordered={false}>
           {this.renderSimpleForm()}
           <Divider />
-          <Table columns={columns} dataSource={data} />
+          <Table 
+            loading={this.state.tableLoading}
+            columns={columns}
+            dataSource={this.state.dataSource}
+            pagination={this.state.pagination}
+            onChange={(pagination) => {
+              this.setState({ pagination }, this.queryDataSource.bind(this));
+            }}
+          />
         </Card>
 
         <AddMember
           drawerVisible={this.state.drawerVisible}
           handleDrawerVisible={this.handleDrawerVisible}
-        // queryDataSource={this.queryDataSource}
+          queryDataSource={this.queryDataSource}
         />
       </Fragment>
     );
+  }
+  componentDidMount(){
+    this.queryDataSource();
   }
 }
 
@@ -192,8 +246,14 @@ class BindMember extends Component {
 class AddMember extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      addSensorNum: [0],
+      memberNameList: [],
+      notBindMemberData:[],
+      memberType: []
+    };
   }
+
   handleSubmit = e => {
     e.preventDefault();
 
@@ -202,23 +262,110 @@ class AddMember extends Component {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
-      // addMember(fieldsValue).then(res => {
-      //   const { code, msg } = res.data;
-      //   if (code === 0) {
-      //     message.success('添加人员成功');
-      //     this.props.handleDrawerVisible(false);
-      //     this.props.queryDataSource(false);
-      //   } else {
-      //     console.log(res.msg);
-      //     message.info(msg);
-      //   }
-      // }).catch(err => {
-      //   message.error('服务器错误');
-      // })
+      // let memberName = [];
+      // let memberType = [];
+      // let sectorRole = [];
+      // for (let item in fieldsValue) {
+      //   if (item.indexOf('memberName') > -1) {
+      //     const itemAry = item.split('_');
+      //     // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
 
+      //     // } else {
+      //     const itemVal = fieldsValue[item];
+      //     memberName[itemAry[1]] = itemVal;
+      //     // }
+      //     delete fieldsValue[item];
+      //   }
+      // }
+      // for (let item in fieldsValue) {
+      //   if (item.indexOf('memberType') > -1) {
+      //     const itemAry = item.split('_');
+      //     // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
+
+      //     // } else {
+      //     const itemVal = fieldsValue[item];
+      //     memberType[itemAry[1]] = itemVal;
+      //     // }
+      //     delete fieldsValue[item];
+      //   }
+      // }
+      // for (let item in fieldsValue) {
+      //   if (item.indexOf('sectorRole') > -1) {
+      //     const itemAry = item.split('_');
+      //     // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
+
+      //     // } else {
+      //     const itemVal = fieldsValue[item];
+      //     sectorRole[itemAry[1]] = itemVal;
+      //     // }
+      //     delete fieldsValue[item];
+      //   }
+      // }
+      // if (memberName.findIndex(item => item === undefined) > -1) {
+        // memberName.splice(memberName.findIndex(item => item === undefined), 1);
+        // memberType.splice(memberType.findIndex(item => item === undefined), 1);
+        // sectorRole.splice(sectorRole.findIndex(item => item === undefined), 1);
+      //}
+      const sectorId = sectormodel.sectorId;
+      const values = [{
+        ...fieldsValue,
+        // memberName, 
+        // memberType,
+        // sectorRole 
+      }];
+      //console.log(values);
+      addUnbindMember(sectorId,values).then(res => {
+        const { code, data, msg } = res.data;
+        //console.log(res.data);
+        if (code === 0) {
+          message.success('添加绑定成功');
+          this.props.handleDrawerVisible(false);
+          this.props.queryDataSource(false);
+        } else {
+          message.info(msg);
+        }
+      }).catch(err => {
+        
+      })
+
+      this.setState({
+        formValues: values,
+      }, _ => { this.queryDataSource });
       this.props.handleDrawerVisible(false);
+    });
+  };
+
+  // 区间下没有绑定的人员
+  NotSectorMember = () => {
+    let params = { sectorId:sectormodel.sectorId }
+    notSectorMember(params).then(res => {
+      const { code, msg, data } = res.data;
+      if(code === 0) {
+        this.setState({ notBindMemberData:data });
+        //console.log(this.state.notBindMemberData);
+      }else{
+        this.setState({ notBindMemberData:[] });
+      }
+    }).catch(err => {
+      //console.log(err);
+    })
+  };
+
+  // 获取职位信息
+  getSectorRole = () => {
+    getMemberType().then(res => {
+      const { code, msg, data } = res.data;
+      //console.log(code);
+      if(code === 0) {
+        this.setState({memberType:data})
+      }else{
+        this.setState({memberType:[]})
+      }
+    }).catch(err => {
+
     })
   }
+
   render() {
     const {
       form: { getFieldDecorator },
@@ -234,31 +381,104 @@ class AddMember extends Component {
           layout="vertical"
           hideRequiredMark
           onSubmit={this.handleSubmit}
-        >
+        > 
           <Row gutter={16}>
             <Col span={12}>
-              <FormItem label="姓名">
-                {getFieldDecorator('name')(
-                  <Select placeholder="请选择人员姓名">
-                    <Select.Option value="张三">张三</Select.Option>
-                    <Select.Option value="李四">李四</Select.Option>
+              <Form.Item label='人员'>
+                {getFieldDecorator(`memberId`)(
+                  <Select 
+                    placeholder="请选择人员"
+                    onFocus={this.NotSectorMember}
+                  >
+                    {this.state.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
                   </Select>
                 )}
-              </FormItem>
+              </Form.Item>
             </Col>
-            <Col span={12}>
-              <FormItem label="人员类型">
-                {getFieldDecorator('type')(
+            <Col span={6}>
+              <Form.Item label='人员类型'>
+                {getFieldDecorator(`memberType`)(
                   <Select placeholder="请选择人员类型">
-                    <Select.Option value="建设单位">建设单位</Select.Option>
-                    <Select.Option value="施工单位">施工单位</Select.Option>
-                    <Select.Option value="监测单位">监测单位</Select.Option>
-                    <Select.Option value="监理单位">监理单位</Select.Option>
+                    <Select.Option value={0}>建设单位</Select.Option>
+                    <Select.Option value={1}>施工单位</Select.Option>
+                    <Select.Option value={2}>监测单位</Select.Option>
+                    <Select.Option value={3}>监理单位</Select.Option>
                   </Select>
                 )}
-              </FormItem>
+              </Form.Item>
+            </Col>
+            <Col span={6}>
+              <Form.Item label='职位'>
+                {getFieldDecorator(`sectorRole`)(
+                  <Select placeholder="请选择职位">
+                    {this.state.memberType.map(v => <Select.Option key={v.id} value={v.id}>{v.itemName}</Select.Option>)}
+                  </Select>
+                )}
+              </Form.Item>
             </Col>
           </Row>
+          {/* {this.state.addSensorNum.map(i => {
+              if (i !== undefined) {
+                return (
+                  <Row gutter={16} key={i}>
+                    <Col span={10}>
+                      <Form.Item label={i > 0 ? '' : '人员'}>
+                        {getFieldDecorator(`memberName_${i}`)(
+                          <Select placeholder="请选择人员">
+                            {this.state.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <Col span={5}>
+                      <Form.Item label={i > 0 ? '' : '人员类型'}>
+                        {getFieldDecorator(`memberType_${i}`)(
+                          <Select placeholder="请选择人员类型">
+                            <Select.Option value={0}>建设单位</Select.Option>
+                            <Select.Option value={1}>施工单位</Select.Option>
+                            <Select.Option value={2}>监测单位</Select.Option>
+                            <Select.Option value={3}>监理单位</Select.Option>
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <Col span={5}>
+                      <Form.Item label={i > 0 ? '' : '职位'}>
+                        {getFieldDecorator(`sectorRole_${i}`)(
+                          <Select placeholder="请选择职位">
+                            {this.state.memberType.map(v => <Select.Option key={v.id} value={v.id}>{v.itemName}</Select.Option>)}
+                          </Select>
+                        )}
+                      </Form.Item>
+                    </Col>
+                    <Col span={4}>
+                      <Form.Item>
+                        <Button
+                          type='dashed'
+                          style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' }}
+                          onClick={_ => {
+                            const addSensorNum = this.state.addSensorNum;
+                            addSensorNum[i] = undefined;
+                            this.setState({ addSensorNum });
+                          }}
+                        >删除</Button>
+                      </Form.Item>
+                    </Col>
+                  </Row>
+                )
+              } else {
+                return null
+              }
+            })}
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item>
+                <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addSensorNum: [...this.state.addSensorNum, this.state.addSensorNum.length] }) }}>
+                  <Icon type="plus" /> 批量增加编号
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row> */}
           < div
             style={{
               position: 'absolute',
@@ -275,13 +495,18 @@ class AddMember extends Component {
               取消
             </Button>
             <Button type="primary" htmlType='submit'>
-              提交
+              绑定
             </Button>
           </div>
         </Form>
       </Drawer>
     );
   }
+  componentDidMount(){
+    this.NotSectorMember();
+    this.getSectorRole();
+  }
+  
 }
 
 export default BindMember;

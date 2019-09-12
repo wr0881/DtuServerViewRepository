@@ -4,8 +4,6 @@ import { Modal, Col, Form, Input, Row, Select, DatePicker, message } from 'antd'
 import moment from 'moment';
 import { handleModifyTerminal, getTerminalType } from '@/services/in-out-library';
 
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
-
 const { Option } = Select;
 
 @Form.create()

@@ -66,7 +66,38 @@ class UserInfo extends Component {
   }
   
   /* 表格数据 */
-  queryDataSource = (loading = true) => {
+  queryDataSource = (loading = true) => {   
+    /* 模拟数据 */
+    // const datalist = [
+    // {
+    //   userName:'testa',
+    //   phone:'15188889999',
+    //   email:'test@qq.com',
+    //   company:'中大检测',
+    //   realName:'智能研究院',
+    //   createTime:'2019-09-09 08:21:00',
+    //   key:1
+    // },
+    // {
+    //   userName:'testb',
+    //   phone:'15188889999',
+    //   email:'test@qq.com',
+    //   company:'中大检测',
+    //   realName:'智能研究院',
+    //   createTime:'2019-09-09 08:22:00',
+    //   key:2
+    // },
+    // {
+    //   userName:'testc',
+    //   phone:'15188889999',
+    //   email:'test@qq.com',
+    //   company:'中大检测',
+    //   realName:'智能研究院',
+    //   createTime:'2019-09-09 08:23:00',
+    //   key:3
+    // },
+    // ];
+    // this.setState({ dataSource: datalist });
     this.setState({ tableLoading: true && loading });
     const { formValues, pagination } = this.state;
     let param = {
@@ -75,9 +106,9 @@ class UserInfo extends Component {
       ...formValues,
     };
     getListUser(param).then(res => {
-      this.setState({ tableLoading: false });
+      this.setState({ tableLoading: false });   
       const { code, data } = res.data;
-      if (code === 0) {
+      if (code === 0) {       
         this.setState({ dataSource: data.list });
         console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
@@ -242,9 +273,9 @@ class UserInfo extends Component {
       {
         title: '区间操作',
         align: 'center',
-        width: '300px',
+        //width: '300px',
         render: (text, record) => (
-          <div style={{width:'300px'}}>
+          <div style={{}}>
             <BindSector bindSector={record} handleBindSector={this.queryDataSource} />
             <Divider type="vertical" />
             <UnbindSector unbindSector={record} handleUnBindSector={this.queryDataSource} />
@@ -261,6 +292,7 @@ class UserInfo extends Component {
       getCheckboxProps: record => ({
       }),
     };
+    
     return (
       <Table
         loading={this.state.tableLoading}
@@ -282,7 +314,7 @@ class UserInfo extends Component {
 
   render() {
     return (
-      <PageHeaderWrapper title='用户信息'>
+      <PageHeaderWrapper title='用户管理'>
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>

@@ -148,19 +148,19 @@ export default [
           },
           {
             path: '/project/memberinfo',
-            name: '人员信息',
+            name: '人员管理',
             component: './Project/MemberInfo/MemberInfo',
           },
           {
             path: '/project/userinfo',
-            name: '用户信息',
+            name: '用户管理',
             component: './Project/UserInfo/UserInfo',
           },
           {
             path: '/project/monitorbasis',
             name: '监测依据',
             component: './Project/MonitorBasis/MonitorBasis',
-          }
+          },
           // {
           //   path: '/project/selectSector',
           //   name: '区间管理',

@@ -1,4 +1,6 @@
+/* eslint-disable */
 import React, { Component, Fragment } from 'react';
+import { getBindingMonitorBasis,removeBindingMoniBas,addSectorMoniBas,notSectorMoniBas } from '@/services/project';
 import {
   Row,
   Col,
@@ -23,69 +25,9 @@ import {
   message,
   Tag
 } from 'antd';
+import sectormodel from './sectorModel';
 
 const FormItem = Form.Item;
-
-const columns = [
-  {
-    title: '监测依据ID',
-    dataIndex: 'id',
-    key: 'id',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: '监测依据名称',
-    dataIndex: 'name',
-    key: 'name',
-    render: text => <a>{text}</a>,
-  },
-  {
-    title: '操作',
-    key: 'action',
-    render: (text, record) => (
-      <span>
-        <a>编辑</a>
-        <Divider type="vertical" />
-        <a>删除</a>
-        <Divider type="vertical" />
-        <a>详情</a>
-      </span>
-    ),
-  },
-];
-
-const data = [
-  {
-    key: '1',
-    name: '《建筑基坑支护技术规程》 JGJ120-2012',
-    id: 32,
-  },
-  {
-    key: '2',
-    name: '《建筑基坑工程检测技术规范》 GB50497-2009',
-    id: 32,
-  },
-  {
-    key: '3',
-    name: '《城市轨道交通工程检测技术规范》 GB50911-2013',
-    id: 32,
-  },
-  {
-    key: '4',
-    name: '《建筑变形测量规范》 JGJ8-2016',
-    id: 32,
-  },
-  {
-    key: '5',
-    name: '《建筑地基基础工程施工质量验收规范》 GB50202-2002',
-    id: 32,
-  },
-  {
-    key: '6',
-    name: '《国家一、二等水准测量规范》 GB/T12897-2006',
-    id: 32,
-  },
-];
 
 @Form.create()
 class BindMonitorBasis extends Component {
@@ -93,8 +35,17 @@ class BindMonitorBasis extends Component {
     super(props);
     this.state = {
       formValues: {},
-
-      drawerVisible: false
+      dataSource: [],
+      pagination: {
+        current: 1,
+        pageSize: 10,
+        size: 'midden',
+        total: 0,
+        showSizeChanger: true,
+        showQuickJumper: true
+      },
+      drawerVisible: false,
+      tableLoading: false,
     };
   }
 
@@ -102,22 +53,47 @@ class BindMonitorBasis extends Component {
     this.setState({ drawerVisible: flag });
   }
 
+  // 获取绑定监测依据表格
+  queryDataSource = (loading = true) => {
+    this.setState({tableLoading:true && loading});
+    const { formValues, pagination } = this.state;
+    let params = {
+      pageNum: pagination.current,
+      pageSize: pagination.pageSize,
+      sectorId: sectormodel.sectorId,
+      ...formValues,
+    };
+    getBindingMonitorBasis(params).then(res => {
+      this.setState({ tableLoading: false });
+      const { code, data } = res.data;
+      if(code === 0 ){
+        this.setState({ dataSource: data.list });
+        this.setState({ pagination: { ...this.state.pagination, total: data.total } });
+      }else{
+        this.setState({ dataSource: [] });
+      }
+    }).catch(err => {
+      this.setState({ tableLoading: false });
+      console.log(`BindingMember code is catch`);
+    })
+  }; 
+  //查询
   handleSearch = e => {
     e.preventDefault();
-
     const { dispatch, form } = this.props;
-
     form.validateFields((err, fieldsValue) => {
       if (err) return;
 
-      // this.setState({
-      //   formValues: fieldsValue,
-      // }, _ => { this.queryDataSource() });
-      console.log(fieldsValue);
-
+      const values = {
+        ...fieldsValue,
+      };
+      //console.log(values);
+      this.setState({
+        formValues: values,
+      }, _ => { this.queryDataSource() });
     });
   };
-
+  // 重置
   handleFormReset = () => {
     const { form, dispatch } = this.props;
     form.resetFields();
@@ -125,15 +101,34 @@ class BindMonitorBasis extends Component {
       formValues: {},
     });
   };
-
+  handleDelBasis = (record) => {
+    //key
+    let body = [record.key];
+    //console.log(body);
+    removeBindingMoniBas(body).then(res => {
+      let result = res.data;
+      //console.log(result.code);
+      if(result.code === 0){
+        message.success(result.msg);
+        this.queryDataSource();
+      }else{
+        message.info(result.msg);
+      }
+    }).catch(err => {
+      message.error(err);
+    })
+  }
   renderSimpleForm() {
     const {
       form: { getFieldDecorator },
     } = this.props;
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
-        <FormItem label="监测依据名称">
-          {getFieldDecorator('name')(<Input placeholder="请输入监测依据名称" style={{ width: '200px' }} />)}
+        <FormItem label="文件编号">
+          {getFieldDecorator('number')(<Input placeholder="请输入文件编号" style={{ width: '200px' }} />)}
+        </FormItem>
+        <FormItem label="文件名称">
+          {getFieldDecorator('fileName')(<Input placeholder="请输入文件名称" style={{ width: '200px' }} />)}
         </FormItem>
         <FormItem>
           <Button type="primary" htmlType="submit">
@@ -159,21 +154,60 @@ class BindMonitorBasis extends Component {
     );
   }
   render() {
+    const columns = [
+      {
+        title: '文件编号',
+        dataIndex: 'number',
+        align: 'center',
+      },
+      {
+        title: '文件名称',
+        dataIndex: 'fileName',
+        align: 'center',
+      },
+      {
+        title: '操作',
+        align: 'center',
+        render: (text, record) => (
+          <span>
+            {/* <a>编辑</a>
+            <Divider type="vertical" /> */}
+            <Popconfirm
+              title="确定解除绑定关系?"
+              onConfirm={()=>this.handleDelBasis(record)}
+            >
+              <a>解绑</a>
+            </Popconfirm>
+          </span>
+        ),
+      },
+    ]
     return (
       <Fragment>
         <Card bordered={false}>
           {this.renderSimpleForm()}
           <Divider />
-          <Table columns={columns} dataSource={data} />
+          <Table 
+            loading={this.state.tableLoading}
+            columns={columns}
+            dataSource={this.state.dataSource}
+            pagination={this.state.pagination}
+            onChange={(pagination) => {
+              this.setState({ pagination }, this.queryDataSource.bind(this));
+            }}
+          />
         </Card>
 
         <AddMonitorBasis
           drawerVisible={this.state.drawerVisible}
           handleDrawerVisible={this.handleDrawerVisible}
-        // queryDataSource={this.queryDataSource}
+          queryDataSource={this.queryDataSource}
         />
       </Fragment>
     );
+  }
+  componentDidMount(){
+    this.queryDataSource();
   }
 }
 
@@ -181,33 +215,53 @@ class BindMonitorBasis extends Component {
 class AddMonitorBasis extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      notSectorMoniBasData:[]
+    };
   }
   handleSubmit = e => {
     e.preventDefault();
 
     const { dispatch, form } = this.props;
-
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
-      // addMember(fieldsValue).then(res => {
-      //   const { code, msg } = res.data;
-      //   if (code === 0) {
-      //     message.success('添加人员成功');
-      //     this.props.handleDrawerVisible(false);
-      //     this.props.queryDataSource(false);
-      //   } else {
-      //     console.log(res.msg);
-      //     message.info(msg);
-      //   }
-      // }).catch(err => {
-      //   message.error('服务器错误');
-      // })
-
+      const sectorId = sectormodel.sectorId;
+      const values = fieldsValue;
+      const params = Object.values(values);
+      addSectorMoniBas(sectorId,params).then(res => {
+        const { code, data, msg } = res.data;
+        if(code === 0){
+          message.success('添加绑定成功');
+          this.props.handleDrawerVisible(false);
+          this.props.queryDataSource(false);
+        } else {
+          message.info(msg);
+        }
+      }).catch(err => {
+        
+      })
+      this.setState({
+        formValues: values,
+      }, _ => { this.queryDataSource });
       this.props.handleDrawerVisible(false);
     })
   }
+
+  // 区间下没有绑定的监测依据
+  NotSectorMoniBas = () =>{
+    let params = { sectorId:sectormodel.sectorId }
+    notSectorMoniBas(params).then(res => {
+      const { code, msg, data } = res.data;
+      if(code === 0) {
+        this.setState({ notSectorMoniBasData:data });
+      }else{
+        this.setState({ notSectorMoniBasData:[] });
+      }
+    }).catch(err => {
+      //console.log(err);
+    })
+  }
+
   render() {
     const {
       form: { getFieldDecorator },
@@ -215,7 +269,7 @@ class AddMonitorBasis extends Component {
     return (
       <Drawer
         title="添加监测依据"
-        width={720}
+        width={360}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
       >
@@ -225,9 +279,16 @@ class AddMonitorBasis extends Component {
           onSubmit={this.handleSubmit}
         >
           <Row gutter={16}>
-            <Col span={12}>
-              <FormItem label="监测依据名称">
-                {getFieldDecorator('name')(<Input placeholder="请输入监测依据名称" style={{ width: '200px' }} />)}
+            <Col span={24}>
+              <FormItem label="文件名称">
+                {getFieldDecorator('fileName')(
+                  <Select 
+                    placeholder="请选择文件"
+                    onFocus={this.NotSectorMoniBas}
+                  >
+                    {this.state.notSectorMoniBasData.map(v => <Select.Option key={v.monitoringBasis} value={v.monitoringBasis}>{v.number}/{v.fileName}</Select.Option>)}
+                  </Select>
+                )}
               </FormItem>
             </Col>
           </Row>
@@ -247,12 +308,15 @@ class AddMonitorBasis extends Component {
               取消
             </Button>
             <Button type="primary" htmlType='submit'>
-              提交
+              绑定
             </Button>
           </div>
         </Form>
       </Drawer>
     );
+  }
+  componentDidMount(){
+    //this.NotSectorMoniBas();
   }
 }
 

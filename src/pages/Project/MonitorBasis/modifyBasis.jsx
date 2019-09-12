@@ -3,8 +3,6 @@ import React, { Component } from 'react';
 import { Modal, Col, Form, Input, Row, Select, DatePicker, message } from 'antd';
 import { updateBasis } from '@/services/project'
 
-import zh_CN from 'antd/lib/locale-provider/zh_CN';
-
 const { Option } = Select;
 
 @Form.create()
