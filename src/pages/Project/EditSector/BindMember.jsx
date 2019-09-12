@@ -322,7 +322,7 @@ class AddMember extends Component {
       //console.log(code);
       if(code === 0) {
         this.setState({memberType:data});
-        console.log(this.state.memberType);
+        //console.log(this.state.memberType);
       }else{
         this.setState({memberType:[]})
       }

@@ -4,11 +4,18 @@ import { Input, Typography } from 'antd';
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
+import { getSectorName } from '@/services/project';
 
 const { Title } = Typography;
 
 @observer
 class EditSelectorWrapper extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      sectorName: ''
+    };
+  }
   handleTabChange = key => {
     const { match } = this.props;
     switch (key) {
@@ -31,6 +38,19 @@ class EditSelectorWrapper extends Component {
         break;
     }
   };
+
+  //根据区间id获取区间名称
+  GetSectorName(){
+    const sectorId = sectorModel.sectorId;
+    getSectorName(sectorId).then(res => {
+      const { code,msg,data } = res.data;
+      if(code === 0){
+        const sectorName = data;
+        this.setState({sectorName});
+        //console.log('获取区间名称',this.state.sectorName);
+      }
+    })
+  }
 
   render() {
     const tabList = [
@@ -62,7 +82,7 @@ class EditSelectorWrapper extends Component {
       <PageHeaderWrapper
         title={
           <div>
-            <Title level={4}>{sectorModel.sectorName}</Title>
+            <Title level={4}>{this.state.sectorName}</Title>
           </div>
         }
         tabList={tabList}
@@ -72,6 +92,9 @@ class EditSelectorWrapper extends Component {
         {children}
       </PageHeaderWrapper>
     );
+  }
+  componentDidMount(){
+    this.GetSectorName();
   }
 }
 

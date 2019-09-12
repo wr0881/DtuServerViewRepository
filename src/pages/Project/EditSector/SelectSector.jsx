@@ -55,29 +55,7 @@ class SelectSector extends Component {
   
   render() {
     const options = [];
-
-    // const options = [
-    //   {
-    //     value: '',
-    //     label: '焦柳铁路怀化至塘豹段电气化改造工程质量第三方检测服务',
-    //     children: [
-    //       {
-    //         value: 'hangzhou',
-    //         label: '海南省万宁至洋浦、文昌至琼海高速公路工程涉铁工程',
-    //       },
-    //     ],
-    //   },
-    //   {
-    //     value: 'jiangsu',
-    //     label: 'Jiangsu',
-    //     children: [
-    //       {
-    //         value: 'nanjing',
-    //         label: 'Nanjing',
-    //       },
-    //     ],
-    //   },
-    // ];
+    
     return (
       <PageHeaderWrapper title='选择区间'>
         <Card bordered={false}>
@@ -102,9 +80,9 @@ class SelectSector extends Component {
               style={{ width: '200px',marginLeft: '20px' }} 
               options={options}  
               placeholder="选择区间"
-              onChange={e => {this.sectorId=e.sectorId,this.sectorName=e.sectorName}} 
+              onChange={e => {this.sectorId=e}} 
             >
-              {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v}>{v.sectorName}</Select.Option>)}
+              {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v.sectorId}>{v.sectorName}</Select.Option>)}
             </Select>
             <div style={{ paddingLeft: '25px' }}><Button size="large" type='primary' onClick={this.onOk.bind(this)}>确认</Button></div>
           </div>
@@ -115,14 +93,14 @@ class SelectSector extends Component {
   onOk() {
     const { match } = this.props;
     const sectorId = this.sectorId;
+    sectorModel.sectorId = sectorId;
+    // sectorModel.sectorName = this.sectorName;
     if(sectorId !== undefined){
       router.push('/project/editSector');
     }else{
       message.info('请选择区间！');
     }
-    sectorModel.sectorId = sectorId;
-    sectorModel.sectorName = this.sectorName;
-    router.push('/project/editSector');
+    
   }
   componentDidMount(){
     this.getAllProject();
