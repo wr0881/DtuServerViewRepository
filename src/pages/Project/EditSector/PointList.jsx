@@ -69,6 +69,20 @@ class PointList extends Component {
     this.setState({ pagination }, this.getPointInfoList.bind(this));
   }
 
+  delectPoint = id => {
+    axios.delete('/monitorPoint/removeMonitorPointByMpId', {
+      params: {
+        mpId:id
+      }
+    }).then(res => {
+      const { code, msg, data } = res.data;
+      if (code === 0) {
+        message.info('删除成功');
+        this.getPointInfoList();
+      }
+    });
+  }
+
   render() {
     const renderContent = (value, row, index) => {
       return (
@@ -170,7 +184,7 @@ class PointList extends Component {
               sectorModel.selectPointInfo = text;
             }}>编辑</a>
             <Divider type="vertical" />
-            <a>删除</a>
+            <a onClick={this.delectPoint.bind(this, text.mpId)}>删除</a>
           </span>
         ),
         width: '10%'

@@ -40,19 +40,36 @@ class BindBenchmark extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      dataSource:[],
+      dataSource: [],
 
-      handleAddPointBindVisible:false,
-      handleSureBenchmarkVisible:false,
+      handleAddPointBindVisible: false,
+      handleSureBenchmarkVisible: false,
+      handleDeleteBenchmarkPointVisible: false,
     };
   }
 
-  handleAddPointBindVisible = flag=>{
-    this.setState({handleAddPointBindVisible:flag});
+  handleAddPointBindVisible = flag => {
+    this.setState({ handleAddPointBindVisible: flag });
   }
 
-  handleSureBenchmarkVisible = flag=>{
-    this.setState({handleSureBenchmarkVisible:flag});
+  handleSureBenchmarkVisible = flag => {
+    this.setState({ handleSureBenchmarkVisible: flag });
+  }
+
+  handleDeleteBenchmarkPointVisible = flag => {
+    this.setState({ handleDeleteBenchmarkPointVisible: flag });
+  }
+
+  delectBenchmark = idAry => {
+    axios.put('/monitorPoint/releaseBenchmark', idAry, {
+      headers: { 'Content-Type': 'application/json' },
+    }).then(res => {
+      const { code, msg, data } = res.data;
+      if (code === 0) {
+        message.info('添加成功');
+        this.getBenchmarkList();
+      }
+    });
   }
 
   render() {
@@ -69,8 +86,8 @@ class BindBenchmark extends Component {
         render: (text, record) => {
           console.log(text);
           return (
-            <div style={{width:'1000px',overflow:'hidden'}}>
-              {text.map(v=><span>{v.monitorPointNumber},</span>)}
+            <div style={{ width: '1000px', overflow: 'hidden' }}>
+              {text.map(v => <span>{v.monitorPointNumber},</span>)}
             </div>
           )
         },
@@ -80,11 +97,21 @@ class BindBenchmark extends Component {
         key: 'action',
         render: (text, record) => (
           <span>
-            <a>编辑</a>
+            <a onClick={_ => {
+              let idAry = [text.benchId];
+              const benchmarkMonitorPoints = text.benchmarkMonitorPoints;
+              benchmarkMonitorPoints.forEach(v => {
+                idAry.push(v.mpId);
+              });
+              this.delectBenchmark(idAry);
+            }}>删除基准点</a>
             <Divider type="vertical" />
-            <a>删除</a>
+            <a onClick={_ => {
+              sectorModel.selectBenchmarkPointList = text.benchmarkMonitorPoints;
+              this.handleDeleteBenchmarkPointVisible(true);
+            }}>删除测点</a>
             <Divider type="vertical" />
-            <a onClick={_=>{
+            <a onClick={_ => {
               sectorModel.selectBenchmarkId = text.benchId;
               this.handleAddPointBindVisible(true);
             }}>添加</a>
@@ -100,7 +127,7 @@ class BindBenchmark extends Component {
             e.preventDefault();
             this.handleSureBenchmarkVisible(true);
           }}>
-            声明测点
+            声明基准点
           </Button>
           <Divider />
           <Table columns={columns} dataSource={this.state.dataSource} />
@@ -109,11 +136,19 @@ class BindBenchmark extends Component {
         <AddPointBind
           visible={this.state.handleAddPointBindVisible}
           handleAddPointBindVisible={this.handleAddPointBindVisible}
+          getBenchmarkList={this.getBenchmarkList}
         />
 
         <SureBenchmark
           visible={this.state.handleSureBenchmarkVisible}
           handleSureBenchmarkVisible={this.handleSureBenchmarkVisible}
+          getBenchmarkList={this.getBenchmarkList}
+        />
+
+        <DeleteBenchmarkPoint
+          visible={this.state.handleDeleteBenchmarkPointVisible}
+          handleDeleteBenchmarkPointVisible={this.handleDeleteBenchmarkPointVisible}
+          getBenchmarkList={this.getBenchmarkList}
         />
       </Fragment>
     );
@@ -122,12 +157,12 @@ class BindBenchmark extends Component {
     this.getBenchmarkList();
   }
   getBenchmarkList = () => {
-    axios.get('/monitorPoint/listBenchmarkBinding',{
-      params:{sectorId:sectorModel.sectorId}
+    axios.get('/monitorPoint/listBenchmarkBinding', {
+      params: { sectorId: sectorModel.sectorId }
     }).then(res => {
       const { code, msg, data } = res.data;
       if (code === 0) {
-        this.setState({dataSource:data});
+        this.setState({ dataSource: data });
       }
     })
   }
@@ -149,12 +184,13 @@ class AddPointBind extends Component {
     validateFields((err, values) => {
       if (!err) {
         let pointList = values.pointList;
-        axios.put(`/monitorPoint/addBenchmarkBinding?benchId=${sectorModel.selectBenchmarkId}`,pointList, {
+        axios.put(`/monitorPoint/addBenchmarkBinding?benchId=${sectorModel.selectBenchmarkId}`, pointList, {
           headers: { 'Content-Type': 'application/json' }
-        }).then(res=>{
-          const {code,msg,data} = res.data;
-          if(code===0){
+        }).then(res => {
+          const { code, msg, data } = res.data;
+          if (code === 0) {
             message.info('添加成功');
+            this.props.getBenchmarkList();
             this.props.handleAddPointBindVisible(false);
           }
         })
@@ -164,9 +200,9 @@ class AddPointBind extends Component {
 
   getlistPoint = () => {
     this.setState({ listPointLoading: true });
-    axios.get('/monitorPoint/listBenchmarkNotBinding',{
-      params:{
-        sectorId:sectorModel.sectorId
+    axios.get('/monitorPoint/listBenchmarkNotBinding', {
+      params: {
+        sectorId: sectorModel.sectorId
       }
     }).then(res => {
       const { code, data, msg } = res.data;
@@ -265,10 +301,11 @@ class SureBenchmark extends Component {
     validateFields((err, values) => {
       if (!err) {
         let pointList = values.pointList;
-        axios.put(`/monitorPoint/declarationBenchmark?mpId=${pointList}`).then(res=>{
-          const {code,msg,data} = res.data;
-          if(code===0){
-            message.info('添加成功');
+        axios.put(`/monitorPoint/declarationBenchmark?mpId=${pointList}`).then(res => {
+          const { code, msg, data } = res.data;
+          if (code === 0) {
+            message.info('删除成功');
+            this.props.getBenchmarkList();
             this.props.handleSureBenchmarkVisible(false);
           }
         })
@@ -278,9 +315,9 @@ class SureBenchmark extends Component {
 
   getlistPoint = () => {
     this.setState({ listPointLoading: true });
-    axios.get('/monitorPoint/listBenchmarkNotBinding',{
-      params:{
-        sectorId:sectorModel.sectorId
+    axios.get('/monitorPoint/listBenchmarkNotBinding', {
+      params: {
+        sectorId: sectorModel.sectorId
       }
     }).then(res => {
       const { code, data, msg } = res.data;
@@ -350,6 +387,96 @@ class SureBenchmark extends Component {
             }}
           >
             <Button onClick={_ => { this.props.handleAddPointBindVisible(false) }} style={{ marginRight: 8 }}>
+              取消
+            </Button>
+            <Button type="primary" onClick={this.handleSubmit}>
+              提交
+            </Button>
+          </div>
+        </Form>
+      </Drawer>
+    );
+  }
+}
+
+@Form.create()
+class DeleteBenchmarkPoint extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+
+    };
+  }
+  handleSubmit = e => {
+    const { form } = this.props;
+    const { validateFields } = form;
+    validateFields((err, values) => {
+      if (!err) {
+        let pointList = values.pointList;
+        axios.put(`/monitorPoint/releaseBenchmark`, pointList, {
+          headers: { 'Content-Type': 'application/json' },
+        }).then(res => {
+          const { code, msg, data } = res.data;
+          if (code === 0) {
+            message.info('删除成功');
+            this.props.getBenchmarkList();
+            this.props.handleDeleteBenchmarkPointVisible(false);
+          }
+        })
+      }
+    });
+  }
+
+  render() {
+    const {
+      form: { getFieldDecorator },
+    } = this.props;
+
+    return (
+      <Drawer
+        title="删除基准点下的测点"
+        width={720}
+        onClose={_ => { this.props.handleDeleteBenchmarkPointVisible(false) }}
+        visible={this.props.visible}
+      >
+        <Form
+          layout="vertical"
+        >
+          <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item label={'测点名称'}>
+                {getFieldDecorator(`pointList`, {
+                  rules: [
+                    { required: true, message: '不允许为空' },
+                  ],
+                })(
+                  <Select
+                    mode="multiple"
+                    placeholder="请选择需要删除的测点名称"
+                    dropdownMatchSelectWidth={false}
+                    style={{ width: '100%' }}
+                  >
+                    {sectorModel.selectBenchmarkPointList.map(v => (
+                      <Option key={v.mpId}>{v.monitorPointNumber}</Option>
+                    ))}
+                  </Select>
+                )}
+              </Form.Item>
+            </Col>
+          </Row>
+          < div
+            style={{
+              position: 'absolute',
+              left: 0,
+              bottom: 0,
+              width: '100%',
+              borderTop: '1px solid #e9e9e9',
+              padding: '10px 16px',
+              background: '#fff',
+              textAlign: 'right',
+            }}
+          >
+            <Button onClick={_ => { this.props.handleDeleteBenchmarkPointVisible(false) }} style={{ marginRight: 8 }}>
               取消
             </Button>
             <Button type="primary" onClick={this.handleSubmit}>

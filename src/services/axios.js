@@ -7,7 +7,7 @@ import axios from 'axios';
 axios.defaults.baseURL = 'http://10.88.89.73:9093'; //李茂平
 // axios.defaults.baseURL = 'http://10.88.89.224:8880'; // 蒋雄威
 
-window.imgAddress = 'http://123.207.88.210';
+window.imgAddress = 'http://10.88.89.73:8100';
 
 axios.defaults.headers.common['Authorization'] =
   'Bearer eyJhbGciOiJIUzI1NiIsInppcCI6IkRFRiJ9.eNqqVspMLFGyMjQ1NTQ2MjK2tNBRSixNUbJSKk9NUtJRSq0ogEmaGIIkS4tTi_wSc1OBKopLC1KLElNyM_OUagEAAAD__w.TRH7E2NyAL2HhXXIbTUwJOEHtzd3NxyWY2WMlnKt-2I';
