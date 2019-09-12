@@ -115,18 +115,14 @@ class SelectSector extends Component {
   onOk() {
     const { match } = this.props;
     const sectorId = this.sectorId;
-    sectorModel.sectorId = sectorId;
-<<<<<<< HEAD
-    sectorModel.sectorName = this.sectorName;
-    router.push('/project/editSector');
-=======
     if(sectorId !== undefined){
       router.push('/project/editSector');
     }else{
       message.info('请选择区间！');
     }
-    
->>>>>>> 661ba64528e8b808250d748e4306f9ee83089ad5
+    sectorModel.sectorId = sectorId;
+    sectorModel.sectorName = this.sectorName;
+    router.push('/project/editSector');
   }
   componentDidMount(){
     this.getAllProject();
