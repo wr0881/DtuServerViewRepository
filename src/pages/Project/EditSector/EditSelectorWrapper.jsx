@@ -1,10 +1,13 @@
 import React, { Component } from 'react';
 import router from 'umi/router';
 import { Input, Typography } from 'antd';
+import { observer } from 'mobx-react';
+import sectorModel from './sectorModel';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 
 const { Title } = Typography;
 
+@observer
 class EditSelectorWrapper extends Component {
   handleTabChange = key => {
     const { match } = this.props;
@@ -59,8 +62,7 @@ class EditSelectorWrapper extends Component {
       <PageHeaderWrapper
         title={
           <div>
-            {/* <Title level={3}>焦柳铁路怀化至塘豹段电气化改造工程质量第三方检测服务</Title> */}
-            <Title level={4}>海南省万宁至洋浦、文昌至琼海高速公路工程涉铁工程</Title>
+            <Title level={4}>{sectorModel.sectorName}</Title>
           </div>
         }
         tabList={tabList}

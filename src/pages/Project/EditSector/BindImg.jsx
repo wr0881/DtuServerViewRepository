@@ -413,6 +413,7 @@ class AddImg extends Component {
         </Form> */}
         <form
           method="POST"
+          target="form"
           enctype="multipart/form-data"
           action="http://10.88.89.73:8090/upload/uploadImageList"
         >
@@ -430,7 +431,14 @@ class AddImg extends Component {
           </select>
           <button type="submit">upload</button>
         </form>
-      </Drawer >
+        <iframe
+          name="form"
+          style={{ display: 'none' }}
+          onLoad={_ => {
+            this.props.handleDrawerVisible(false);
+            this.props.getImageList();
+          }} />
+      </Drawer>
     );
   }
 }
@@ -439,99 +447,22 @@ class AddImg extends Component {
 class EditImage extends Component {
   constructor(props) {
     super(props);
-    this.state = {
-      imgUrl: '',
-      imgFile: ''
-    };
+    this.state = {};
   }
-
-  handleSubmit = e => {
-    const { form } = this.props;
-    const { validateFields } = form;
-    validateFields((err, values) => {
-      if (!err) {
-        let param = new FormData();
-        param.append('img', this.state.imgFile);
-        axios.post(`http://10.88.89.73:8090/upload/updateImage?sectorId=${sectorModel.selectImageListId}`, param).then(res => {
-          const { code, msg, data } = res.data;
-          if (code === 0) {
-            message.info('编辑成功');
-            // this.props.getBenchmarkList();
-            this.props.getImageList();
-            this.props.handleEditImageVisible(false);
-          }
-        })
-        console.log(image);
-      }
-    });
-  }
-
   render() {
     const {
       form: { getFieldDecorator },
     } = this.props;
     return (
       <Drawer
-        title="编辑图片"
+        title="替换图片"
         width={720}
         onClose={_ => { this.props.handleEditImageVisible(false) }}
         visible={this.props.visible}
       >
-        {/* <Form
-          layout="vertical"
-          hideRequiredMark
-        >
-          <Form.Item label="选择图片">
-            <input
-              ref={ref => { this.imgSelect = ref }}
-              type="file"
-              style={{ display: 'none' }}
-              onChange={e => {
-                const file = e.target.files.item(0);
-                if (file) {
-                  const url = window.URL.createObjectURL(file);
-                  this.setState({ imgUrl: url, imgFile: file });
-                }
-              }}
-            />
-            <div className={styles.addFile} onClick={_ => { this.imgSelect.click() }}>
-              {this.state.imgUrl ?
-                <img src={this.state.imgUrl} style={{ width: '100%', height: '100%' }} alt="" />
-                :
-                <div style={{
-                  width: '100%',
-                  height: '62px',
-                  textAlign: 'center',
-                  color: '#999',
-                }}>
-                  <Icon type="plus" style={{ fontSize: '32px' }} />
-                  <div>Upload</div>
-                </div>
-              }
-            </div>
-          </Form.Item>
-          <div
-            style={{
-              position: 'absolute',
-              left: 0,
-              bottom: 0,
-              width: '100%',
-              borderTop: '1px solid #e9e9e9',
-              padding: '10px 16px',
-              background: '#fff',
-              textAlign: 'right',
-            }}
-          >
-            <Button onClick={_ => { this.props.handleDrawerVisible(false) }} style={{ marginRight: 8 }}>
-              取消
-            </Button>
-            <Button type="primary" onClick={this.handleSubmit}>
-              提交
-            </Button>
-          </div>
-        </Form> */}
         <form
           method="POST"
+          target="form"
           enctype="multipart/form-data"
           action="http://10.88.89.73:8090/upload/updateImage"
         >
@@ -543,6 +474,13 @@ class EditImage extends Component {
           <input type="input" name="imageListId" placeholder="图片ListID" value={sectorModel.selectImageListId}></input>
           <button type="submit">upload</button>
         </form>
+        <iframe
+          name="form"
+          style={{ display: 'none' }}
+          onLoad={_ => {
+            this.props.handleEditImageVisible(false);
+            this.props.getImageList();
+          }} />
       </Drawer >
     );
   }

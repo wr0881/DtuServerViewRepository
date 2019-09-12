@@ -4,6 +4,7 @@ import { getAllProject,getProjectSector } from '@/services/project';
 class SectorModel {
   @observable projectId = '';
   @observable sectorId = '';
+  @observable sectorName = '';
 
   @observable selectImageId = '';
   @observable selectImageListId = '';

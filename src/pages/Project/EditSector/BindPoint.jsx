@@ -218,7 +218,7 @@ class BindPoint extends Component {
   }
   getPointImageList() {
     this.setState({ getPointImageListLoading: true });
-    axios.get('/image/listMonitorPointImage', {
+    axios.get('/image/listSectorPointImage', {
       params: {
         sectorId: sectorModel.sectorId
       }
@@ -261,8 +261,9 @@ class AddImg extends Component {
       >
         <form
           method="POST"
+          target="form"
           enctype="multipart/form-data"
-          action="http://10.88.89.73:8090/upload/uploadImage"
+          action="http://10.88.89.73:8090/upload/uploadImageList"
         >
           <input
             type="file"
@@ -271,8 +272,6 @@ class AddImg extends Component {
             accept=".jpg,.png"
           />
           <input type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
-          <input type="input" name="imageName" placeholder="图片名称"></input>
-          <input type="input" name="description" placeholder="图片描述"></input>
           <select name="type">
             <option value="1">布点图</option>
             <option value="2">现场图</option>
@@ -280,6 +279,7 @@ class AddImg extends Component {
           </select>
           <button type="submit">upload</button>
         </form>
+        <iframe name="form" id="form" style={{ display: 'none' }}></iframe>
       </Drawer >
     );
   }

@@ -157,7 +157,7 @@ class BindMember extends Component {
             e.preventDefault();
             this.handleDrawerVisible(true);
           }}>
-            添加人员
+            绑定人员
           </Button>
         </FormItem>
       </Form>
@@ -372,7 +372,7 @@ class AddMember extends Component {
     } = this.props;
     return (
       <Drawer
-        title="添加人员"
+        title="绑定人员"
         width={720}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
@@ -411,7 +411,7 @@ class AddMember extends Component {
               <Form.Item label='职位'>
                 {getFieldDecorator(`sectorRole`)(
                   <Select placeholder="请选择职位">
-                    {this.state.memberType.map(v => <Select.Option key={v.id} value={v.id}>{v.itemName}</Select.Option>)}
+                    {this.state.memberType.map(v => <Select.Option key={v.id} value={v.scId}>{v.itemName}</Select.Option>)}
                   </Select>
                 )}
               </Form.Item>

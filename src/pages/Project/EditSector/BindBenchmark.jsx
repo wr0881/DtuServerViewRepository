@@ -28,6 +28,7 @@ import {
   Spin
 } from 'antd';
 import PointList from './PointList';
+import debounce from 'lodash/debounce';
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
 import styles from './style.less';
@@ -66,7 +67,7 @@ class BindBenchmark extends Component {
     }).then(res => {
       const { code, msg, data } = res.data;
       if (code === 0) {
-        message.info('添加成功');
+        message.info('删除成功');
         this.getBenchmarkList();
       }
     });
@@ -163,6 +164,8 @@ class BindBenchmark extends Component {
       const { code, msg, data } = res.data;
       if (code === 0) {
         this.setState({ dataSource: data });
+      } else {
+        this.setState({ dataSource: [] });
       }
     })
   }
@@ -198,11 +201,12 @@ class AddPointBind extends Component {
     });
   }
 
-  getlistPoint = () => {
+  getlistPoint = v => {
     this.setState({ listPointLoading: true });
     axios.get('/monitorPoint/listBenchmarkNotBinding', {
       params: {
-        sectorId: sectorModel.sectorId
+        sectorId: sectorModel.sectorId,
+        monitorPointNumber: v
       }
     }).then(res => {
       const { code, data, msg } = res.data;
@@ -248,8 +252,8 @@ class AddPointBind extends Component {
                     placeholder="请选择测点名称"
                     loading={this.state.getlistPointLoading}
                     notFoundContent={this.state.getlistPointLoading ? <Spin size="small" /> : null}
-                    onSearch={this.getlistPoint}
-                    dropdownMatchSelectWidth={false}
+                    onFocus={this.getlistPoint}
+                    optionFilterProp='children'
                     style={{ width: '100%' }}
                   >
                     {this.state.listPoint.map(v => (
@@ -290,9 +294,9 @@ class SureBenchmark extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      listPoint: [],
+      listPointSure: [],
 
-      listPointLoading: false
+      listPointSureLoading: false
     };
   }
   handleSubmit = e => {
@@ -304,7 +308,7 @@ class SureBenchmark extends Component {
         axios.put(`/monitorPoint/declarationBenchmark?mpId=${pointList}`).then(res => {
           const { code, msg, data } = res.data;
           if (code === 0) {
-            message.info('删除成功');
+            message.info('添加成功');
             this.props.getBenchmarkList();
             this.props.handleSureBenchmarkVisible(false);
           }
@@ -313,24 +317,25 @@ class SureBenchmark extends Component {
     });
   }
 
-  getlistPoint = () => {
-    this.setState({ listPointLoading: true });
+  getlistPointSure = v => {
+    this.setState({ listPointSureLoading: true });
     axios.get('/monitorPoint/listBenchmarkNotBinding', {
       params: {
-        sectorId: sectorModel.sectorId
+        sectorId: sectorModel.sectorId,
+        monitorPointNumber: v
       }
     }).then(res => {
       const { code, data, msg } = res.data;
       if (code === 0) {
-        this.setState({ listPoint: data });
+        this.setState({ listPointSure: data });
         console.log(data);
       } else {
         console.log(msg);
       }
-      this.setState({ listPointLoading: false });
+      this.setState({ listPointSureLoading: false });
     }).catch(err => {
       console.log(err);
-      this.setState({ listPointLoading: false });
+      this.setState({ listPointSureLoading: false });
     })
   }
 
@@ -360,15 +365,15 @@ class SureBenchmark extends Component {
                   <Select
                     showSearch
                     placeholder="请选择测点名称"
-                    loading={this.state.getlistPointLoading}
-                    notFoundContent={this.state.getlistPointLoading ? <Spin size="small" /> : null}
-                    onSearch={this.getlistPoint}
-                    dropdownMatchSelectWidth={false}
+                    loading={this.state.getlistPointSureLoading}
+                    notFoundContent={this.state.getlistPointSureLoading ? <Spin size="small" /> : null}
+                    onFocus={this.getlistPointSure}
+                    optionFilterProp='children'
                     style={{ width: '100%' }}
                   >
-                    {this.state.listPoint.map(v => (
-                      <Option key={v.mpId}>{v.monitorPointNumber}</Option>
-                    ))}
+                    {this.state.listPointSure.map(v => {
+                      return <Option value={v.mpId}>{v.monitorPointNumber}</Option>
+                    })}
                   </Select>
                 )}
               </Form.Item>
@@ -386,7 +391,7 @@ class SureBenchmark extends Component {
               textAlign: 'right',
             }}
           >
-            <Button onClick={_ => { this.props.handleAddPointBindVisible(false) }} style={{ marginRight: 8 }}>
+            <Button onClick={_ => { this.props.handleSureBenchmarkVisible(false) }} style={{ marginRight: 8 }}>
               取消
             </Button>
             <Button type="primary" onClick={this.handleSubmit}>

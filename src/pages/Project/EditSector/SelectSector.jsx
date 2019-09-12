@@ -102,9 +102,9 @@ class SelectSector extends Component {
               style={{ width: '200px',marginLeft: '20px' }} 
               options={options}  
               placeholder="选择区间"
-              onChange={e => {this.sectorId=JSON.parse(e);}} 
+              onChange={e => {this.sectorId=e.sectorId,this.sectorName=e.sectorName}} 
             >
-              {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v.sectorId}>{v.sectorName}</Select.Option>)}
+              {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v}>{v.sectorName}</Select.Option>)}
             </Select>
             <div style={{ paddingLeft: '25px' }}><Button size="large" type='primary' onClick={this.onOk.bind(this)}>确认</Button></div>
           </div>
@@ -116,6 +116,7 @@ class SelectSector extends Component {
     const { match } = this.props;
     const sectorId = this.sectorId;
     sectorModel.sectorId = sectorId;
+    sectorModel.sectorName = this.sectorName;
     router.push('/project/editSector');
   }
   componentDidMount(){

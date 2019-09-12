@@ -41,7 +41,7 @@ class Login extends Component {
         const params = new URLSearchParams();
         params.append('userName', values.username);
         params.append('password', values.password);
-        axios.post(`/token/login`, params)
+        axios.post(`/token/consoleLogin`, params)
           .then(response => {
             //console.log(response)
             let result = response.data
