@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import router from 'umi/router';
 import { toJS } from 'mobx';
-import { Cascader, Card, Button, Select } from 'antd';
+import { Cascader, Card, Button, Select, message } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { getAllProject,getProjectSector } from '@/services/project';
 import { observer } from 'mobx-react';
@@ -116,8 +116,17 @@ class SelectSector extends Component {
     const { match } = this.props;
     const sectorId = this.sectorId;
     sectorModel.sectorId = sectorId;
+<<<<<<< HEAD
     sectorModel.sectorName = this.sectorName;
     router.push('/project/editSector');
+=======
+    if(sectorId !== undefined){
+      router.push('/project/editSector');
+    }else{
+      message.info('请选择区间！');
+    }
+    
+>>>>>>> 661ba64528e8b808250d748e4306f9ee83089ad5
   }
   componentDidMount(){
     this.getAllProject();

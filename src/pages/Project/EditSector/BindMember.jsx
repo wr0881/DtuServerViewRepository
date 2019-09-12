@@ -110,7 +110,7 @@ class BindMember extends Component {
     removeSectorMember(body).then(res => {
       let result = res.data;
       if(result.code === 0){
-        message.success(result.msg);
+        message.success('解绑人员成功!');
         this.queryDataSource();
       }else{
         message.info(result.msg);
@@ -247,7 +247,7 @@ class AddMember extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      addSensorNum: [0],
+      addMemberNum: [0],
       memberNameList: [],
       notBindMemberData:[],
       memberType: []
@@ -261,77 +261,41 @@ class AddMember extends Component {
 
     form.validateFields((err, fieldsValue) => {
       if (err) return;
-
-      // let memberName = [];
-      // let memberType = [];
-      // let sectorRole = [];
-      // for (let item in fieldsValue) {
-      //   if (item.indexOf('memberName') > -1) {
-      //     const itemAry = item.split('_');
-      //     // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
-
-      //     // } else {
-      //     const itemVal = fieldsValue[item];
-      //     memberName[itemAry[1]] = itemVal;
-      //     // }
-      //     delete fieldsValue[item];
-      //   }
-      // }
-      // for (let item in fieldsValue) {
-      //   if (item.indexOf('memberType') > -1) {
-      //     const itemAry = item.split('_');
-      //     // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
-
-      //     // } else {
-      //     const itemVal = fieldsValue[item];
-      //     memberType[itemAry[1]] = itemVal;
-      //     // }
-      //     delete fieldsValue[item];
-      //   }
-      // }
-      // for (let item in fieldsValue) {
-      //   if (item.indexOf('sectorRole') > -1) {
-      //     const itemAry = item.split('_');
-      //     // if (this.state.cancelSensorNum.includes(Number(itemAry[1]))) {
-
-      //     // } else {
-      //     const itemVal = fieldsValue[item];
-      //     sectorRole[itemAry[1]] = itemVal;
-      //     // }
-      //     delete fieldsValue[item];
-      //   }
-      // }
-      // if (memberName.findIndex(item => item === undefined) > -1) {
-        // memberName.splice(memberName.findIndex(item => item === undefined), 1);
-        // memberType.splice(memberType.findIndex(item => item === undefined), 1);
-        // sectorRole.splice(sectorRole.findIndex(item => item === undefined), 1);
-      //}
-      const sectorId = sectormodel.sectorId;
-      const values = [{
-        ...fieldsValue,
-        // memberName, 
-        // memberType,
-        // sectorRole 
-      }];
-      //console.log(values);
-      addUnbindMember(sectorId,values).then(res => {
-        const { code, data, msg } = res.data;
-        //console.log(res.data);
-        if (code === 0) {
-          message.success('添加绑定成功');
-          this.props.handleDrawerVisible(false);
-          this.props.queryDataSource(false);
-        } else {
-          message.info(msg);
-        }
-      }).catch(err => {
+      
+      console.log(fieldsValue);
+      if(!err){
+        let result = [];
         
-      })
+        let memberIdKeys = Object.keys(fieldsValue).filter(item => item.indexOf('memberId_') > -1);
+        let memberTypeKeys = Object.keys(fieldsValue).filter(item => item.indexOf('memberType_') > -1);
+        let sectorRoleKeys = Object.keys(fieldsValue).filter(item => item.indexOf('sectorRole_') > -1);
 
-      this.setState({
-        formValues: values,
-      }, _ => { this.queryDataSource });
-      this.props.handleDrawerVisible(false);
+        for(let i = 0; i < memberIdKeys.length; i++){
+          result.push({
+            memberId: fieldsValue[memberIdKeys[i]],
+            memberType: fieldsValue[memberTypeKeys[i]],
+            sectorRole: fieldsValue[sectorRoleKeys[i]]
+          })
+        }
+        const sectorId = sectormodel.sectorId;
+        addUnbindMember(sectorId,result).then(res => {
+          const { code, data, msg } = res.data;
+          if (code === 0) {
+            message.success('绑定成功');
+            this.props.handleDrawerVisible(false);
+            this.props.queryDataSource(false);
+          } else {
+            message.info(msg);
+          }
+        }).catch(err => {
+          
+        })
+
+        this.setState({
+          formValues: result,
+        }, _ => { this.queryDataSource });
+        this.props.handleDrawerVisible(false);
+      }
     });
   };
 
@@ -357,7 +321,8 @@ class AddMember extends Component {
       const { code, msg, data } = res.data;
       //console.log(code);
       if(code === 0) {
-        this.setState({memberType:data})
+        this.setState({memberType:data});
+        console.log(this.state.memberType);
       }else{
         this.setState({memberType:[]})
       }
@@ -382,7 +347,81 @@ class AddMember extends Component {
           hideRequiredMark
           onSubmit={this.handleSubmit}
         > 
+          {this.state.addMemberNum.map(i => {
+            if(i !== undefined){
+              return(
+                <Row gutter={16} key={i}>
+                  <Col span={10}>
+                    <Form.Item label={i > 0 ? '' : '人员'}>
+                      {getFieldDecorator(`memberId_${i}`, {
+                          rules: [
+                            { required: true, message: '不允许为空' },
+                          ],
+                        })(
+                        <Select placeholder="请选择人员">
+                          {this.state.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
+                        </Select>
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={5}>
+                    <Form.Item label={i > 0 ? '' : '人员类型'}>
+                      {getFieldDecorator(`memberType_${i}`, {
+                          rules: [
+                            { required: true, message: '不允许为空' },
+                          ],
+                        })(
+                        <Select placeholder="请选择人员类型">
+                          <Select.Option value={0}>建设单位</Select.Option>
+                          <Select.Option value={1}>施工单位</Select.Option>
+                          <Select.Option value={2}>监测单位</Select.Option>
+                          <Select.Option value={3}>监理单位</Select.Option>
+                        </Select>
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={5}>
+                    <Form.Item label={i > 0 ? '' : '职位'}>
+                      {getFieldDecorator(`sectorRole_${i}`, {
+                          rules: [
+                            { required: true, message: '不允许为空' },
+                          ],
+                        })(
+                        <Select placeholder="请选择职位">
+                          {this.state.memberType.map(v => <Select.Option key={v.id} value={v.id}>{v.itemName}</Select.Option>)}
+                        </Select>
+                      )}
+                    </Form.Item>
+                  </Col>
+                  <Col span={4}>
+                    <Form.Item>
+                      <Button
+                        type='dashed'
+                        style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' } && i === 0 ? {display:'none'}:{display:'block'}}
+                        onClick={_ => {
+                          const addMemberNum = this.state.addMemberNum;
+                          addMemberNum[i] = undefined;
+                          this.setState({ addMemberNum });
+                        }}
+                      >删除</Button>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              )
+            }else{
+              return null
+            }
+          })}
           <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item>
+                <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addMemberNum: [...this.state.addMemberNum, this.state.addMemberNum.length] }) }}>
+                  <Icon type="plus" /> 批量绑定人员
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* <Row gutter={16}>
             <Col span={12}>
               <Form.Item label='人员'>
                 {getFieldDecorator(`memberId`)(
@@ -414,68 +453,6 @@ class AddMember extends Component {
                     {this.state.memberType.map(v => <Select.Option key={v.id} value={v.scId}>{v.itemName}</Select.Option>)}
                   </Select>
                 )}
-              </Form.Item>
-            </Col>
-          </Row>
-          {/* {this.state.addSensorNum.map(i => {
-              if (i !== undefined) {
-                return (
-                  <Row gutter={16} key={i}>
-                    <Col span={10}>
-                      <Form.Item label={i > 0 ? '' : '人员'}>
-                        {getFieldDecorator(`memberName_${i}`)(
-                          <Select placeholder="请选择人员">
-                            {this.state.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Col>
-                    <Col span={5}>
-                      <Form.Item label={i > 0 ? '' : '人员类型'}>
-                        {getFieldDecorator(`memberType_${i}`)(
-                          <Select placeholder="请选择人员类型">
-                            <Select.Option value={0}>建设单位</Select.Option>
-                            <Select.Option value={1}>施工单位</Select.Option>
-                            <Select.Option value={2}>监测单位</Select.Option>
-                            <Select.Option value={3}>监理单位</Select.Option>
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Col>
-                    <Col span={5}>
-                      <Form.Item label={i > 0 ? '' : '职位'}>
-                        {getFieldDecorator(`sectorRole_${i}`)(
-                          <Select placeholder="请选择职位">
-                            {this.state.memberType.map(v => <Select.Option key={v.id} value={v.id}>{v.itemName}</Select.Option>)}
-                          </Select>
-                        )}
-                      </Form.Item>
-                    </Col>
-                    <Col span={4}>
-                      <Form.Item>
-                        <Button
-                          type='dashed'
-                          style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' }}
-                          onClick={_ => {
-                            const addSensorNum = this.state.addSensorNum;
-                            addSensorNum[i] = undefined;
-                            this.setState({ addSensorNum });
-                          }}
-                        >删除</Button>
-                      </Form.Item>
-                    </Col>
-                  </Row>
-                )
-              } else {
-                return null
-              }
-            })}
-          <Row gutter={16}>
-            <Col span={24}>
-              <Form.Item>
-                <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addSensorNum: [...this.state.addSensorNum, this.state.addSensorNum.length] }) }}>
-                  <Icon type="plus" /> 批量增加编号
-                </Button>
               </Form.Item>
             </Col>
           </Row> */}

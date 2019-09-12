@@ -109,7 +109,7 @@ class BindMonitorBasis extends Component {
       let result = res.data;
       //console.log(result.code);
       if(result.code === 0){
-        message.success(result.msg);
+        message.success('解绑监测依据成功!');
         this.queryDataSource();
       }else{
         message.info(result.msg);
@@ -147,7 +147,7 @@ class BindMonitorBasis extends Component {
             e.preventDefault();
             this.handleDrawerVisible(true);
           }}>
-            添加依据
+            绑定依据
           </Button>
         </FormItem>
       </Form>
@@ -216,7 +216,8 @@ class AddMonitorBasis extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      notSectorMoniBasData:[]
+      notSectorMoniBasData:[],
+      addMoniBasNum: [0],
     };
   }
   handleSubmit = e => {
@@ -228,10 +229,11 @@ class AddMonitorBasis extends Component {
       const sectorId = sectormodel.sectorId;
       const values = fieldsValue;
       const params = Object.values(values);
+      console.log(params);
       addSectorMoniBas(sectorId,params).then(res => {
         const { code, data, msg } = res.data;
         if(code === 0){
-          message.success('添加绑定成功');
+          message.success('绑定成功');
           this.props.handleDrawerVisible(false);
           this.props.queryDataSource(false);
         } else {
@@ -268,8 +270,8 @@ class AddMonitorBasis extends Component {
     } = this.props;
     return (
       <Drawer
-        title="添加监测依据"
-        width={360}
+        title="绑定监测依据"
+        width={400}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
       >
@@ -278,7 +280,51 @@ class AddMonitorBasis extends Component {
           hideRequiredMark
           onSubmit={this.handleSubmit}
         >
+          {this.state.addMoniBasNum.map(i => {
+            if(i !== undefined){
+              return(
+                <Row gutter={16} key={i}>
+                  <Col span={18}>
+                    <FormItem label={i > 0 ? '' : '文件名称'}>
+                      {getFieldDecorator(`fileName_${i}`)(
+                        <Select 
+                          placeholder="请选择文件"
+                          onFocus={this.NotSectorMoniBas}
+                        >
+                          {this.state.notSectorMoniBasData.map(v => <Select.Option key={v.monitoringBasis} value={v.monitoringBasis}>{v.number}/{v.fileName}</Select.Option>)}
+                        </Select>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={6}>
+                    <Form.Item>
+                      <Button
+                        type='dashed'
+                        style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' } && i === 0 ? {display:'none'}:{display:'block'}}
+                        onClick={_ => {
+                          const addMoniBasNum = this.state.addMoniBasNum;
+                          addMoniBasNum[i] = undefined;
+                          this.setState({ addMoniBasNum });
+                        }}
+                      >删除</Button>
+                    </Form.Item>
+                  </Col>
+                </Row>
+              )
+            }else{
+              return null
+            }
+          })}
           <Row gutter={16}>
+            <Col span={24}>
+              <Form.Item>
+                <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addMoniBasNum: [...this.state.addMoniBasNum, this.state.addMoniBasNum.length] }) }}>
+                  <Icon type="plus" /> 批量绑定监测依据
+                </Button>
+              </Form.Item>
+            </Col>
+          </Row>
+          {/* <Row gutter={16}>
             <Col span={24}>
               <FormItem label="文件名称">
                 {getFieldDecorator('fileName')(
@@ -291,7 +337,7 @@ class AddMonitorBasis extends Component {
                 )}
               </FormItem>
             </Col>
-          </Row>
+          </Row> */}
           < div
             style={{
               position: 'absolute',
