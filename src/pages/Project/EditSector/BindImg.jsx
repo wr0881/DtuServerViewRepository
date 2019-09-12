@@ -34,30 +34,6 @@ import styles from './style.less';
 const FormItem = Form.Item;
 const { TextArea } = Input;
 
-const data = [
-  {
-    key: '1',
-    url: 'http://123.207.88.210/monitor/images/three/siteMap/dtx1.jpg',
-    name: '图片一',
-    des: '尾矿库项目现场图',
-    type: '现场图'
-  },
-  {
-    key: '2',
-    url: 'http://123.207.88.210/monitor/images/three/siteMap/dtx.jpg',
-    name: 'xxxxxxx图片',
-    des: 'xxxxxx现场图',
-    type: '现场图'
-  },
-  {
-    key: '3',
-    url: 'http://123.207.88.210/monitor/images/three/siteMap/dtx2.jpg',
-    name: 'xxxxxxx布点图',
-    des: '布点图',
-    type: '布点图'
-  },
-];
-
 @Form.create()
 class BindImg extends Component {
   constructor(props) {
@@ -187,7 +163,7 @@ class BindImg extends Component {
               uid: '-1',
               name: 'image.png',
               status: 'done',
-              url: window.imgAddress + text,
+              url: window.imgAddress + text + '?' + new Date().toString(32),
             },]}
             onPreview={_ => { this.setState({ previewVisible: 'true', previewUrl: text }) }}
           // onChange={this.handleChange}
