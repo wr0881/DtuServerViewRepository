@@ -42,8 +42,8 @@ class bindSector extends Component {
         let params = {
             pageNum: pagination.current,
             pageSize: pagination.pageSize,
-            //userId: this.props.bindSector.key
-            userId: 19
+            userId: this.props.bindSector.key
+            //userId: 19
         }
         //console.log(params);
         /* 模拟数据 */
@@ -94,8 +94,8 @@ class bindSector extends Component {
     };
     //确定
     handleSubmit = () => {
-        const userId = 19;
-        //const userId: this.props.bindSector.key
+        //const userId = 19;
+        const userId = this.props.bindSector.key
         const body = this.state.targetKeys;
         //console.log(body);
         bindingSector(userId,body).then(res =>{

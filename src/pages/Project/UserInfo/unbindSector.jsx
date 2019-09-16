@@ -28,6 +28,7 @@ class UnbindSector extends Component {
         })
         //this.terminalType();
         this.getMock();
+        console.log(this.props.unbindSector.key);
     }
     handleOkOrCancel() {
         this.setState({
@@ -42,8 +43,8 @@ class UnbindSector extends Component {
         let params = {
             pageNum: pagination.current,
             pageSize: pagination.pageSize,
-            //userId: this.props.bindSector.key
-            userId: 19
+            userId: this.props.unbindSector.key
+            //userId: 19
         }
         //console.log(params);
         getBindSector(params).then(res => {
@@ -70,8 +71,8 @@ class UnbindSector extends Component {
     };
     //确定
     handleSubmit = () => {
-        const userId = 19;
-        //const userId: this.props.bindSector.key
+        //const userId = 19;
+        const userId = this.props.unbindSector.key;
         const body = this.state.targetKeys;
         //console.log(body);
         unbindSector(userId,body).then(res =>{

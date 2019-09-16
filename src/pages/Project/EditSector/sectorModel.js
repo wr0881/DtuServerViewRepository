@@ -1,5 +1,5 @@
 import { observable, toJS, action } from 'mobx';
-import { getAllProject,getProjectSector } from '@/services/project';
+import { getAllProject,getProjectSector,notSectorMember } from '@/services/project';
 
 class SectorModel {
   @observable projectId = '';
@@ -24,6 +24,22 @@ class SectorModel {
   };
   @observable ProjectData = [];
   @observable ProjectSectorData = [];
+  @observable notBindMemberData = [];
+
+  // 区间下没有绑定的人员
+  @action NotSectorMember = () => {
+    let params = { sectorId:this.sectorId }
+    notSectorMember(params).then(res => {
+      const { code, msg, data } = res.data;
+      if(code === 0) {
+        this.notBindMemberData = data;
+      }else{
+        this.notBindMemberData = [];
+      }
+    }).catch(err => {
+      //console.log(err);
+    });
+  };
 
   //获取所有项目
   // @action getAllProject(){
