@@ -79,7 +79,7 @@ class modifyMember extends Component {
                         hideRequiredMark
                         onSubmit={this.handleSubmit}
                     >
-                        <Row gutter={8}>
+                        {/* <Row gutter={8}>
                             <Col md={24} sm={24}>
                                 <Form.Item label="姓名" {...formItemLayout}>
                                     {getFieldDecorator('memberName', {
@@ -95,7 +95,7 @@ class modifyMember extends Component {
 
                                 </Form.Item>
                             </Col>
-                        </Row>
+                        </Row> */}
                         <Row gutter={8}>
                             <Col md={24} sm={24}>
                                 <Form.Item label="公司" {...formItemLayout}>
