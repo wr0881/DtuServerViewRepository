@@ -229,7 +229,6 @@ class AddMonitorBasis extends Component {
       const sectorId = sectormodel.sectorId;
       const values = fieldsValue;
       const params = Object.values(values);
-      console.log(params);
       addSectorMoniBas(sectorId,params).then(res => {
         const { code, data, msg } = res.data;
         if(code === 0){
@@ -256,6 +255,7 @@ class AddMonitorBasis extends Component {
       const { code, msg, data } = res.data;
       if(code === 0) {
         this.setState({ notSectorMoniBasData:data });
+        console.log(this.state.notSectorMoniBasData);
       }else{
         this.setState({ notSectorMoniBasData:[] });
       }
@@ -274,6 +274,7 @@ class AddMonitorBasis extends Component {
         width={400}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
+        destroyOnClose
       >
         <Form
           layout="vertical"

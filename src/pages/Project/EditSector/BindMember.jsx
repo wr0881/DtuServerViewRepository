@@ -57,6 +57,7 @@ class BindMember extends Component {
   // 获取绑定人员表格
   queryDataSource = (loading = true) => {
     this.setState({tableLoading:true && loading});
+    sectormodel.NotSectorMember();
     const { formValues, pagination } = this.state;
     let params = {
       pageNum: pagination.current,
@@ -249,8 +250,9 @@ class AddMember extends Component {
     this.state = {
       addMemberNum: [0],
       memberNameList: [],
-      notBindMemberData:[],
-      memberType: []
+      //notBindMemberData:[],
+      memberType: [],
+      //formValues: []
     };
   }
 
@@ -258,7 +260,6 @@ class AddMember extends Component {
     e.preventDefault();
 
     const { dispatch, form } = this.props;
-
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       
@@ -290,7 +291,6 @@ class AddMember extends Component {
         }).catch(err => {
           
         })
-
         this.setState({
           formValues: result,
         }, _ => { this.queryDataSource });
@@ -300,20 +300,20 @@ class AddMember extends Component {
   };
 
   // 区间下没有绑定的人员
-  NotSectorMember = () => {
-    let params = { sectorId:sectormodel.sectorId }
-    notSectorMember(params).then(res => {
-      const { code, msg, data } = res.data;
-      if(code === 0) {
-        this.setState({ notBindMemberData:data });
-        //console.log(this.state.notBindMemberData);
-      }else{
-        this.setState({ notBindMemberData:[] });
-      }
-    }).catch(err => {
-      //console.log(err);
-    })
-  };
+  // NotSectorMember = () => {
+  //   let params = { sectorId:sectormodel.sectorId }
+  //   notSectorMember(params).then(res => {
+  //     const { code, msg, data } = res.data;
+  //     if(code === 0) {
+  //       this.setState({ notBindMemberData:data });
+  //       console.log(this.state.notBindMemberData);
+  //     }else{
+  //       this.setState({ notBindMemberData:[] });
+  //     }
+  //   }).catch(err => {
+  //     //console.log(err);
+  //   });
+  // };
 
   // 获取职位信息
   getSectorRole = () => {
@@ -341,6 +341,7 @@ class AddMember extends Component {
         width={720}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
+        destroyOnClose
       >
         <Form
           layout="vertical"
@@ -359,7 +360,7 @@ class AddMember extends Component {
                           ],
                         })(
                         <Select placeholder="请选择人员">
-                          {this.state.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
+                          {sectormodel.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
                         </Select>
                       )}
                     </Form.Item>
@@ -388,7 +389,7 @@ class AddMember extends Component {
                           ],
                         })(
                         <Select placeholder="请选择职位">
-                          {this.state.memberType.map(v => <Select.Option key={v.id} value={v.id}>{v.itemName}</Select.Option>)}
+                          {this.state.memberType.map(v => <Select.Option key={v.id} value={v.scId}>{v.itemName}</Select.Option>)}
                         </Select>
                       )}
                     </Form.Item>
@@ -421,41 +422,7 @@ class AddMember extends Component {
               </Form.Item>
             </Col>
           </Row>
-          {/* <Row gutter={16}>
-            <Col span={12}>
-              <Form.Item label='人员'>
-                {getFieldDecorator(`memberId`)(
-                  <Select 
-                    placeholder="请选择人员"
-                    onFocus={this.NotSectorMember}
-                  >
-                    {this.state.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
-                  </Select>
-                )}
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item label='人员类型'>
-                {getFieldDecorator(`memberType`)(
-                  <Select placeholder="请选择人员类型">
-                    <Select.Option value={0}>建设单位</Select.Option>
-                    <Select.Option value={1}>施工单位</Select.Option>
-                    <Select.Option value={2}>监测单位</Select.Option>
-                    <Select.Option value={3}>监理单位</Select.Option>
-                  </Select>
-                )}
-              </Form.Item>
-            </Col>
-            <Col span={6}>
-              <Form.Item label='职位'>
-                {getFieldDecorator(`sectorRole`)(
-                  <Select placeholder="请选择职位">
-                    {this.state.memberType.map(v => <Select.Option key={v.id} value={v.scId}>{v.itemName}</Select.Option>)}
-                  </Select>
-                )}
-              </Form.Item>
-            </Col>
-          </Row> */}
+          
           < div
             style={{
               position: 'absolute',
@@ -480,10 +447,9 @@ class AddMember extends Component {
     );
   }
   componentDidMount(){
-    this.NotSectorMember();
+    sectormodel.NotSectorMember();
     this.getSectorRole();
   }
-  
 }
 
 export default BindMember;
