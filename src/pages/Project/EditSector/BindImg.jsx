@@ -202,9 +202,16 @@ class BindImg extends Component {
               this.setState({ handleEditImageInfoVisible: true });
             }}>编辑</a>
             <Divider type="vertical" />
-            <a onClick={_ => {
-              this.deleteImage(text.imageListId);
-            }}>删除</a>
+            <Popconfirm
+              title="确定删除?"
+              onConfirm={_ => {
+                this.deleteImage(text.imageListId);
+              }}
+              okText="是"
+              cancelText="否"
+            >
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },

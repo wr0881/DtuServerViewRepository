@@ -180,7 +180,14 @@ class BindPoint extends Component {
               sectorModel.selectImageId = text.imageId;
             }}>详情</a>
             <Divider type="vertical" />
-            <a onClick={this.delectPointImage.bind(this, text.imageId)}>删除</a>
+            <Popconfirm
+              title="确定删除?"
+              onConfirm={this.delectPointImage.bind(this, text.imageId)}
+              okText="是"
+              cancelText="否"
+            >
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },

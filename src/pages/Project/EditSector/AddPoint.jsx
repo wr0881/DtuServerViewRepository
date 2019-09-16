@@ -110,15 +110,14 @@ class AddPoint extends Component {
         addSensorNum.forEach(v => {
           result.push({
             "monitorType": values[`monitorType`],
-            "picx": values[`picx`],
-            "picy": values[`picy`],
+            "picx": values[`picx`] + 'px',
+            "picy": values[`picy`] + 'px',
             "sensorDeep": values[`sensorDeep_${v}`],
             "sensorNumber": values[`sensorNumber_${v}`],
             "terminalChannel": values[`terminalChannel_${v}`],
             "terminalNumber": values[`terminalNumber_${v}`]
           })
         })
-        console.log(result);
 
         axios.post(
           `/monitorPoint/addMonitorPointBach?imageId=${sectorModel.selectImageId}&monitorPointNumber=${values.monitorPointNumber}&sectorId=${sectorModel.sectorId}`,

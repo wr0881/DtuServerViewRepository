@@ -72,7 +72,7 @@ class PointList extends Component {
   delectPoint = id => {
     axios.delete('/monitorPoint/removeMonitorPointByMpId', {
       params: {
-        mpId:id
+        mpId: id
       }
     }).then(res => {
       const { code, msg, data } = res.data;
@@ -184,7 +184,14 @@ class PointList extends Component {
               sectorModel.selectPointInfo = text;
             }}>编辑</a>
             <Divider type="vertical" />
-            <a onClick={this.delectPoint.bind(this, text.mpId)}>删除</a>
+            <Popconfirm
+              title="确定删除?"
+              onConfirm={this.delectPoint.bind(this, text.mpId)}
+              okText="是"
+              cancelText="否"
+            >
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
         width: '10%'

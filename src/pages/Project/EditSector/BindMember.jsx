@@ -388,7 +388,7 @@ class AddMember extends Component {
                           ],
                         })(
                         <Select placeholder="请选择职位">
-                          {this.state.memberType.map(v => <Select.Option key={v.id} value={v.id}>{v.itemName}</Select.Option>)}
+                          {this.state.memberType.map(v => <Select.Option key={v.id} value={v.scId}>{v.itemName}</Select.Option>)}
                         </Select>
                       )}
                     </Form.Item>
