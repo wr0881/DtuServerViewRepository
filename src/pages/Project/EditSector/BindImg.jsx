@@ -40,6 +40,7 @@ class BindImg extends Component {
     super(props);
     this.state = {
       formValues: {},
+      editImageInfo: {},
       previewUrl: '',
 
       drawerVisible: false,
@@ -120,7 +121,7 @@ class BindImg extends Component {
           {getFieldDecorator('type')(
             <Select placeholder="请选择图片类型" style={{ width: '200px' }}>
               <Select.Option value="">全部</Select.Option>
-              <Select.Option value="1">布点图</Select.Option>
+              {/* <Select.Option value="1">布点图</Select.Option> */}
               <Select.Option value="2">现场图</Select.Option>
               <Select.Option value="3">剖面图</Select.Option>
             </Select>
@@ -198,7 +199,8 @@ class BindImg extends Component {
             }}>替换</a>
             <Divider type="vertical" />
             <a onClick={_ => {
-              sectorModel.selectImageListId = text.imageListId
+              sectorModel.selectImageListId = text.imageListId;
+              this.setState({ editImageInfo: text });
               this.setState({ handleEditImageInfoVisible: true });
             }}>编辑</a>
             <Divider type="vertical" />
@@ -241,6 +243,7 @@ class BindImg extends Component {
           visible={this.state.handleEditImageInfoVisible}
           handleEditImageInfoVisible={this.handleEditImageInfoVisible}
           getImageList={this.getImageList}
+          info={this.state.editImageInfo}
         />
 
         <Modal visible={this.state.previewVisible} footer={null} onCancel={_ => { this.setState({ previewVisible: false }) }}>
@@ -499,6 +502,7 @@ class EditImageInfo extends Component {
   render() {
     const {
       form: { getFieldDecorator },
+      info
     } = this.props;
     return (
       <Drawer
@@ -513,14 +517,18 @@ class EditImageInfo extends Component {
           <Row gutter={16}>
             <Col span={12}>
               <FormItem label="图片名称">
-                {getFieldDecorator('imageName')(
+                {getFieldDecorator('imageName', {
+                  initialValue: info.imageName ? info.imageName : ''
+                })(
                   <Input placeholder="请输入图片名称" />
                 )}
               </FormItem>
             </Col>
             <Col span={12}>
               <FormItem label="图片描述">
-                {getFieldDecorator('imageDes')(
+                {getFieldDecorator('imageDes', {
+                  initialValue: info.imageDes ? info.imageDes : ''
+                })(
                   <Input placeholder="请输入图片描述" />
                 )}
               </FormItem>
