@@ -191,5 +191,10 @@ export async function removeBindingMoniBas(body) {
 }
 // 添加区间监测依据关系
 export async function addSectorMoniBas(sectorId, body) {
-    return axios.post('/binding/addSectorMoniBasis?sectorId=' + sectorId, body);
+    return axios.post('/binding/addSectorMoniBasis?sectorId='+sectorId, body);
+}
+
+// 根据区间id获取区间名称
+export async function getSectorName(sectorId){
+    return axios.get('/sector/getSectorName?sectorId='+sectorId);
 }
