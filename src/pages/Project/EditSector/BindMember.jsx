@@ -263,7 +263,7 @@ class AddMember extends Component {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       
-      console.log(fieldsValue);
+      //console.log(fieldsValue);
       if(!err){
         let result = [];
         

@@ -255,7 +255,7 @@ class AddMonitorBasis extends Component {
       const { code, msg, data } = res.data;
       if(code === 0) {
         this.setState({ notSectorMoniBasData:data });
-        console.log(this.state.notSectorMoniBasData);
+        //console.log(this.state.notSectorMoniBasData);
       }else{
         this.setState({ notSectorMoniBasData:[] });
       }
