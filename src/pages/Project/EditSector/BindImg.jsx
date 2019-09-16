@@ -163,7 +163,7 @@ class BindImg extends Component {
               uid: '-1',
               name: 'image.png',
               status: 'done',
-              url: window.imgAddress + text + '?' + new Date().toString(32),
+              url: `${window.imgAddress}${text}?time=${new Date().toString(32)}`
             },]}
             onPreview={_ => { this.setState({ previewVisible: 'true', previewUrl: text }) }}
           // onChange={this.handleChange}
@@ -289,7 +289,7 @@ class AddImg extends Component {
       if (!err) {
         let type = values.type;
         let image = this.state.imgFile;
-        axios.post(`http://10.88.89.73:8090/upload/uploadImageListLoca`, {
+        axios.post(`${window.uploadImgAddress}/upload/uploadImageListLoca`, {
           params: {
             sectorId: sectorModel.sectorId,
             type,
@@ -391,7 +391,7 @@ class AddImg extends Component {
           method="POST"
           target="form"
           enctype="multipart/form-data"
-          action="http://10.88.89.73:8090/upload/uploadImageList"
+          action={`${window.uploadImgAddress}/upload/uploadImageList`}
         >
           <input
             type="file"
@@ -399,13 +399,13 @@ class AddImg extends Component {
             multiple="multiple"
             accept=".jpg,.png"
           />
-          <input type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
+          <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
           <select name="type">
-            <option value="1">布点图</option>
+            {/* <option value="1">布点图</option> */}
             <option value="2">现场图</option>
             <option value="3">剖面图</option>
           </select>
-          <button type="submit">upload</button>
+          <button type="submit">上传</button>
         </form>
         <iframe
           name="form"
@@ -440,15 +440,15 @@ class EditImage extends Component {
           method="POST"
           target="form"
           enctype="multipart/form-data"
-          action="http://10.88.89.73:8090/upload/updateImage"
+          action={`${window.uploadImgAddress}/upload/updateImage`}
         >
           <input
             type="file"
             name="img"
             accept=".jpg,.png"
           />
-          <input type="input" name="imageListId" placeholder="图片ListID" value={sectorModel.selectImageListId}></input>
-          <button type="submit">upload</button>
+          <input style={{ display: 'none' }} type="input" name="imageListId" placeholder="图片ListID" value={sectorModel.selectImageListId}></input>
+          <button type="submit">上传</button>
         </form>
         <iframe
           name="form"
