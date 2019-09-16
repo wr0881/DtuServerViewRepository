@@ -180,7 +180,14 @@ class BindPoint extends Component {
               sectorModel.selectImageId = text.imageId;
             }}>详情</a>
             <Divider type="vertical" />
-            <a onClick={this.delectPointImage.bind(this, text.imageId)}>删除</a>
+            <Popconfirm
+              title="确定删除?"
+              onConfirm={this.delectPointImage.bind(this, text.imageId)}
+              okText="是"
+              cancelText="否"
+            >
+              <a>删除</a>
+            </Popconfirm>
           </span>
         ),
       },
@@ -199,6 +206,7 @@ class BindPoint extends Component {
         <AddImg
           visible={this.state.handleAddImgVisible}
           handleAddImgVisible={this.handleAddImgVisible}
+          getPointImageList={this.getPointImageList}
         />
 
         {/* 布点图测点信息 */}
@@ -216,7 +224,7 @@ class BindPoint extends Component {
   componentDidMount() {
     this.getPointImageList();
   }
-  getPointImageList() {
+  getPointImageList = () => {
     this.setState({ getPointImageListLoading: true });
     axios.get('/image/listSectorPointImage', {
       params: {
@@ -263,7 +271,7 @@ class AddImg extends Component {
           method="POST"
           target="form"
           enctype="multipart/form-data"
-          action="http://10.88.89.73:8090/upload/uploadImageList"
+          action={`${window.uploadImgAddress}/upload/uploadImageList`}
         >
           <input
             type="file"
@@ -271,15 +279,18 @@ class AddImg extends Component {
             multiple="multiple"
             accept=".jpg,.png"
           />
-          <input type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
-          <select name="type">
+          <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
+          <select style={{ display: 'none' }} name="type" >
             <option value="1">布点图</option>
             <option value="2">现场图</option>
             <option value="3">剖面图</option>
           </select>
-          <button type="submit">upload</button>
+          <button type="submit">上传</button>
         </form>
-        <iframe name="form" id="form" style={{ display: 'none' }}></iframe>
+        <iframe name="form" id="form" style={{ display: 'none' }} onLoad={_ => {
+          this.props.handleAddImgVisible(false);
+          this.props.getPointImageList();
+        }} ></iframe>
       </Drawer >
     );
   }
