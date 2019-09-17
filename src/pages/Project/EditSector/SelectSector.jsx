@@ -71,6 +71,8 @@ class SelectSector extends Component {
               options={options}  
               placeholder="选择项目" 
               onChange={e => {this.projectId=JSON.parse(e);this.getProjectSector();}}
+              showSearch
+              optionFilterProp="children"
               //value={this.projectId}
             >
               {this.state.ProjectData.map(v => <Select.Option key={v.projectId} value={v.projectId}>{v.projectName}</Select.Option>)}
@@ -81,6 +83,8 @@ class SelectSector extends Component {
               options={options}  
               placeholder="选择区间"
               onChange={e => {this.sectorId=e}} 
+              showSearch
+              optionFilterProp="children"
             >
               {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v.sectorId}>{v.sectorName}</Select.Option>)}
             </Select>

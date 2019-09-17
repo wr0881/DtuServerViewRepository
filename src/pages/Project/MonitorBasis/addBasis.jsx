@@ -75,6 +75,7 @@ class addBasis extends Component {
           width={360}
           onClose={_ => { this.props.handleDrawerAddBasisVisible(false) }}
           visible={this.props.drawerAddBasisVisible}
+          destroyOnClose
         >
           <Form
             layout="vertical"

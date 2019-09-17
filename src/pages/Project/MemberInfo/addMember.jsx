@@ -75,6 +75,7 @@ class addMember extends Component {
           width={360}
           onClose={_ => { this.props.handleDrawerAddMemberVisible(false) }}
           visible={this.props.drawerAddMemberVisible}
+          destroyOnClose
         >
           <Form
             layout="vertical"
