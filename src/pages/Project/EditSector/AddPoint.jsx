@@ -199,7 +199,7 @@ class AddPoint extends Component {
                         { required: true, message: '不允许为空' }
                       ],
                       // initialValue: this.props.modifypass.manufacturer
-                    })(<Input style={{ width: '210px' }} />)}
+                    })(<Input style={{ width: '210px' }} placeholder='例如:1920' />)}
                   </Form.Item>
                 </Col>
                 <Col md={12} sm={24}>
@@ -209,7 +209,7 @@ class AddPoint extends Component {
                         { required: true, message: '不允许为空' }
                       ],
                       // initialValue: this.props.modifypass.sensorModel
-                    })(<Input style={{ width: '210px' }} />)}
+                    })(<Input style={{ width: '210px' }} placeholder='例如:1080' />)}
                   </Form.Item>
                 </Col>
               </Row>

@@ -56,7 +56,7 @@ class AddSectorName extends Component {
           const { code, data, msg } = res.data;
           if (code === 0) {
             projectState.sectorId = data;
-            router.push('/project/add-project/add-member-info');
+            router.push('/project/add-project/result');
           }
         })
       }
@@ -209,13 +209,6 @@ class AddSectorName extends Component {
     return (
       <Fragment>
         {this.detailForm()}
-        <Divider style={{ margin: '40px 0 24px' }} />
-        <div className={styles.desc}>
-          <h4>锐雯</h4>
-          <p>
-            我已经流浪了如此之久……
-          </p>
-        </div>
       </Fragment>
     );
   }

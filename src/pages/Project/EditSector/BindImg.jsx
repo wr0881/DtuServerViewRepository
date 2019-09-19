@@ -409,12 +409,15 @@ class AddImg extends Component {
             multiple="multiple"
             accept=".jpg,.png"
           />
+          <div style={{ height: '25px' }}></div>
           <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
+          <div style={{ height: '25px' }}></div>
           <select name="type">
             {/* <option value="1">布点图</option> */}
             <option value="2">现场图</option>
             <option value="3">剖面图</option>
           </select>
+          <div style={{ height: '25px' }}></div>
           <button type="submit">上传</button>
         </form>
         <iframe

@@ -103,6 +103,21 @@ export default [
             ],
           },
           {
+            path: '/project/memberinfo',
+            name: '人员管理',
+            component: './Project/MemberInfo/MemberInfo',
+          },
+          {
+            path: '/project/userinfo',
+            name: '用户管理',
+            component: './Project/UserInfo/UserInfo',
+          },
+          {
+            path: '/project/monitorbasis',
+            name: '监测依据',
+            component: './Project/MonitorBasis/MonitorBasis',
+          },
+          {
             path: '/project/selectSector',
             name: '区间管理',
             component: './Project/EditSector/SelectSector',
@@ -146,60 +161,6 @@ export default [
               },
             ],
           },
-          {
-            path: '/project/memberinfo',
-            name: '人员管理',
-            component: './Project/MemberInfo/MemberInfo',
-          },
-          {
-            path: '/project/userinfo',
-            name: '用户管理',
-            component: './Project/UserInfo/UserInfo',
-          },
-          {
-            path: '/project/monitorbasis',
-            name: '监测依据',
-            component: './Project/MonitorBasis/MonitorBasis',
-          },
-          // {
-          //   path: '/project/selectSector',
-          //   name: '区间管理',
-          //   component: './Project/EditSector/SelectSector',
-          //   hideChildrenInMenu: true,
-          //   routes: [
-          //     {
-          //       path: '/project/selectSector/editSector/',
-          //       name: '编辑区间',
-          //       component: './Project/EditSector/EditSelectorWrapper',
-          //       routes: [
-          //         {
-          //           path: '/project/selectSector/editSector',
-          //           redirect: '/project/selectSector/editSector/bindMember',
-          //         },
-          //         {
-          //           path: '/project/selectSector/editSector/bindMember',
-          //           name: '绑定人员信息',
-          //           component: './Project/EditSector/BindMember',
-          //         },
-          //         {
-          //           path: '/project/selectSector/editSector/bindImg',
-          //           name: '绑定图片信息',
-          //           component: './Project/EditSector/BindImg',
-          //         },
-          //         {
-          //           path: '/project/selectSector/editSector/bindMonitorBasis',
-          //           name: '绑定监测依据',
-          //           component: './Project/EditSector/BindMonitorBasis',
-          //         },
-          //         {
-          //           path: '/project/selectSector/editSector/bindPoint',
-          //           name: '绑定测点',
-          //           component: './Project/EditSector/BindPoint',
-          //         },
-          //       ],
-          //     }
-          //   ],
-          // },
         ],
       },
       // // dashboard

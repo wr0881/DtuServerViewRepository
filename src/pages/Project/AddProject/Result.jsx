@@ -19,11 +19,11 @@ const actions = (
     }}>
       新建区间
     </Button>
-    <Button onClick={_=>{
+    {/* <Button onClick={_=>{
       router.push('/project/add-project/add-sector-info');
     }}>
       新建布点图
-    </Button>
+    </Button> */}
   </Fragment>
 );
 
