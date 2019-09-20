@@ -1,7 +1,8 @@
 /* eslint-disable */
 import React, { Component } from 'react';
-import { Modal, Col, Form, Input, Row, Select, DatePicker, message, Button, Transfer } from 'antd';
-import { getBindSector, unbindSector } from '@/services/project'
+import { Modal, Col, Form, Input, Row, Select, DatePicker, message, Button, Transfer, Table } from 'antd';
+import { getBindSector, unbindSector } from '@/services/project';
+import difference from 'lodash/difference';
 
 
 const { Option } = Select;
@@ -13,24 +14,19 @@ class UnbindSector extends Component {
             visible: false,
             mockData: [],
             targetKeys: [],
-            pagination: {
-                current: 1,
-                pageSize: 10,
-                
-            },
         }
         this.handlePopup = this.handlePopup.bind(this);
         this.handleOkOrCancel = this.handleOkOrCancel.bind(this);
     }
-    handlePopup() {
+    handlePopup = () => {
         this.setState({
             visible: true
         })
         //this.terminalType();
         this.getMock();
-        console.log(this.props.unbindSector.key);
+        //console.log(this.props.unbindSector.key);
     }
-    handleOkOrCancel() {
+    handleOkOrCancel = () => {
         this.setState({
             visible: false
         })
@@ -41,26 +37,26 @@ class UnbindSector extends Component {
         //获取未绑定的区间
         const { pagination } = this.state;
         let params = {
-            pageNum: pagination.current,
-            pageSize: pagination.pageSize,
+            // pageNum: pagination.current,
+            // pageSize: pagination.pageSize,
             userId: this.props.unbindSector.key
-            //userId: 19
         }
         //console.log(params);
         getBindSector(params).then(res => {
             const { code, msg, data } = res.data;
-            let bindData = [];
+            let mockData = [];
             //console.log(code,msg);
             if(code === 0){
                 //console.log(data.list);
-                const bindList = data.list;
+                const bindList = data;
                 bindList.forEach(v => {
-                    bindData.push({
+                    mockData.push({
                         key:v.sectorId,
-                        title:`区间ID:${v.sectorId} ${v.sectorName}`,
+                        title:`${v.sectorName}`,
                         description:`${v.sectorName}`
                     });
-                    this.setState({bindData});
+                    this.setState({mockData});
+                    //this.setState({ pagination: { ...this.state.pagination, total: data.total } });
                 })
             }
         })        
@@ -80,6 +76,7 @@ class UnbindSector extends Component {
             if(code === 0){
                 message.success('解绑区间成功！');
                 this.props.handleUnBindSector();
+                this.getMock();
             }else{
                 message.info(msg);
             }
@@ -93,20 +90,93 @@ class UnbindSector extends Component {
     }
     
     render() {
+
+        //表格穿梭框
+        const TableTransfer = ({ leftColumns, rightColumns, ...restProps }) => (
+            <Transfer {...restProps} showSelectAll={false}>
+                {({
+                    direction,
+                    filteredItems,
+                    onItemSelectAll,
+                    onItemSelect,
+                    selectedKeys: listSelectedKeys,
+                    disabled: listDisabled,
+                }) => {
+                    const columns = direction === 'left' ? leftColumns : rightColumns;
+                    //console.log(filteredItems);
+                    const rowSelection = {
+                    getCheckboxProps: item => ({ disabled: listDisabled || item.disabled }),
+                    onSelectAll(selected, selectedRows) {
+                        const treeSelectedKeys = selectedRows
+                        .filter(item => !item.disabled)
+                        .map(({ key }) => key);
+                        const diffKeys = selected
+                        ? difference(treeSelectedKeys, listSelectedKeys)
+                        : difference(listSelectedKeys, treeSelectedKeys);
+                        onItemSelectAll(diffKeys, selected);
+                    },
+                    onSelect({ key }, selected) {
+                        onItemSelect(key, selected);
+                    },
+                    selectedRowKeys: listSelectedKeys,
+                    };
+                                      
+                    return (
+                        <Table
+                            rowSelection={rowSelection}
+                            columns={columns}
+                            dataSource={filteredItems}
+                            size="small"
+                            style={{ pointerEvents: listDisabled ? 'none' : null }}
+                            onRow={({ key, disabled: itemDisabled }) => ({
+                            onClick: () => {
+                                if (itemDisabled || listDisabled) return;
+                                onItemSelect(key, !listSelectedKeys.includes(key));
+                            },
+                            })}
+                        />
+                    );
+                }}
+            </Transfer>
+        );
+
+        //模拟数据
+        // const mockData = [];
+        // for (let i = 0; i < 20; i++) {
+        //     mockData.push({
+        //         key: i.toString(),
+        //         title: `区间${i + 1}`,
+        //         description: `区间描述${i + 1}`,
+        //         //disabled: i % 4 === 0,
+        //         //tag: mockTags[i % 3],
+        //     });
+        // }
+
+        const leftTableColumns = [
+            {
+                dataIndex: 'title',
+                title: '区间',
+            },
+        ];
+        const rightTableColumns = [
+            {
+                dataIndex: 'title',
+                title: '区间',
+            },
+        ];
         const { targetKeys } = this.state;
         return (
             <div style={{ display: 'inline-block' }}>
-                {/* <a onClick={this.handlePopup}>绑定区间</a> */}
                 <Button size="small" onClick={this.handlePopup}>解绑区间</Button>
                 <Modal
                     title="解绑区间"
-                    width='694px'
+                    width='730px'
                     visible={this.state.visible}
                     onOk={this.handleSubmit}
                     onCancel={this.handleOkOrCancel}
                     okText='解绑'
                 >
-                   <Transfer
+                    {/* <Transfer
                         listStyle={{
                             width:300,
                             height:300
@@ -116,7 +186,22 @@ class UnbindSector extends Component {
                         dataSource={this.state.bindData}
                         targetKeys={targetKeys}
                         onChange={this.onChange}
-                    /> 
+                    />  */}
+                    <TableTransfer
+                        listStyle={{
+                            width:320,
+                        }}
+                        dataSource={this.state.mockData}
+                        targetKeys={targetKeys}
+                        titles={['已绑定的区间','需解绑的区间']}
+                        //showSearch
+                        onChange={this.onChange}
+                        filterOption={(inputValue, item) =>
+                            item.title.indexOf(inputValue) !== -1 || item.tag.indexOf(inputValue) !== -1
+                        }
+                        leftColumns={leftTableColumns}
+                        rightColumns={rightTableColumns}
+                    />
                 </Modal>
             </div>
         )

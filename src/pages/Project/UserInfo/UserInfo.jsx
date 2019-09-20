@@ -67,37 +67,6 @@ class UserInfo extends Component {
   
   /* 表格数据 */
   queryDataSource = (loading = true) => {   
-    /* 模拟数据 */
-    // const datalist = [
-    // {
-    //   userName:'testa',
-    //   phone:'15188889999',
-    //   email:'test@qq.com',
-    //   company:'中大检测',
-    //   realName:'智能研究院',
-    //   createTime:'2019-09-09 08:21:00',
-    //   key:1
-    // },
-    // {
-    //   userName:'testb',
-    //   phone:'15188889999',
-    //   email:'test@qq.com',
-    //   company:'中大检测',
-    //   realName:'智能研究院',
-    //   createTime:'2019-09-09 08:22:00',
-    //   key:2
-    // },
-    // {
-    //   userName:'testc',
-    //   phone:'15188889999',
-    //   email:'test@qq.com',
-    //   company:'中大检测',
-    //   realName:'智能研究院',
-    //   createTime:'2019-09-09 08:23:00',
-    //   key:3
-    // },
-    // ];
-    // this.setState({ dataSource: datalist });
     this.setState({ tableLoading: true && loading });
     const { formValues, pagination } = this.state;
     let param = {
@@ -110,7 +79,7 @@ class UserInfo extends Component {
       const { code, data } = res.data;
       if (code === 0) {       
         this.setState({ dataSource: data.list });
-        console.log(this.state.dataSource);
+        //console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });

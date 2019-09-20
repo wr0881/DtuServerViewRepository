@@ -255,7 +255,7 @@ class AddMonitorBasis extends Component {
       const { code, msg, data } = res.data;
       if(code === 0) {
         this.setState({ notSectorMoniBasData:data });
-        //console.log(this.state.notSectorMoniBasData);
+        console.log(this.state.notSectorMoniBasData);
       }else{
         this.setState({ notSectorMoniBasData:[] });
       }
@@ -271,7 +271,7 @@ class AddMonitorBasis extends Component {
     return (
       <Drawer
         title="绑定监测依据"
-        width={400}
+        width={600}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
         destroyOnClose
@@ -286,13 +286,13 @@ class AddMonitorBasis extends Component {
               return(
                 <Row gutter={16} key={i}>
                   <Col span={18}>
-                    <FormItem label={i > 0 ? '' : '文件名称'}>
+                    <FormItem label={i > 0 ? '' : '文件编号和名称'}>
                       {getFieldDecorator(`fileName_${i}`)(
                         <Select 
                           placeholder="请选择文件"
                           onFocus={this.NotSectorMoniBas}
                         >
-                          {this.state.notSectorMoniBasData.map(v => <Select.Option key={v.monitoringBasis} value={v.monitoringBasis}>{v.number}/{v.fileName}</Select.Option>)}
+                          {this.state.notSectorMoniBasData.map(v => <Select.Option key={v.monitoringBasis} value={v.monitoringBasis}><span style={{width:'120px',display:'inline-block'}}>{v.number}</span>{v.fileName}</Select.Option>)}
                         </Select>
                       )}
                     </FormItem>

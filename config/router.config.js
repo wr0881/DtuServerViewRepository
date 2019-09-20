@@ -27,7 +27,7 @@ export default [
       {
         path: '/in-out-library',
         name: '出入库平台',
-        icon: 'yuque',
+        icon: 'diff',
         routes: [
           {
             path: '/in-out-library/sensor',
@@ -63,7 +63,7 @@ export default [
       {
         path: '/project',
         name: '项目管理',
-        icon: 'yuque',
+        icon: 'project',
         routes: [
           {
             path: '/project/add-project',
@@ -101,6 +101,21 @@ export default [
                 component: './Project/AddProject/Result',
               },
             ],
+          },
+          {
+            path: '/project/memberinfo',
+            name: '人员管理',
+            component: './Project/MemberInfo/MemberInfo',
+          },
+          {
+            path: '/project/userinfo',
+            name: '用户管理',
+            component: './Project/UserInfo/UserInfo',
+          },
+          {
+            path: '/project/monitorbasis',
+            name: '监测依据',
+            component: './Project/MonitorBasis/MonitorBasis',
           },
           {
             path: '/project/selectSector',
@@ -146,21 +161,26 @@ export default [
               },
             ],
           },
-          {
-            path: '/project/memberinfo',
-            name: '人员管理',
-            component: './Project/MemberInfo/MemberInfo',
-          },
-          {
-            path: '/project/userinfo',
-            name: '用户管理',
-            component: './Project/UserInfo/UserInfo',
-          },
-          {
-            path: '/project/monitorbasis',
-            name: '监测依据',
-            component: './Project/MonitorBasis/MonitorBasis',
-          },
+          // {
+          //   path: '/project/memberinfo',
+          //   name: '人员管理',
+          //   component: './Project/MemberInfo/MemberInfo',
+          // },
+          // {
+          //   path: '/project/userinfo',
+          //   name: '用户管理',
+          //   component: './Project/UserInfo/UserInfo',
+          // },
+          // {
+          //   path: '/project/monitorbasis',
+          //   name: '监测依据',
+          //   component: './Project/MonitorBasis/MonitorBasis',
+          // },
+          // {
+          //   path: '/project/studentslist',
+          //   name: '测试',
+          //   component: './Project/UserInfo/StudentsList',
+          // },
           // {
           //   path: '/project/selectSector',
           //   name: '区间管理',

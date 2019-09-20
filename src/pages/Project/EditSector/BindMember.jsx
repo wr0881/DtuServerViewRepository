@@ -1,6 +1,6 @@
 /* eslint-disable */
 import React, { Component, Fragment } from 'react';
-import { getBindingMember,removeSectorMember,notSectorMember,addUnbindMember,getMemberType } from '@/services/project';
+import { getInstrMemberInfo,getBindingMember,removeSectorMember,notSectorMember,addUnbindMember,getMemberType } from '@/services/project';
 import {
   Row,
   Col,
@@ -23,7 +23,7 @@ import {
   Modal,
   Popconfirm,
   message,
-  Tag
+  Tag,
 } from 'antd';
 import sectormodel from './sectorModel';
 
@@ -338,7 +338,7 @@ class AddMember extends Component {
     return (
       <Drawer
         title="绑定人员"
-        width={720}
+        width={800}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
         destroyOnClose
@@ -359,8 +359,21 @@ class AddMember extends Component {
                             { required: true, message: '不允许为空' },
                           ],
                         })(
-                        <Select placeholder="请选择人员">
-                          {sectormodel.notBindMemberData.map(v => <Select.Option key={v.key} value={v.key}>{v.memberName}/{v.memberCompany}/{v.memberPhone}</Select.Option>)}
+                        <Select 
+                          placeholder="请选择人员"
+                          showSearch
+                        >
+                          {sectormodel.notBindMemberData.map(v => 
+                            <Select.Option 
+                              key={v.key} 
+                              value={v.key}
+                              //style={{lineHeight:'13px'}}
+                            >
+                                <span style={{width:'20%',display:'inline-block',verticalAlign:'top'}}>{v.memberName}</span>
+                                <Tooltip title={v.memberCompany}><span style={{width:'50%',display:'inline-block',overflow:'hidden',textOverflow:'ellipsis',verticalAlign:'top'}}>{v.memberCompany}</span></Tooltip>
+                                <span style={{width:'30px',height:'10px',display:'inline-block',verticalAlign:'top'}}>{v.memberPhone}</span>
+                            </Select.Option>          
+                          )}
                         </Select>
                       )}
                     </Form.Item>

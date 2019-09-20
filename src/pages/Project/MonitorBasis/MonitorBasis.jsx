@@ -75,6 +75,7 @@ class MonitorBasis extends Component {
       const { code, data } = res.data;
       if (code === 0) {
         this.setState({ dataSource: data.list });
+        console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });
@@ -150,6 +151,7 @@ class MonitorBasis extends Component {
   handleDelBasis = (record) => {
     //传入人员ID(key)
     let body = [record.key];
+    console.log(body);
     removeBasis(body).then(res => {
       let result = res.data;
       if(result.code === 0){

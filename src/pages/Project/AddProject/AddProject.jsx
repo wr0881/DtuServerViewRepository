@@ -21,12 +21,13 @@ class Project extends Component {
         return 0;
       case 'add-sector-name':
         return 1;
-      case 'add-member-info':
-        return 2;
-      case 'add-sector-info':
-        return 3;
+      // case 'add-member-info':
+      //   return 2;
+      // case 'add-sector-info':
+      //   return 3;
       case 'result':
-        return 4;
+        //return 4;
+        return 2;
       default:
         return 0;
     }
@@ -40,8 +41,8 @@ class Project extends Component {
             <Steps current={this.getCurrentStep()} style={{ margin: '0 auto', width: '700px' }}>
               <Step title="新建项目名" />
               <Step title="新建区间名" />
-              <Step title="添加人员信息" />
-              <Step title="新建区间信息" />
+              {/* <Step title="添加人员信息" />
+              <Step title="新建区间信息" /> */}
               <Step title="新建成功" />
             </Steps>
             {children}

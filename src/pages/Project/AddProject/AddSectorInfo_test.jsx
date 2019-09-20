@@ -257,13 +257,13 @@ class AddSectorInfo extends Component {
             </div>
           </TabPane>
         </Tabs>
-        <Divider style={{ margin: '40px 0 24px' }} />
+        {/* <Divider style={{ margin: '40px 0 24px' }} />
         <div>
           <h4>易大师</h4>
           <p>
             无极之道，在我内心延续。 In me, Wuju lives on.
           </p>
-        </div>
+        </div> */}
       </div>
     );
   }

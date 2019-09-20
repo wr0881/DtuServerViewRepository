@@ -48,7 +48,7 @@ class Login extends Component {
             if (result.code == 0) {
               //console.log(result.data)
               axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data;
-              router.push('/server/youren');
+              router.push('/project/add-project');
             } else {
               message.warn(result.msg);
             }

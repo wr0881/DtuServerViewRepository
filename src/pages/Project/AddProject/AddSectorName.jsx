@@ -52,6 +52,7 @@ class AddSectorName extends Component {
           sectorStatus: values.sectorStatus,
           sectorType: values.sectorType
         };
+        //console.log(result);
         addSector(result).then(res => {
           const { code, data, msg } = res.data;
           if (code === 0) {
@@ -68,6 +69,7 @@ class AddSectorName extends Component {
     if (sectorType.length === 0) {
       getsectorType().then(res => {
         const { code, data } = res.data;
+        console.log(data);
         if (code === 0) {
           this.setState({ sectorType: data });
         } else {
@@ -99,7 +101,7 @@ class AddSectorName extends Component {
               dropdownMatchSelectWidth={false}
               style={{ width: '100%' }}
             >
-              {this.state.sectorType.map((type, i) => <Select.Option key={i} value={type.typeCode}>{type.itemName}</Select.Option>)}
+              {this.state.sectorType.map((type, i) => <Select.Option key={type.id} value={type.id}>{type.itemName}</Select.Option>)}
             </Select>
           )}
         </Form.Item>
@@ -209,13 +211,13 @@ class AddSectorName extends Component {
     return (
       <Fragment>
         {this.detailForm()}
-        <Divider style={{ margin: '40px 0 24px' }} />
+        {/* <Divider style={{ margin: '40px 0 24px' }} />
         <div className={styles.desc}>
           <h4>锐雯</h4>
           <p>
             我已经流浪了如此之久……
           </p>
-        </div>
+        </div> */}
       </Fragment>
     );
   }

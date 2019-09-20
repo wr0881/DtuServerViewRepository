@@ -77,7 +77,7 @@ class MemberInfo extends Component {
       //console.log('人员信息数据:',data);
       if (code === 0) {
         this.setState({ dataSource: data.list });
-        //console.log('人员信息第一页',this.state.dataSource);
+        console.log('人员信息:',this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });
@@ -152,6 +152,7 @@ class MemberInfo extends Component {
   handleDelMember = (record) => {
     //传入人员ID(key)
     let body = [record.key];
+    console.log(body);
     removeMember(body).then(res => {
       let result = res.data;
       if(result.code === 0){
