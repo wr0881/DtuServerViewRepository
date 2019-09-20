@@ -57,7 +57,7 @@ class AddSectorName extends Component {
           const { code, data, msg } = res.data;
           if (code === 0) {
             projectState.sectorId = data;
-            router.push('/project/add-project/add-member-info');
+            router.push('/project/add-project/result');
           }
         })
       }

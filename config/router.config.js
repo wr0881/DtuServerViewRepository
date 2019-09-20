@@ -161,6 +161,7 @@ export default [
               },
             ],
           },
+<<<<<<< HEAD
           // {
           //   path: '/project/memberinfo',
           //   name: '人员管理',
@@ -220,6 +221,8 @@ export default [
           //     }
           //   ],
           // },
+=======
+>>>>>>> dbc7d62a993678a83cc3ffccab557af4bee0d513
         ],
       },
       // // dashboard
