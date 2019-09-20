@@ -424,6 +424,7 @@ class AddImg extends Component {
           name="form"
           style={{ display: 'none' }}
           onLoad={_ => {
+            console.log(_);
             this.props.handleDrawerVisible(false);
             this.props.getImageList();
           }} />

@@ -98,14 +98,21 @@ class BindBenchmark extends Component {
         key: 'action',
         render: (text, record) => (
           <span>
-            <a onClick={_ => {
-              let idAry = [text.benchId];
-              const benchmarkMonitorPoints = text.benchmarkMonitorPoints;
-              benchmarkMonitorPoints.forEach(v => {
-                idAry.push(v.mpId);
-              });
-              this.delectBenchmark(idAry);
-            }}>删除基准点</a>
+            <Popconfirm
+              title="确定删除?"
+              onConfirm={_ => {
+                let idAry = [text.benchId];
+                const benchmarkMonitorPoints = text.benchmarkMonitorPoints;
+                benchmarkMonitorPoints.forEach(v => {
+                  idAry.push(v.mpId);
+                });
+                this.delectBenchmark(idAry);
+              }}
+              okText="是"
+              cancelText="否"
+            >
+              <a>删除基准点</a>
+            </Popconfirm>
             <Divider type="vertical" />
             <a onClick={_ => {
               sectorModel.selectBenchmarkPointList = text.benchmarkMonitorPoints;

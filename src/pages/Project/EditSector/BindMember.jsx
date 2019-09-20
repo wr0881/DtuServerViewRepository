@@ -369,9 +369,9 @@ class AddMember extends Component {
                               value={v.key}
                               //style={{lineHeight:'13px'}}
                             >
-                                <span style={{width:'20%',display:'inline-block',verticalAlign:'top'}}>{v.memberName}</span>
-                                <Tooltip title={v.memberCompany}><span style={{width:'50%',display:'inline-block',overflow:'hidden',textOverflow:'ellipsis',verticalAlign:'top'}}>{v.memberCompany}</span></Tooltip>
-                                <span style={{width:'30px',height:'10px',display:'inline-block',verticalAlign:'top'}}>{v.memberPhone}</span>
+                                <span style={{width:'60px',display:'inline-block',verticalAlign:'top'}}>{v.memberName}</span>
+                                <Tooltip title={v.memberCompany}><span style={{width:'110px',display:'inline-block',overflow:'hidden',textOverflow:'ellipsis',verticalAlign:'top'}}>{v.memberCompany}</span></Tooltip>
+                                <span style={{width:'60px',display:'inline-block',verticalAlign:'top'}}>{v.memberPhone}</span>
                             </Select.Option>          
                           )}
                         </Select>
