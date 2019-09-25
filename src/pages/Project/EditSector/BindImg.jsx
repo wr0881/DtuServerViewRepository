@@ -288,7 +288,9 @@ class AddImg extends Component {
     super(props);
     this.state = {
       imgUrl: '',
-      imgFile: ''
+      imgFile: '',
+
+      values: {},
     };
   }
 
@@ -297,24 +299,10 @@ class AddImg extends Component {
     const { validateFields } = form;
     validateFields((err, values) => {
       if (!err) {
-        let type = values.type;
-        let image = this.state.imgFile;
-        axios.post(`${window.uploadImgAddress}/upload/uploadImageListLoca`, {
-          params: {
-            sectorId: sectorModel.sectorId,
-            type,
-            image
-          }
-        }).then(res => {
-          const { code, msg, data } = res.data;
-          if (code === 0) {
-            message.info('添加成功');
-            // this.props.getBenchmarkList();
-            this.props.handleSubmit();
-            this.props.handleDrawerVisible(false);
-          }
-        })
-        console.log(image);
+        let type = values;
+        this.setState({ values }, _ => {
+          this.refs.addImgUpload.click();
+        });
       }
     });
   }
@@ -326,77 +314,10 @@ class AddImg extends Component {
     return (
       <Drawer
         title="添加图片"
-        width={720}
+        width={420}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
       >
-        {/* <Form
-          layout="vertical"
-          hideRequiredMark
-        >
-          <Form.Item label="选择图片">
-            <input
-              ref={ref => { this.imgSelect = ref }}
-              type="file"
-              style={{ display: 'none' }}
-              onChange={e => {
-                const file = e.target.files.item(0);
-                if (file) {
-                  const url = window.URL.createObjectURL(file);
-                  this.setState({ imgUrl: url, imgFile: file });
-                }
-              }}
-            />
-            <div className={styles.addFile} onClick={_ => { this.imgSelect.click() }}>
-              {this.state.imgUrl ?
-                <img src={this.state.imgUrl} style={{ width: '100%', height: '100%' }} alt="" />
-                :
-                <div style={{
-                  width: '100%',
-                  height: '62px',
-                  textAlign: 'center',
-                  color: '#999',
-                }}>
-                  <Icon type="plus" style={{ fontSize: '32px' }} />
-                  <div>Upload</div>
-                </div>
-              }
-            </div>
-          </Form.Item>
-          <Form.Item label="图片类型">
-            {getFieldDecorator('type', {
-              initValue: 1,
-              rules: [{ required: true, message: '请输入图片类型' }],
-            })(
-              <Select
-                placeholder="请选择图片类型"
-              >
-                <Option key={1}>布点图</Option>
-                <Option key={2}>现场图</Option>
-                <Option key={3}>剖面图</Option>
-              </Select>
-            )}
-          </Form.Item>
-          < div
-            style={{
-              position: 'absolute',
-              left: 0,
-              bottom: 0,
-              width: '100%',
-              borderTop: '1px solid #e9e9e9',
-              padding: '10px 16px',
-              background: '#fff',
-              textAlign: 'right',
-            }}
-          >
-            <Button onClick={_ => { this.props.handleDrawerVisible(false) }} style={{ marginRight: 8 }}>
-              取消
-            </Button>
-            <Button type="primary" onClick={this.handleSubmit}>
-              提交
-            </Button>
-          </div>
-        </Form> */}
         <form
           method="POST"
           target="form"
@@ -409,17 +330,34 @@ class AddImg extends Component {
             multiple="multiple"
             accept=".jpg,.png"
           />
-          <div style={{ height: '25px' }}></div>
+          <div style={{ height: '30px' }}></div>
           <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
-          <div style={{ height: '25px' }}></div>
-          <select name="type">
-            {/* <option value="1">布点图</option> */}
+          <select style={{ display: 'none' }} name="type" value={this.state.values.type}>
             <option value="2">现场图</option>
             <option value="3">剖面图</option>
           </select>
-          <div style={{ height: '25px' }}></div>
-          <button type="submit">上传</button>
+          <button style={{ display: 'none' }} type="submit" ref='addImgUpload'>上传</button>
         </form>
+        <Form
+          layout="vertical"
+        >
+          <Form.Item label="图片类型">
+            {getFieldDecorator('type', {
+              initialValue: 2,
+              rules: [{ required: true, message: '请输入图片类型' }],
+            })(
+              <Select
+                placeholder="请选择图片类型"
+              >
+                <Option value={2}>现场图</Option>
+                <Option value={3}>剖面图</Option>
+              </Select>
+            )}
+          </Form.Item>
+          <Form.Item>
+            <Button type='primary' onClick={this.handleSubmit}>上传</Button>
+          </Form.Item>
+        </Form>
         <iframe
           name="form"
           style={{ display: 'none' }}
@@ -446,7 +384,7 @@ class EditImage extends Component {
     return (
       <Drawer
         title="替换图片"
-        width={720}
+        width={420}
         onClose={_ => { this.props.handleEditImageVisible(false) }}
         visible={this.props.visible}
       >
@@ -462,7 +400,8 @@ class EditImage extends Component {
             accept=".jpg,.png"
           />
           <input style={{ display: 'none' }} type="input" name="imageListId" placeholder="图片ListID" value={sectorModel.selectImageListId}></input>
-          <button type="submit">上传</button>
+          <div style={{ height: '30px' }}></div>
+          <Button type='primary' htmlType='submit'>上传</Button>
         </form>
         <iframe
           name="form"

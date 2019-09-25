@@ -37,6 +37,7 @@ class AddPoint extends Component {
     super(props);
     this.state = {
       addSensorNum: [Date.now().toString(36)],
+      isDeep: false,
 
       terminlaNumberAry: [],
       sersorNumberAry: [],
@@ -184,8 +185,16 @@ class AddPoint extends Component {
                         notFoundContent={this.state.listMonitorTypeLoading ? <Spin size="small" /> : null}
                         dropdownMatchSelectWidth={false}
                         style={{ width: '100%' }}
+                        onChange={v => {
+                          axios.get('/sysCode/queryIsNeedDeep', { params: { scId: v } }).then(res => {
+                            const { code, msg, data } = res.data;
+                            if (code === 0 || code === 1) {
+                              this.setState({ isDeep: data });
+                            }
+                          })
+                        }}
                       >
-                        {this.state.listMonitorType.map(type => <Select.Option key={type.scId}>{type.itemName}</Select.Option>)}
+                        {this.state.listMonitorType.map(type => <Select.Option value={type.scId}>{type.itemName}</Select.Option>)}
                       </Select>
                     )}
                   </Form.Item>
@@ -196,7 +205,11 @@ class AddPoint extends Component {
                   <Form.Item label="x轴坐标" {...formItemLayout}>
                     {getFieldDecorator('picx', {
                       rules: [
-                        { required: true, message: '不允许为空' }
+                        { required: true, message: '不允许为空' },
+                        {
+                          pattern: /^[0-9]*$/,
+                          message: '只允许数字',
+                        },
                       ],
                       // initialValue: this.props.modifypass.manufacturer
                     })(<Input style={{ width: '210px' }} placeholder='例如:1920' />)}
@@ -206,9 +219,12 @@ class AddPoint extends Component {
                   <Form.Item label="y轴坐标" {...formItemLayout}>
                     {getFieldDecorator('picy', {
                       rules: [
-                        { required: true, message: '不允许为空' }
+                        { required: true, message: '不允许为空' },
+                        {
+                          pattern: /^[0-9]*$/,
+                          message: '只允许数字',
+                        },
                       ],
-                      // initialValue: this.props.modifypass.sensorModel
                     })(<Input style={{ width: '210px' }} placeholder='例如:1080' />)}
                   </Form.Item>
                 </Col>
@@ -219,11 +235,16 @@ class AddPoint extends Component {
                 return (
                   <Fragment>
                     <Row gutter={8}>
-                      <Col md={12} sm={24}>
+                      <Col md={12} sm={24} >
                         <Form.Item label="传感器深度" {...formItemLayout}>
                           {getFieldDecorator(`sensorDeep_${v}`, {
-                            // initialValue: this.props.modifypass.sensorName
-                          })(<Input style={{ width: '210px' }} />)}
+                            rules: [
+                              {
+                                pattern: /^[0-9]*$/,
+                                message: '只允许数字',
+                              },
+                            ],
+                          })(<Input style={{ width: '210px' }} disabled={!this.state.isDeep} />)}
                         </Form.Item>
                       </Col>
                       <Col md={12} sm={24}>
@@ -255,10 +276,13 @@ class AddPoint extends Component {
                         <Form.Item label="终端通道" {...formItemLayout}>
                           {getFieldDecorator(`terminalChannel_${v}`, {
                             rules: [
-                              { required: true, message: '不允许为空' }
+                              { required: true, message: '不允许为空' },
+                              {
+                                pattern: /^((0?[1-9])|((1|2)[0-9])|30|31|32|33|34)$/,
+                                message: '只允许1-34数字',
+                              },
                             ],
-                            // initialValue: this.props.modifypass.sensorAccuracy
-                          })(<Input style={{ width: '210px' }} />)}
+                          })(<Input style={{ width: '210px' }} placeholder='示例:1' />)}
                         </Form.Item>
                       </Col>
                       <Col md={12} sm={24}>
@@ -290,7 +314,7 @@ class AddPoint extends Component {
                 )
               })}
 
-              <Row gutter={16}>
+              <Row gutter={16} style={{ display: this.state.isDeep ? 'block' : 'none' }}>
                 <Col span={24}>
                   <Form.Item>
                     <Button type="dashed" style={{ width: '100%' }} onClick={_ => { this.setState({ addSensorNum: [...this.state.addSensorNum, Date.now().toString(36)] }) }}>

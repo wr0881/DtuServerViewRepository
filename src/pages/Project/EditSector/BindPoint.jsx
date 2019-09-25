@@ -197,7 +197,7 @@ class BindPoint extends Component {
       <Fragment>
         <Card bordered={false}>
           {/* {this.renderSimpleForm()}*/}
-          <Button onClick={_ => { this.handleAddImgVisible(true) }}>添加布点图</Button>
+          <Button type='primary' onClick={_ => { this.handleAddImgVisible(true) }}>添加布点图</Button>
           <Divider />
           <Table loading={this.state.getPointImageListLoading} columns={columns} dataSource={this.state.PointImageList} />
         </Card>
@@ -263,7 +263,7 @@ class AddImg extends Component {
     return (
       <Drawer
         title="布点图"
-        width={720}
+        width={420}
         onClose={_ => { this.props.handleAddImgVisible(false) }}
         visible={this.props.visible}
       >
@@ -280,12 +280,13 @@ class AddImg extends Component {
             accept=".jpg,.png"
           />
           <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
-          <select style={{ display: 'none' }} name="type" >
+          <select style={{ display: 'none' }} name="type" value='1'>
             <option value="1">布点图</option>
             <option value="2">现场图</option>
             <option value="3">剖面图</option>
           </select>
-          <button type="submit">上传</button>
+          <div style={{ height: '30px' }}></div>
+          <Button type='primary' htmlType='submit'>上传</Button>
         </form>
         <iframe name="form" id="form" style={{ display: 'none' }} onLoad={_ => {
           this.props.handleAddImgVisible(false);

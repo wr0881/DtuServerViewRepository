@@ -37,6 +37,7 @@ class EditPoint extends Component {
     super(props);
     this.state = {
       addSensorNum: [Date.now().toString(36)],
+      isDeep: false,
 
       terminlaNumberAry: [],
       sersorNumberAry: [],
@@ -160,12 +161,20 @@ class EditPoint extends Component {
                       initialValue: sectorModel.selectPointInfo.monitorTypeName
                     })(
                       <Select
-                        placeholder="示例：监测指标"
+                        placeholder="示例：监测类型"
                         onFocus={this.listMonitorType}
                         loading={this.state.listMonitorTypeLoading}
                         notFoundContent={this.state.listMonitorTypeLoading ? <Spin size="small" /> : null}
                         dropdownMatchSelectWidth={false}
                         style={{ width: '100%' }}
+                        onChange={v => {
+                          axios.get('/sysCode/queryIsNeedDeep', { params: { scId: v } }).then(res => {
+                            const { code, msg, data } = res.data;
+                            if (code === 0 || code === 1) {
+                              this.setState({ isDeep: data });
+                            }
+                          })
+                        }}
                       >
                         {this.state.listMonitorType.map(type => <Select.Option key={type.scId}>{type.itemName}</Select.Option>)}
                       </Select>
@@ -178,9 +187,13 @@ class EditPoint extends Component {
                   <Form.Item label="x轴坐标" {...formItemLayout}>
                     {getFieldDecorator('picx', {
                       rules: [
-                        { required: true, message: '不允许为空' }
+                        { required: true, message: '不允许为空' },
+                        {
+                          pattern: /^[0-9]*$/,
+                          message: '只允许数字',
+                        },
                       ],
-                      initialValue: sectorModel.selectPointInfo.picx
+                      initialValue: parseInt(sectorModel.selectPointInfo.picx)
                     })(<Input style={{ width: '210px' }} />)}
                   </Form.Item>
                 </Col>
@@ -188,9 +201,13 @@ class EditPoint extends Component {
                   <Form.Item label="y轴坐标" {...formItemLayout}>
                     {getFieldDecorator('picy', {
                       rules: [
-                        { required: true, message: '不允许为空' }
+                        { required: true, message: '不允许为空' },
+                        {
+                          pattern: /^[0-9]*$/,
+                          message: '只允许数字',
+                        },
                       ],
-                      initialValue: sectorModel.selectPointInfo.picy
+                      initialValue: parseInt(sectorModel.selectPointInfo.picy)
                     })(<Input style={{ width: '210px' }} />)}
                   </Form.Item>
                 </Col>
@@ -199,11 +216,17 @@ class EditPoint extends Component {
 
               <Fragment>
                 <Row gutter={8}>
-                  <Col md={12} sm={24}>
+                  <Col md={12} sm={24} >
                     <Form.Item label="传感器深度" {...formItemLayout}>
                       {getFieldDecorator(`sensorDeep`, {
+                        rules: [
+                          {
+                            pattern: /^[0-9]*$/,
+                            message: '只允许数字',
+                          },
+                        ],
                         initialValue: sectorModel.selectPointInfo.sensorDeep
-                      })(<Input style={{ width: '210px' }} />)}
+                      })(<Input style={{ width: '210px' }} disabled={!this.state.isDeep} />)}
                     </Form.Item>
                   </Col>
                   <Col md={12} sm={24}>
@@ -236,7 +259,11 @@ class EditPoint extends Component {
                     <Form.Item label="终端通道" {...formItemLayout}>
                       {getFieldDecorator(`terminalChannel`, {
                         rules: [
-                          { required: true, message: '不允许为空' }
+                          { required: true, message: '不允许为空' },
+                          {
+                            pattern: /^((0?[1-9])|((1|2)[0-9])|30|31|32|33|34)$/,
+                            message: '只允许1-34数字',
+                          },
                         ],
                         initialValue: sectorModel.selectPointInfo.terminalChannel
                       })(<Input style={{ width: '210px' }} />)}
