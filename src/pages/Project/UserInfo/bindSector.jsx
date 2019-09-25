@@ -15,15 +15,14 @@ class bindSector extends Component {
             targetKeys: [],
             showSearch: false
         }
-        this.handlePopup = this.handlePopup.bind(this);
-        this.handleOkOrCancel = this.handleOkOrCancel.bind(this);
+        // this.handlePopup = this.handlePopup.bind(this);
+        // this.handleOkOrCancel = this.handleOkOrCancel.bind(this);
     }
     handlePopup = () => {
+        this.getMock();
         this.setState({
             visible: true
         })
-        //this.terminalType();
-        this.getMock();
         //console.log(this.props.bindSector.key);
     }
     handleOkOrCancel = () => {
@@ -32,9 +31,8 @@ class bindSector extends Component {
         })
         
     }
-    onChange = targetKeys => {
-        //console.log('Target Keys:', targetKeys);
-        this.setState({ targetKeys });
+    onChange = nextTargetKeys => {
+        this.setState({ targetKeys:nextTargetKeys });
     };
 
     //获取数据
@@ -42,15 +40,11 @@ class bindSector extends Component {
         //获取未绑定的区间
         const { pagination } = this.state;
         let params = {
-            // pageNum: pagination.current,
-            // pageSize: pagination.pageSize,
             userId: this.props.bindSector.key
         }
-        //console.log(params);
         getUnbindSector(params).then(res => {
             const { code, msg, data } = res.data;
-            let mockData = [];
-            //console.log(code,msg);            
+            let mockData = [];           
             if(code === 0){
                 const unbindList = data;
                 unbindList.forEach(v => {
@@ -61,21 +55,18 @@ class bindSector extends Component {
                     });
                 })
                 this.setState({mockData});
-                //this.setState({ pagination: { ...this.state.pagination, total: data.total } });
             }
         })        
     };
     //确定
     handleSubmit = () => {
-        //const userId = 19;
         const userId = this.props.bindSector.key
         const body = this.state.targetKeys;
-        //console.log(body);
         bindingSector(userId,body).then(res =>{
             const { code, msg, data } = res.data;
             if(code === 0){
                 message.success('绑定区间成功！');
-                this.props.handleBindSector();
+                //this.props.handleBindSector();
                 //this.getMock(); 
             }else{
                 message.info(msg);
@@ -102,7 +93,6 @@ class bindSector extends Component {
                     disabled: listDisabled,
                 }) => {
                     const columns = direction === 'left' ? leftColumns : rightColumns;
-                    //console.log(filteredItems);
                     const rowSelection = {
                     getCheckboxProps: item => ({ disabled: listDisabled || item.disabled }),
                     onSelectAll(selected, selectedRows) {
@@ -140,19 +130,6 @@ class bindSector extends Component {
             </Transfer>
         );
 
-        //模拟数据
-        // const mockData = [];
-        // for (let i = 0; i < 20; i++) {
-        //     mockData.push({
-        //         key: i.toString(),
-        //         title: `区间${i + 1}`,
-        //         description: `区间描述${i + 1}`,
-        //         //disabled: i % 4 === 0,
-        //         //tag: mockTags[i % 3],
-        //     });
-            
-        // }
-
         const leftTableColumns = [
             {
                 dataIndex: 'title',
@@ -165,9 +142,7 @@ class bindSector extends Component {
                 title: '区间',
             },
         ];
-
         const { targetKeys } = this.state;
-        //console.log("targetKeys:",targetKeys);
         return (
             <div style={{ display: 'inline-block' }}>
                 <Button size="small" onClick={this.handlePopup}>绑定区间</Button>
@@ -179,18 +154,6 @@ class bindSector extends Component {
                     onCancel={this.handleOkOrCancel}
                     okText='绑定'
                 >
-                    {/* <Transfer
-                        listStyle={{
-                            width:300,
-                            height:500
-                        }}
-                        render={item => item.title}
-                        titles={['未绑定的区间','需绑定的区间']}
-                        dataSource={this.state.unbindData}
-                        targetKeys={targetKeys}
-                        onChange={this.onChange}
-                        showSearch
-                    />  */}
                     <TableTransfer
                         listStyle={{
                             width:320,
@@ -198,10 +161,10 @@ class bindSector extends Component {
                         dataSource={this.state.mockData}
                         targetKeys={targetKeys}
                         titles={['未绑定的区间','需绑定的区间']}
-                        //showSearch={this.setState({showSearch:true})}
+                        showSearch
                         onChange={this.onChange}
                         filterOption={(inputValue, item) =>
-                            item.title.indexOf(inputValue) !== -1 || item.tag.indexOf(inputValue) !== -1
+                            item.title.indexOf(inputValue) !== -1
                         }
                         leftColumns={leftTableColumns}
                         rightColumns={rightTableColumns}

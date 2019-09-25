@@ -81,6 +81,7 @@ class MemberInfo extends Component {
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });
+        router.push('/user/login');
       }
     }).catch(err => {
       this.setState({ tableLoading: false });

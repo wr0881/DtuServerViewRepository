@@ -20,14 +20,6 @@ const formItemLayout = {
     span: 19,
   },
 };
-const formItemLayout1 = {
-  labelCol: {
-    span: 14,
-  },
-  wrapperCol: {
-    span: 10,
-  },
-};
 
 @observer
 @Form.create()
@@ -41,19 +33,7 @@ class AddSectorName extends Component {
   }
 
   setJW = v => {
-    this.setState({ JW: v },_=>{
-      this.props.form.setFieldsValue({longitude:this.state.JW.lng});
-      this.props.form.setFieldsValue({latitude:this.state.JW.lat});
-    });    
-  }
-  //地图缩放
-  setScale = v => {
-    this.setState({
-      scale:v
-    },_=>{
-      console.log('获取的地图缩放比例为:',this.state.scale);
-      this.props.form.setFieldsValue({mapScale:this.state.scale});
-    })
+    this.setState({ JW: v });
   }
   onValidateForm = () => {
     const { form } = this.props;
@@ -102,6 +82,14 @@ class AddSectorName extends Component {
         console.log(err);
       })
     }
+  }
+
+  zoomChange(mapzoom){
+    console.log(mapzoom);
+    this.setState({
+      zoom:mapzoom
+    })
+    console.log(this.state.zoom);
   }
  
   detailForm = (record) => {
@@ -190,7 +178,6 @@ class AddSectorName extends Component {
             <Slider min={3} max={19} tipFormatter={v => `缩放比例: ${v}`} 
             tooltipPlacement='right'
             tooltipVisible={true}
-            //value={10}
             />
           )}
           {/* <Slider min={3} max={19} tipFormatter={v => `缩放比例: ${v}`}
@@ -202,37 +189,28 @@ class AddSectorName extends Component {
             //defaultValue={10}
           /> */}
         </Form.Item>
-        <Input.Group compact>
-        <Form.Item {...formItemLayout1} label="经纬度">
+        <Form.Item {...formItemLayout} label="经纬度">
           
-          
+          <Input.Group compact>
             {/* <Input style={{ width: 170, textAlign: 'center' }} placeholder="经度" value={this.state.JW.lng} disabled />  */}
-            {getFieldDecorator('longitude')(
-              <Input style={{ width: 120, borderTopRightRadius: 0, borderBottomRightRadius: 0, textAlign: 'center' }} placeholder="经度" />
-            )}
+            <Input id="longitude" style={{ width: 170, textAlign: 'center' }} placeholder={this.state.JW.lng} />
             
+            <Input
+              style={{
+                width: 30,
+                borderLeft: 0,
+                pointerEvents: 'none',
+                backgroundColor: '#fff',
+              }}
+              placeholder="~"
+              disabled
+            />
+            {/* <Input style={{ width: 170, textAlign: 'center', borderLeft: 0 }} placeholder="纬度" value={this.state.JW.lat} disabled />  */}
+            
+            <Input id="latitude" style={{ width: 170, textAlign: 'center' }} placeholder={this.state.JW.lat} />
+          </Input.Group>
+          
         </Form.Item>
-        <Form.Item>
-          <Input
-            style={{
-              width: 30,
-              borderLeft: 0,
-              marginLeft: 47,
-              pointerEvents: 'none',
-              backgroundColor: '#fff',
-              borderRadius: 0
-            }}
-            placeholder="~"
-            disabled
-          />
-
-        </Form.Item>
-        <Form.Item {...formItemLayout1}>
-            {getFieldDecorator('latitude')(
-              <Input style={{ width: 120, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, textAlign: 'center' }} placeholder="纬度" />
-            )}
-        </Form.Item>
-        </Input.Group>
         <Form.Item {...formItemLayout} label="标点">
           {/* {getFieldDecorator('map',{
             rules: [{ required: true, message:''}]
@@ -249,12 +227,9 @@ class AddSectorName extends Component {
             setJW={this.setJW}
             address={this.props.form.getFieldValue('adress') + this.props.form.getFieldValue('adress_detail')}
             scale={this.props.form.getFieldValue('mapScale')}
-            //输入框的经纬度
-            lng={this.props.form.getFieldValue('longitude')}
-            lat={this.props.form.getFieldValue('latitude')}
+            //scale={record}
+
             //getZoom={(mapzoom) => {this.zoomChange(mapzoom);console.log('Map的mapzoom:',mapzoom)}}
-            setScale={this.setScale}
-            
           />
         </Form.Item>
         <Form.Item

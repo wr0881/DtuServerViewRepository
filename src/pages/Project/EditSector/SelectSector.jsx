@@ -29,9 +29,11 @@ class SelectSector extends Component {
         //this.getProjectSector();
       }else{
         this.setState({ ProjectData:[] });
+        router.push('/user/login');
       }
     }).catch(err => {
       console.log(err);
+      
     })
   }
   

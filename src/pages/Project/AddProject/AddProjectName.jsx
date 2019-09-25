@@ -61,6 +61,7 @@ class AddProjectName extends Component {
           this.setState({ allProject: data });
         } else {
           this.setState({ allProject: [] });
+          router.push('/user/login');
         }
         this.setState({ getAllProjectLoading: false });
       }).catch(err => {
