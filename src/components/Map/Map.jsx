@@ -36,7 +36,7 @@ class BaiduMap extends Component {
     }
     initBMap() {
         this.map = new BMap.Map(this.refs.BMap);
-        this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 11);
+        this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 10);
         this.map.enableScrollWheelZoom(true);
 
         this.map.addEventListener("click", e => {
@@ -45,13 +45,13 @@ class BaiduMap extends Component {
             this.map.centerAndZoom(e.point, this.state.scale);
             this.map.clearOverlays();
             this.map.addOverlay(new BMap.Marker(e.point));
-            console.log('获取定位:',e.point.lng,e.point.lat);  
+            //console.log('获取定位:',e.point.lng,e.point.lat);  
             
         });
         //鼠标滚动缩放监听
         this.map.addEventListener("zoomend", () => {
             const zoom = this.map.getZoom();
-            console.log('当前缩放比例:',zoom);
+            //console.log('当前缩放比例:',zoom);
             this.setState( _ =>{this.props.setScale(zoom)} );
         })
     }
@@ -60,7 +60,7 @@ class BaiduMap extends Component {
     getLocation = () => {
         const lng = this.props.lng;
         const lat = this.props.lat;
-        console.log('输入框当前经纬度:',lng,lat);
+        //console.log('输入框当前经纬度:',lng,lat);
         if(lng !=="" && lat !== ""){
             this.map.clearOverlays();
             let new_point = new BMap.Point(lng,lat);
