@@ -419,7 +419,7 @@ class AddMember extends Component {
                           { required: true, message: '不允许为空' },
                         ]
                       })(
-                        <Input placeholder='人员单位' disabled />
+                        <Input placeholder='人员单位' />
                       )}
                     </Form.Item>
                   </Col>
@@ -430,7 +430,7 @@ class AddMember extends Component {
                           { required: true, message: '不允许为空' },
                         ]
                       })(
-                        <Input placeholder='人员电话' disabled />
+                        <Input placeholder='人员电话' />
                       )}
                     </Form.Item>
                   </Col>

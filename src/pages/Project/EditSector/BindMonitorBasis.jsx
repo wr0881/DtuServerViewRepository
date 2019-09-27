@@ -335,7 +335,7 @@ class AddMonitorBasis extends Component {
                           { required: true, message: '不允许为空' },
                         ]
                       })(
-                        <Input placeholder="文件名" disabled />
+                        <Input placeholder="文件名" />
                       )}
                     </FormItem>
                   </Col>
