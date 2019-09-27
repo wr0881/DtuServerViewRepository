@@ -117,6 +117,7 @@ export async function removeUser(param) {
     return axios.delete('/user/removeUser?userId=' + param);
 }
 
+
 // 已绑定的区间
 export async function getBindSector(params) {
     return axios.get('/user/listUserSector', { params });

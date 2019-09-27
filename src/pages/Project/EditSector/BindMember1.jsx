@@ -1,6 +1,5 @@
 /* eslint-disable */
 import React, { Component, Fragment } from 'react';
-import { observer } from 'mobx-react';
 import { getInstrMemberInfo,getBindingMember,removeSectorMember,notSectorMember,addUnbindMember,getMemberType } from '@/services/project';
 import {
   Row,
@@ -25,14 +24,11 @@ import {
   Popconfirm,
   message,
   Tag,
-  Spin
 } from 'antd';
 import sectormodel from './sectorModel';
-import debounce from 'lodash/debounce';
 
 const FormItem = Form.Item;
 
-@observer
 @Form.create()
 class BindMember extends Component {
   constructor(props) {
@@ -257,8 +253,6 @@ class AddMember extends Component {
       //notBindMemberData:[],
       memberType: [],
       //formValues: []
-
-      getInstrMemberInfoLoading: false
     };
   }
 
@@ -321,25 +315,6 @@ class AddMember extends Component {
   //   });
   // };
 
-  //获取人员信息
-  getInstrMemberInfo = (value, type, i) => {
-    if (value) {
-      this.setState({ getInstrMemberInfoLoading: true });
-      getInstrMemberInfo({ memberName: value }).then(res => {
-        const { code, data, msg } = res.data;
-        console.log('人员信息:',code,data);
-        if (code === 0) {
-          this.setState({ [type + i + 'Data']: data });
-        } else {
-          console.log(msg);
-        }
-        this.setState({ getInstrMemberInfoLoading: false });
-      }).catch(err => {
-        console.log(err);
-        this.setState({ getInstrMemberInfoLoading: false });
-      })
-    }
-  }
   // 获取职位信息
   getSectorRole = () => {
     getMemberType().then(res => {
@@ -357,12 +332,13 @@ class AddMember extends Component {
   }
 
   render() {
-    const { form } = this.props;
-    const { getFieldDecorator, getFieldValue } = form;
+    const {
+      form: { getFieldDecorator },
+    } = this.props;
     return (
       <Drawer
         title="绑定人员"
-        width={1000}
+        width={800}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
         destroyOnClose
@@ -376,7 +352,7 @@ class AddMember extends Component {
             if(i !== undefined){
               return(
                 <Row gutter={16} key={i}>
-                  <Col span={4}>
+                  <Col span={10}>
                     <Form.Item label={i > 0 ? '' : '人员'}>
                       {getFieldDecorator(`memberId_${i}`, {
                           rules: [
@@ -386,55 +362,23 @@ class AddMember extends Component {
                         <Select 
                           placeholder="请选择人员"
                           showSearch
-                          loading={this.state.getInstrMemberInfoLoading}
-                          notFoundContent={this.state.getInstrMemberInfoLoading ? <Spin size="small" /> : null}
-                          filterOption={false}
-                          onSearch={debounce(v => { this.getInstrMemberInfo(v, 'memberId', i) }, 800)}
-                          onChange={value => {
-                            if (this.state[`memberId${i}Data`]) {
-                              let select = this.state[`memberId${i}Data`].filter(v => v.memberId.toString() === value)[0];
-                              this.props.form.setFieldsValue({
-                                [`memberCompany_${i}`]: select.memberCompany,
-                                [`memberPhone_${i}`]: select.memberPhone,
-                              });
-                            }
-                          }}
                         >
-                          {this.state[`memberId${i}Data`] && this.state[`memberId${i}Data`].map(v =>(
-                            <Select.Option  
-                              key={v.memberId}
+                          {sectormodel.notBindMemberData.map(v => 
+                            <Select.Option 
+                              key={v.key} 
+                              value={v.key}
                               //style={{lineHeight:'13px'}}
                             >
-                              {v.memberName}
+                                <span style={{width:'60px',display:'inline-block',verticalAlign:'top'}}>{v.memberName}</span>
+                                <Tooltip title={v.memberCompany}><span style={{width:'110px',display:'inline-block',overflow:'hidden',textOverflow:'ellipsis',verticalAlign:'top'}}>{v.memberCompany}</span></Tooltip>
+                                <span style={{width:'60px',display:'inline-block',verticalAlign:'top'}}>{v.memberPhone}</span>
                             </Select.Option>          
-                          ))}
+                          )}
                         </Select>
                       )}
                     </Form.Item>
                   </Col>
                   <Col span={5}>
-                    <Form.Item label={i > 0 ? '' : '单位'}>
-                      {getFieldDecorator(`memberCompany_${i}`, {
-                        rules: [
-                          { required: true, message: '不允许为空' },
-                        ]
-                      })(
-                        <Input placeholder='人员单位' />
-                      )}
-                    </Form.Item>
-                  </Col>
-                  <Col span={4}>
-                    <Form.Item label={i > 0 ? '' : '电话'}>
-                      {getFieldDecorator(`memberPhone_${i}`, {
-                        rules: [
-                          { required: true, message: '不允许为空' },
-                        ]
-                      })(
-                        <Input placeholder='人员电话' />
-                      )}
-                    </Form.Item>
-                  </Col>
-                  <Col span={3}>
                     <Form.Item label={i > 0 ? '' : '人员类型'}>
                       {getFieldDecorator(`memberType_${i}`, {
                           rules: [
@@ -450,7 +394,7 @@ class AddMember extends Component {
                       )}
                     </Form.Item>
                   </Col>
-                  <Col span={4}>
+                  <Col span={5}>
                     <Form.Item label={i > 0 ? '' : '职位'}>
                       {getFieldDecorator(`sectorRole_${i}`, {
                           rules: [

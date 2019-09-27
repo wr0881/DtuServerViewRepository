@@ -51,7 +51,7 @@ class AddSectorName extends Component {
     this.setState({
       scale:v
     },_=>{
-      console.log('获取的地图缩放比例为:',this.state.scale);
+      //console.log('获取的地图缩放比例为:',this.state.scale);
       this.props.form.setFieldsValue({mapScale:this.state.scale});
     })
   }
@@ -187,7 +187,7 @@ class AddSectorName extends Component {
             initialValue: 10,
             rules: [{ required: true, message: '请选择地图缩放比例' }],
           })(
-            <Slider min={3} max={19} tipFormatter={v => `缩放比例: ${v}`} 
+            <Slider min={4} max={19} tipFormatter={v => `缩放比例: ${v}`} 
             tooltipPlacement='right'
             tooltipVisible={true}
             //value={10}

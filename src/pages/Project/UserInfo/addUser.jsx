@@ -23,6 +23,7 @@ import {
   Tooltip,
 } from 'antd';
 import styles from './userinfo.less';
+import axios from '@/services/axios'
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -37,6 +38,26 @@ class addUser extends Component {
       addUserNum: [0],
       cancelUserNum: [],
     };
+  }
+  
+  //验证用户唯一性
+  userRules = (rule, value ,callback) => {
+    //console.log(value);
+    this.setState({
+      userName:value
+    },() => {
+      this.nameChange(callback)
+    })
+  }
+  nameChange = (callback) => {
+    axios.get('/user/checkOnlyUser',{params:{userName: this.state.userName}}).then(res =>{
+      const { code, msg, data } = res.data;
+      if(data === false){
+        callback(msg)
+      }else{
+        //callback(msg)
+      }
+    })
   }
 
   // 添加用户提交
@@ -91,6 +112,7 @@ class addUser extends Component {
                 <Form.Item label="账号">
                   {getFieldDecorator('userName', {
                     rules: [
+                      { validator: this.userRules },
                       { required: true, message: '不允许为空' },
                       {
                         pattern: /^[a-zA-Z]+$|^[a-zA-Z]+_+[\w]*[a-zA-Z]+$/,

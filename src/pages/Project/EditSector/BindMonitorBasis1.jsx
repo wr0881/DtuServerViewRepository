@@ -23,11 +23,9 @@ import {
   Modal,
   Popconfirm,
   message,
-  Tag,
-  Spin
+  Tag
 } from 'antd';
 import sectormodel from './sectorModel';
-import debounce from 'lodash/debounce';
 
 const FormItem = Form.Item;
 
@@ -220,8 +218,6 @@ class AddMonitorBasis extends Component {
     this.state = {
       notSectorMoniBasData:[],
       addMoniBasNum: [0],
-
-      getMonitorBasisLoading: false
     };
   }
   handleSubmit = e => {
@@ -231,12 +227,8 @@ class AddMonitorBasis extends Component {
     form.validateFields((err, fieldsValue) => {
       if (err) return;
       const sectorId = sectormodel.sectorId;
-      let params = [];
-      const monitoringBasisKeys = Object.keys(fieldsValue).filter(item => item.indexOf('monitoringBasis_') > -1);
-      for(let i = 0; i < monitoringBasisKeys.length; i++){
-        params.push(fieldsValue[monitoringBasisKeys[i]])
-      }
-      //console.log(params);
+      const values = fieldsValue;
+      const params = Object.values(values);
       addSectorMoniBas(sectorId,params).then(res => {
         const { code, data, msg } = res.data;
         if(code === 0){
@@ -257,30 +249,26 @@ class AddMonitorBasis extends Component {
   }
 
   // 区间下没有绑定的监测依据
-  NotSectorMoniBas = (value, type, i) =>{
-    let params = { sectorId:sectormodel.sectorId,number:value }
-    //console.log(sectormodel.sectorId)
-    if(value){
-      this.setState({ getMonitorBasisLoading: true });
-      notSectorMoniBas(params).then(res => {
-        const { code, msg, data } = res.data;
-        if(code === 0) {
-          this.setState({ [type + i + 'Data']:data });
-        }else{
-          console.log(msg);
-          this.setState({ [type + i + 'Data']:[] });
-        }
-        this.setState({ getMonitorBasisLoading: false });
-      }).catch(err => {
-        //console.log(err);
-        this.setState({ getMonitorBasisLoading: false });
-      })
-    }
+  NotSectorMoniBas = () =>{
+    let params = { sectorId:sectormodel.sectorId }
+    console.log(sectormodel.sectorId)
+    notSectorMoniBas(params).then(res => {
+      const { code, msg, data } = res.data;
+      if(code === 0) {
+        this.setState({ notSectorMoniBasData:data });
+        console.log(this.state.notSectorMoniBasData);
+      }else{
+        this.setState({ notSectorMoniBasData:[] });
+      }
+    }).catch(err => {
+      //console.log(err);
+    })
   }
 
   render() {
-    const { form } = this.props;
-    const { getFieldDecorator, getFieldValue } = form;
+    const {
+      form: { getFieldDecorator },
+    } = this.props;
     return (
       <Drawer
         title="绑定监测依据"
@@ -298,49 +286,20 @@ class AddMonitorBasis extends Component {
             if(i !== undefined){
               return(
                 <Row gutter={16} key={i}>
-                  <Col span={7}>
-                    <FormItem label={i > 0 ? '' : '文件编号'}>
-                      {getFieldDecorator(`monitoringBasis_${i}`)(
+                  <Col span={18}>
+                    <FormItem label={i > 0 ? '' : '文件编号和名称'}>
+                      {getFieldDecorator(`fileName_${i}`)(
                         <Select 
-                          placeholder="请选择文件编号"
-                          showSearch
-                          loading={this.state.getMonitorBasisLoading}
-                          notFoundContent={this.state.getMonitorBasisLoading ? <Spin size="small" /> : null}
-                          filterOption={false}
-                          onSearch={debounce(v => { this.NotSectorMoniBas(v, 'monitoringBasis', i)}, 800)}
-                          onChange={value => {
-                            if (this.state[`monitoringBasis${i}Data`]) {
-                              let select = this.state[`monitoringBasis${i}Data`].filter(v => v.monitoringBasis.toString() === value)[0];
-                              this.props.form.setFieldsValue({
-                                [`fileName_${i}`]: select.fileName,
-                              });
-                            }
-                          }}
+                          placeholder="请选择文件"
+                          onFocus={this.NotSectorMoniBas}
                         >
-                          {this.state[`monitoringBasis${i}Data`] && this.state[`monitoringBasis${i}Data`].map(v => (
-                            <Select.Option
-                              key={v.monitoringBasis}
-                            >
-                              {v.number}
-                            </Select.Option>
-                          ))}
+                          {this.state.notSectorMoniBasData.map(v => <Select.Option key={v.monitoringBasis} value={v.monitoringBasis}><span style={{width:'120px',display:'inline-block'}}>{v.number}</span>{v.fileName}</Select.Option>)}
                         </Select>
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={11}>
-                    <FormItem label={i > 0 ? '' : '文件名称'}>
-                      {getFieldDecorator(`fileName_${i}`, {
-                        rules: [
-                          { required: true, message: '不允许为空' },
-                        ]
-                      })(
-                        <Input placeholder="文件名" />
-                      )}
-                    </FormItem>
-                  </Col>
                   <Col span={6}>
-                    <FormItem>
+                    <Form.Item>
                       <Button
                         type='dashed'
                         style={i > 0 ? { width: '100%' } : { top: '29px', width: '100%' } && i === 0 ? {display:'none'}:{display:'block'}}
@@ -350,7 +309,7 @@ class AddMonitorBasis extends Component {
                           this.setState({ addMoniBasNum });
                         }}
                       >删除</Button>
-                    </FormItem>
+                    </Form.Item>
                   </Col>
                 </Row>
               )
