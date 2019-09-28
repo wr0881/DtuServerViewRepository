@@ -59,8 +59,8 @@ class modifyUser extends Component {
 
     render() {
         const formItemLayout = {
-            labelCol: { sm: { span: 8 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'center' } },
-            wrapperCol: { sm: { span: 16 }, xs: { span: 24 } }
+            labelCol: { sm: { span: 6 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'left' } },
+            wrapperCol: { sm: { span: 18 }, xs: { span: 24 } }
         }
         const { form: { getFieldDecorator, getFieldValue } } = this.props;
         return (
@@ -104,7 +104,7 @@ class modifyUser extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.phone
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>
@@ -121,7 +121,7 @@ class modifyUser extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.email
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>
@@ -138,7 +138,7 @@ class modifyUser extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.company
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>
@@ -155,7 +155,7 @@ class modifyUser extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.realName
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>

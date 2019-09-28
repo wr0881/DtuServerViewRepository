@@ -117,6 +117,11 @@ export async function removeUser(param) {
     return axios.delete('/user/removeUser?userId=' + param);
 }
 
+//用户唯一性验证
+// export async function checkOnlyUser(param) {
+//     return axios.get('/user/checkOnlyUser',{ param })
+// }
+
 
 // 已绑定的区间
 export async function getBindSector(params) {
