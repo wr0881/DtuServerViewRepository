@@ -291,7 +291,7 @@ class AddMonitorBasis extends Component {
       >
         <Form
           layout="vertical"
-          hideRequiredMark
+          //hideRequiredMark
           onSubmit={this.handleSubmit}
         >
           {this.state.addMoniBasNum.map(i => {
@@ -332,7 +332,7 @@ class AddMonitorBasis extends Component {
                     <FormItem label={i > 0 ? '' : '文件名称'}>
                       {getFieldDecorator(`fileName_${i}`, {
                         rules: [
-                          { required: true, message: '不允许为空' },
+                          { required: false, message: '不允许为空' },
                         ]
                       })(
                         <Input placeholder="文件名" />

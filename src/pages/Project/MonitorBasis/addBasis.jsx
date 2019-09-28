@@ -79,7 +79,7 @@ class addBasis extends Component {
         >
           <Form
             layout="vertical"
-            hideRequiredMark
+            //hideRequiredMark
             onSubmit={this.handleSubmit}
           >
             <Row gutter={16}>
@@ -89,7 +89,7 @@ class addBasis extends Component {
                     rules: [
                       { required: true, message: '不允许为空' },
                       {
-                        pattern: /^[a-zA-Z0-9/]+$|[a-zA-Z0-9]+_+[\w]*[a-zA-Z0-9]+$/,
+                        pattern: /^[a-zA-Z0-9/]+$|[a-zA-Z0-9]+-+[\w]*[a-zA-Z0-9]+$/,
                         message: '只允许输入英文和数字,中间可以用‘-’符号',
                       },
                     ],

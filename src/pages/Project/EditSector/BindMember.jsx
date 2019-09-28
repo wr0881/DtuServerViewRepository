@@ -369,7 +369,7 @@ class AddMember extends Component {
       >
         <Form
           layout="vertical"
-          hideRequiredMark
+          //hideRequiredMark
           onSubmit={this.handleSubmit}
         > 
           {this.state.addMemberNum.map(i => {
@@ -416,7 +416,7 @@ class AddMember extends Component {
                     <Form.Item label={i > 0 ? '' : '单位'}>
                       {getFieldDecorator(`memberCompany_${i}`, {
                         rules: [
-                          { required: true, message: '不允许为空' },
+                          { required: false, message: '不允许为空' },
                         ]
                       })(
                         <Input placeholder='人员单位' />
@@ -427,7 +427,7 @@ class AddMember extends Component {
                     <Form.Item label={i > 0 ? '' : '电话'}>
                       {getFieldDecorator(`memberPhone_${i}`, {
                         rules: [
-                          { required: true, message: '不允许为空' },
+                          { required: false, message: '不允许为空' },
                         ]
                       })(
                         <Input placeholder='人员电话' />

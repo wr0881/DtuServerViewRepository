@@ -42,7 +42,7 @@ class addUser extends Component {
   
   //验证用户唯一性
   userRules = (rule, value ,callback) => {
-    console.log(value);
+    //console.log(value);
     this.setState({
       userName:value
     },() => {
@@ -53,7 +53,7 @@ class addUser extends Component {
   nameChange = (callback) => {
     axios.get('/user/checkOnlyUser',{params:{userName: this.state.userName}}).then(res =>{
       const { code, msg, data } = res.data;
-      console.log(data,msg);
+      //console.log(data,msg);
       if(data === false){
         callback(msg)
       }else{
@@ -107,7 +107,7 @@ class addUser extends Component {
         >
           <Form
             layout="vertical"
-            hideRequiredMark
+            //hideRequiredMark
             onSubmit={this.handleSubmit}
           >
             <Row gutter={16}>
