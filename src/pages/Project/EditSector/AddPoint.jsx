@@ -231,9 +231,16 @@ class AddPoint extends Component {
               </Row>
               <Divider style={{ marginTop: '0' }} />
 
-              {this.state.addSensorNum.map(v => {
+              {this.state.addSensorNum.map((v,i) => {
                 return (
-                  <Fragment>
+                  <div style={{ position: 'relative' }}>
+                    <Icon 
+                      type="close-circle" 
+                      style={{ display:this.state.length>0?'block':'none',position: 'absolute', top: '40px', right: '-50px', zIndex: '1000' ,fontSize:'20px',cursor:'pointer'}}
+                      onClick={_=>{
+                        this.state.addSensorNum.splice(i,1);
+                      }}
+                    />
                     <Row gutter={8}>
                       <Col md={12} sm={24} >
                         <Form.Item label="传感器深度" {...formItemLayout}>
@@ -310,7 +317,7 @@ class AddPoint extends Component {
                       </Col>
                     </Row>
                     <Divider style={{ marginTop: '0' }} />
-                  </Fragment>
+                  </div>
                 )
               })}
 
