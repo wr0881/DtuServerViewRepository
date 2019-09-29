@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Form, Input, Button, Select, Divider, Cascader, DatePicker, Slider } from 'antd';
 import moment from 'moment';
 import Map from '@/components/Map/Map';
-import { getsectorType, addSector } from '@/services/project';
+import { getsectorType, addSector, getAddress } from '@/services/project';
 import { getLocation } from '@/utils/getLocation';
 import projectState from './project';
 import styles from './style.less';
@@ -20,6 +20,14 @@ const formItemLayout = {
     span: 19,
   },
 };
+const formItemLayout1 = {
+  labelCol: {
+    span: 14,
+  },
+  wrapperCol: {
+    span: 10,
+  },
+};
 
 @observer
 @Form.create()
@@ -31,8 +39,21 @@ class AddSectorName extends Component {
       JW: { lng: '', lat: '' },
     };
   }
+
   setJW = v => {
-    this.setState({ JW: v });
+    this.setState({ JW: v },_=>{
+      this.props.form.setFieldsValue({longitude:this.state.JW.lng});
+      this.props.form.setFieldsValue({latitude:this.state.JW.lat});
+    });    
+  }
+  //地图缩放
+  setScale = v => {
+    this.setState({
+      scale:v
+    },_=>{
+      //console.log('获取的地图缩放比例为:',this.state.scale);
+      this.props.form.setFieldsValue({mapScale:this.state.scale});
+    })
   }
   onValidateForm = () => {
     const { form } = this.props;
@@ -46,17 +67,20 @@ class AddSectorName extends Component {
           sectorDescription: values.sectorDescription,
           sectorEndTime: values.sectorEnd_time.format('YYYY-MM-DD HH:mm:ss'),
           mapScale: values.mapScale,
+          //mapScale: this.state.zoom,
           sectorLatitude: this.state.JW.lat,
           sectorLongitude: this.state.JW.lng,
           sectorName: values.sectorName,
           sectorStatus: values.sectorStatus,
           sectorType: values.sectorType
         };
+        
+        //console.log(result);
         addSector(result).then(res => {
           const { code, data, msg } = res.data;
           if (code === 0) {
             projectState.sectorId = data;
-            router.push('/project/add-project/add-member-info');
+            router.push('/project/add-project/result');
           }
         })
       }
@@ -68,6 +92,7 @@ class AddSectorName extends Component {
     if (sectorType.length === 0) {
       getsectorType().then(res => {
         const { code, data } = res.data;
+        console.log(data);
         if (code === 0) {
           this.setState({ sectorType: data });
         } else {
@@ -78,8 +103,8 @@ class AddSectorName extends Component {
       })
     }
   }
-
-  detailForm = () => {
+ 
+  detailForm = (record) => {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
@@ -99,7 +124,7 @@ class AddSectorName extends Component {
               dropdownMatchSelectWidth={false}
               style={{ width: '100%' }}
             >
-              {this.state.sectorType.map((type, i) => <Select.Option key={i} value={type.typeCode}>{type.itemName}</Select.Option>)}
+              {this.state.sectorType.map((type, i) => <Select.Option key={type.id} value={type.id}>{type.itemName}</Select.Option>)}
             </Select>
           )}
         </Form.Item>
@@ -162,30 +187,74 @@ class AddSectorName extends Component {
             initialValue: 10,
             rules: [{ required: true, message: '请选择地图缩放比例' }],
           })(
-            <Slider min={3} max={19} tipFormatter={v => `缩放比例: ${v}`} />
-          )}
-        </Form.Item>
-        <Form.Item {...formItemLayout} label="经纬度">
-          <Input.Group compact>
-            <Input style={{ width: 170, textAlign: 'center' }} placeholder="经度" value={this.state.JW.lng} disabled />
-            <Input
-              style={{
-                width: 30,
-                borderLeft: 0,
-                pointerEvents: 'none',
-                backgroundColor: '#fff',
-              }}
-              placeholder="~"
-              disabled
+            <Slider min={4} max={19} tipFormatter={v => `缩放比例: ${v}`} 
+            tooltipPlacement='right'
+            tooltipVisible={true}
+            //value={10}
             />
-            <Input style={{ width: 170, textAlign: 'center', borderLeft: 0 }} placeholder="纬度" value={this.state.JW.lat} disabled />
-          </Input.Group>
+          )}
+          {/* <Slider min={3} max={19} tipFormatter={v => `缩放比例: ${v}`}
+            //value={this.state.zoom}
+            value={this.state.zoom}
+            tooltipPlacement='right'
+            tooltipVisible={true}
+            //onChange={v => {v===this.state.zoom}} 
+            //defaultValue={10}
+          /> */}
         </Form.Item>
+        <Input.Group compact>
+        <Form.Item {...formItemLayout1} label="经纬度">
+          
+          
+            {/* <Input style={{ width: 170, textAlign: 'center' }} placeholder="经度" value={this.state.JW.lng} disabled />  */}
+            {getFieldDecorator('longitude')(
+              <Input style={{ width: 120, borderTopRightRadius: 0, borderBottomRightRadius: 0, textAlign: 'center' }} placeholder="经度" />
+            )}
+            
+        </Form.Item>
+        <Form.Item>
+          <Input
+            style={{
+              width: 30,
+              borderLeft: 0,
+              marginLeft: 47,
+              pointerEvents: 'none',
+              backgroundColor: '#fff',
+              borderRadius: 0
+            }}
+            placeholder="~"
+            disabled
+          />
+
+        </Form.Item>
+        <Form.Item {...formItemLayout1}>
+            {getFieldDecorator('latitude')(
+              <Input style={{ width: 120, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, textAlign: 'center' }} placeholder="纬度" />
+            )}
+        </Form.Item>
+        </Input.Group>
         <Form.Item {...formItemLayout} label="标点">
+          {/* {getFieldDecorator('map',{
+            rules: [{ required: true, message:''}]
+          })(
+            <Map
+              setJW={this.setJW}
+              address={this.props.form.getFieldValue('adress') + this.props.form.getFieldValue('adress_detail')}
+              scale={this.props.form.getFieldValue('mapScale')}
+
+              getZoom={(mapzoom) => {this.zoomChange(mapzoom)}}
+            />
+          )} */}
           <Map
             setJW={this.setJW}
             address={this.props.form.getFieldValue('adress') + this.props.form.getFieldValue('adress_detail')}
             scale={this.props.form.getFieldValue('mapScale')}
+            //输入框的经纬度
+            lng={this.props.form.getFieldValue('longitude')}
+            lat={this.props.form.getFieldValue('latitude')}
+            //getZoom={(mapzoom) => {this.zoomChange(mapzoom);console.log('Map的mapzoom:',mapzoom)}}
+            setScale={this.setScale}
+            
           />
         </Form.Item>
         <Form.Item
@@ -209,13 +278,13 @@ class AddSectorName extends Component {
     return (
       <Fragment>
         {this.detailForm()}
-        <Divider style={{ margin: '40px 0 24px' }} />
+        {/* <Divider style={{ margin: '40px 0 24px' }} />
         <div className={styles.desc}>
           <h4>锐雯</h4>
           <p>
             我已经流浪了如此之久……
           </p>
-        </div>
+        </div> */}
       </Fragment>
     );
   }

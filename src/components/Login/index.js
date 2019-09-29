@@ -41,14 +41,14 @@ class Login extends Component {
         const params = new URLSearchParams();
         params.append('userName', values.username);
         params.append('password', values.password);
-        axios.post(`/token/login`, params)
+        axios.post(`/token/consoleLogin`, params)
           .then(response => {
             //console.log(response)
             let result = response.data
             if (result.code == 0) {
               //console.log(result.data)
               axios.defaults.headers.common['Authorization'] = 'Bearer ' + result.data;
-              router.push('/server/youren');
+              router.push('/project/add-project');
             } else {
               message.warn(result.msg);
             }

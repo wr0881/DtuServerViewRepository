@@ -339,7 +339,7 @@ export default class ServerSensor extends Component {
               return
             }
             const hide = message.loading('正在发送指令，请稍候');
-            // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'0304000000027029'} })
+            // axios.get(`/deviceConfig/manualSend`, { params: {...item,queryInstruct:'EE'} })
             axios.get(`/deviceConfig/manualSend`, { params: item })
               .then(response => {
                 let result = response.data

@@ -29,6 +29,8 @@ import AddSensor from './addSensor';
 import ModifySensor from './modifySensor';
 import SensorDetail from './sensorDetail';
 import styles from './index.less';
+import qs from 'qs';
+import axios from 'axios';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -223,7 +225,7 @@ class index extends Component {
         productDate: fieldsValue.productDate ? fieldsValue.productDate.format('YYYY-MM-DD') : undefined,
         endDate: fieldsValue.endDate ? fieldsValue.endDate.format('YYYY-MM-DD') : undefined,
       };
-
+      console.log(values);
       this.setState({
         formValues: values,
       }, _ => { this.queryDataSource() });
@@ -262,9 +264,10 @@ class index extends Component {
     getSensorInfo(param).then(res => {
       this.setState({ tableLoading: false });
       const { code, data } = res.data;
+      //console.log('传感器数据:',data);
       if (code === 0) {
         this.setState({ dataSource: data.list });
-        console.log(this.state.dataSource);
+        //console.log('传感器第一页:',this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
       }else{
         this.setState({ dataSource: [] });
@@ -279,32 +282,40 @@ class index extends Component {
   //批量入库
   handleSelectedInStatus = (record) => {
     if(this.state.selectedRowKeys.length>0){
-      message.success('批量入库！！！');
-      console.log('批量入库数据:',[...this.state.selectedRows]);
-      //let params = { "sensorNumber": record.sensorNumber }
+      //message.success('批量入库！！！');
+      const param1 = '入库';
+      const params = this.state.selectedRowKeys
+      updateInAndOut(param1,params).then(res=>{
+        const { code, msg } = res.data;
+        if(code === 0){
+          message.success(msg);
+        }
+        this.queryDataSource();
+      })
+      
     }else{
-
+      message.error('请先选择！');
     }
   }
   //批量出库
   handleSelectedOutStatus(){
     if(this.state.selectedRowKeys.length>0){
-      message.success('批量出库！！！');
-      console.log('批量出库数据:',[...this.state.selectedRows]);
-    }
-  }
-  //批量删除
-  handleSelectedDel(){
-    if(this.state.selectedRowKeys.length>0){
-      message.success('批量删除！！！');
-      console.log('批量删除数据:',[...this.state.selectedRows]);
+      const param1 = '出库';
+      const params = this.state.selectedRowKeys
+      updateInAndOut(param1,params).then(res=>{
+        const { code, msg } = res.data;
+        if(code === 0){
+          message.success(msg);
+        }
+        this.queryDataSource();
+      })
+    }else{
+      message.error('请先选择！');
     }
   }
   //清空所选
   handleSelectedEmpty(){
     if(this.state.selectedRowKeys.length>0){
-      message.success('清空所选！！！');
-      console.log('清空所选数据:',[...this.state.selectedRows]);
       this.queryDataSource();
       this.state.selectedRowKeys=[];
     }
@@ -312,20 +323,18 @@ class index extends Component {
 
   //删除
   handleDel = (record) => {
-    console.log(record);
     //转换为json格式
     let params = { "sensorNumber": record.sensorNumber };
     handleDelSensor(params).then(res => {
-      console.log(res);
       let result = res.data;
       if(result.code === 0){
-        console.log(result.msg);
+        message.success(result.msg);
         this.queryDataSource();
       }else{
-        console.log(result.msg);
+        message.info(result.msg);
       }
     }).catch(err => {
-      console.log(err);
+      message.error(err);
     })
   }
 
@@ -381,11 +390,16 @@ class index extends Component {
               checkedChildren="已入库"
               unCheckedChildren="未入库"
               checked={checked}
-              onChange={e => {
-                const inAndOutStatus = e ? '入库' : '出库';
-                updateInAndOut({ inAndOutStatus, sensorId: record.key }).then(res => {
-                  if (res) {
-                    this.queryDataSource(false);
+              onChange={checked => {
+                const inAndOutStatus = checked ? '入库' : '出库';
+                const sensorId = [record.key];
+                console.log(inAndOutStatus,sensorId);
+                updateInAndOut(inAndOutStatus,sensorId).then(res => {
+                  console.log(res.data);
+                  console.log(record.key);
+                  const { code, msg } = res.data;
+                  if (code === 0) {
+                    this.queryDataSource();
                   }
                 })
               }}
@@ -398,7 +412,7 @@ class index extends Component {
         align: 'center',
         render: (text, record) => (
           <div>
-            <ModifySensor className="sensor_modify" modifypass={record} />
+            <ModifySensor className="sensor_modify" modifypass={record} handleUpdate={this.queryDataSource} />
             <Divider type="vertical" />
             <Popconfirm
               title="确定删除此传感器？"
@@ -423,8 +437,9 @@ class index extends Component {
     const rowSelection = {
       selectedRowKeys: this.state.selectedRowKeys,
       onChange: (selectedRowKeys, selectedRows) => {
-        console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
+        //console.log(`selectedRowKeys: ${selectedRowKeys}`, 'selectedRows: ', selectedRows);
         this.setState({ selectedRowKeys, selectedRows });
+        //console.log(this.state.selectedRowKeys);
       },
       // onSelect:(record, selected, selectedRowKeys, selectedRows) => {
 
@@ -478,10 +493,10 @@ class index extends Component {
                     <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedOutStatus()}}>
                       批量出库
                     </a>
-                    <Divider type="vertical" />
+                    {/* <Divider type="vertical" />
                     <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedDel()}}>
                       批量删除
-                    </a>
+                    </a> */}
                     <Divider type="vertical" />
                     <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedEmpty()}}>
                       清空所选

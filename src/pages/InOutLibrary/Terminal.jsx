@@ -163,10 +163,6 @@ class Terminal extends Component {
     this.setState({
       formValues: {},
     });
-    // dispatch({
-    //   type: 'rule/fetch',
-    //   payload: {},
-    // });
   };
 
   handleDrawerAddTerminalVisible = (boolen) => {
@@ -184,8 +180,8 @@ class Terminal extends Component {
     getTerminalInfo(param).then(res => {
       this.setState({ tableLoading: false });
       const { code, data } = res.data;
-      console.log()
       if (code === 0) {
+        console.log(data.list);
         this.setState({ dataSource: data.list });
         console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
@@ -199,30 +195,13 @@ class Terminal extends Component {
   };
 
   //批量操作
-  //批量入库
-  handleSelectedInStatus = (record) => {
-    if(this.state.selectedRowKeys.length>0){
-      message.success('批量入库！！！');
-      console.log('批量入库数据:',[...this.state.selectedRows]);
-      //let params = { "sensorNumber": record.sensorNumber }
-    }else{
-
-    }
-  }
-  //批量出库
-  handleSelectedOutStatus(){
-    if(this.state.selectedRowKeys.length>0){
-      message.success('批量出库！！！');
-      console.log('批量出库数据:',[...this.state.selectedRows]);
-    }
-  }
   //清空所选
   handleSelectedEmpty(){
     if(this.state.selectedRowKeys.length>0){
-      message.success('清空所选！！！');
-      console.log('清空所选数据:',[...this.state.selectedRows]);
       this.queryDataSource();
       this.state.selectedRowKeys=[];
+    }else{
+      message.error('请先选择！');
     }
   }
 
@@ -233,13 +212,13 @@ class Terminal extends Component {
     handleDelTerminal(params).then(res => {
       let result = res.data;
       if(result.code === 0) {
-        console.log(result.msg);
+        message.success(result.msg);
         this.queryDataSource();
       }else{
-        console.log(result.msg);
+        message.info(result.msg);
       }
     }).catch(err => {
-      console.log(err);
+      message.error(err);
     })
   }
 
@@ -312,12 +291,15 @@ class Terminal extends Component {
         title: '终端状态',
         dataIndex: 'terminalStatus',
         align: 'center',
-        render: (text, value, index) => {          
-          switch(text){
-            case 1:text="未使用";status="default";break;
-            case 2:text="使用中";status="success";break;
-            case 3:text="已损坏";status="error";break;
-          }
+        render: (text, value, index) => {  
+          let status = 'default';
+          if (text === '未使用') {
+            status = 'default';
+          } else if (text === '使用中') {
+            status = 'success';
+          } else if (text === '已损坏') {
+            status = 'error';
+          }     
           return <Badge status={status} text={text} />
         }
       },
@@ -326,7 +308,7 @@ class Terminal extends Component {
         align: 'center',
         render: (text, record) => (
           <div>
-            <ModifyTerminal className="terminal_modify" modifypass={record} />
+            <ModifyTerminal className="terminal_modify" modifypass={record} handleUpdate={this.queryDataSource}/>
             <Divider type="vertical" />
             <Popconfirm
               title="确定删除此终端?"
@@ -366,7 +348,7 @@ class Terminal extends Component {
   }
   
   handleEditSensor(record){
-    console.log(record);
+    //console.log(record);
     this.setState({modalVisible:true,record});
   }
 
@@ -390,7 +372,7 @@ class Terminal extends Component {
                   <div>
                     已选择 <a style={{ fontWeight: 600 }}>{this.state.selectedRowKeys.length}</a> 项&nbsp;&nbsp;
                     全选为选择当前页的所有终端
-                    <a style={{ marginLeft: 24 }} onClick={_=>{this.handleSelectedInStatus()}}>
+                    {/* <a style={{ marginLeft: 24 }} onClick={_=>{this.handleSelectedInStatus()}}>
                       批量入库
                     </a>
                     <Divider type="vertical" />
@@ -401,8 +383,8 @@ class Terminal extends Component {
                     <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedDel()}}>
                       批量删除
                     </a>
-                    <Divider type="vertical" />
-                    <a style={{ marginLeft: 0 }} onClick={_=>{this.handleSelectedEmpty()}}>
+                    <Divider type="vertical" /> */}
+                    <a style={{ marginLeft: 24 }} onClick={_=>{this.handleSelectedEmpty()}}>
                       清空所选
                     </a>
                   </div>

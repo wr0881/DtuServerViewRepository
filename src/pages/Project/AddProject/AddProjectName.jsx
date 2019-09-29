@@ -61,6 +61,7 @@ class AddProjectName extends Component {
           this.setState({ allProject: data });
         } else {
           this.setState({ allProject: [] });
+          router.push('/user/login');
         }
         this.setState({ getAllProjectLoading: false });
       }).catch(err => {
@@ -227,13 +228,13 @@ class AddProjectName extends Component {
     return (
       <Fragment>
         {this.state.form === 'detail' ? this.detailForm() : this.simpleForm()}
-        <Divider style={{ margin: '40px 0 24px' }} />
+        {/* <Divider style={{ margin: '40px 0 24px' }} />
         <div className={styles.desc}>
           <h4>亚索</h4>
           <p>
             树叶的一生,只是为了归根吗?
           </p>
-        </div>
+        </div> */}
       </Fragment>
     );
   }

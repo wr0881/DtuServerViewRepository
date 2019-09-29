@@ -27,7 +27,7 @@ export default [
       {
         path: '/in-out-library',
         name: '出入库平台',
-        icon: 'yuque',
+        icon: 'diff',
         routes: [
           {
             path: '/in-out-library/sensor',
@@ -63,7 +63,7 @@ export default [
       {
         path: '/project',
         name: '项目管理',
-        icon: 'yuque',
+        icon: 'project',
         routes: [
           {
             path: '/project/add-project',
@@ -102,19 +102,66 @@ export default [
               },
             ],
           },
-        ],
-      },
-      {
-        path: '/device',
-        name: '设备管理',
-        icon: 'yuque',
-        routes:[
           {
-            path: '/device/device',
-            name: '设备绑定',
-            component: './Device/Device'
-          }
-        ]
+            path: '/project/memberinfo',
+            name: '人员管理',
+            component: './Project/MemberInfo/MemberInfo',
+          },
+          {
+            path: '/project/userinfo',
+            name: '用户管理',
+            component: './Project/UserInfo/UserInfo',
+          },
+          {
+            path: '/project/monitorbasis',
+            name: '监测依据',
+            component: './Project/MonitorBasis/MonitorBasis',
+          },
+          {
+            path: '/project/selectSector',
+            name: '区间管理',
+            component: './Project/EditSector/SelectSector',
+            hideChildrenInMenu: true,
+          },
+          {
+            path: '/project/editSector',
+            name: '区间管理',
+            component: './Project/EditSector/EditSelectorWrapper',
+            hideChildrenInMenu: true,
+            hideInMenu: true,
+            routes: [
+              {
+                path: '/project/editSector',
+                redirect: '/project/editSector/bindMember',
+              },
+              {
+                path: '/project/editSector/bindMember',
+                name: '绑定人员信息',
+                component: './Project/EditSector/BindMember',
+              },
+              {
+                path: '/project/editSector/bindImg',
+                name: '绑定图片信息',
+                component: './Project/EditSector/BindImg',
+              },
+              {
+                path: '/project/editSector/bindMonitorBasis',
+                name: '绑定监测依据',
+                component: './Project/EditSector/BindMonitorBasis',
+              },
+              {
+                path: '/project/editSector/bindPoint',
+                name: '绑定测点',
+                component: './Project/EditSector/BindPoint',
+              },
+              {
+                path: '/project/editSector/bindBenchmark',
+                name: '绑定基准点',
+                component: './Project/EditSector/bindBenchmark',
+              },
+            ],
+          },
+        ],
       },
       // // dashboard
       // { path: '/', redirect: '/in-out-library/sensor', authority: ['admin', 'user'] },
