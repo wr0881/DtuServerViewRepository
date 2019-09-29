@@ -168,6 +168,26 @@ class BindMonitorBasis extends Component {
         align: 'center',
       },
       {
+        title: '文件状态',
+        dataIndex: 'fileStatus',
+        align: 'center',
+        render: (text) => {
+          //let status = 'default';
+          let color = 'green'; 
+          //let text = '运行';
+          if(text === '运行'){
+            color = 'green'
+          }else if(text === '作废'){
+            color = 'red'
+          }else if(text === '无'){
+            color = '#000'
+          }else if(text === '试运行'){
+            color='#d9d9d9'
+          }
+          return <Badge color={color} text={text} />
+        }
+      },
+      {
         title: '操作',
         align: 'center',
         render: (text, record) => (
@@ -298,7 +318,7 @@ class AddMonitorBasis extends Component {
             if(i !== undefined){
               return(
                 <Row gutter={16} key={i}>
-                  <Col span={7}>
+                  <Col span={5}>
                     <FormItem label={i > 0 ? '' : '文件编号'}>
                       {getFieldDecorator(`monitoringBasis_${i}`)(
                         <Select 
@@ -328,7 +348,7 @@ class AddMonitorBasis extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={11}>
+                  <Col span={9}>
                     <FormItem label={i > 0 ? '' : '文件名称'}>
                       {getFieldDecorator(`fileName_${i}`, {
                         rules: [
@@ -340,6 +360,14 @@ class AddMonitorBasis extends Component {
                     </FormItem>
                   </Col>
                   <Col span={6}>
+                    <FormItem label={i > 0 ? '' : '文件状态'}>
+                      {getFieldDecorator(`fileStatus_${i}`
+                      )(
+                        <Input placeholder="文件状态" />
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={4}>
                     <FormItem>
                       <Button
                         type='dashed'

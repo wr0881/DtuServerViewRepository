@@ -112,6 +112,26 @@ class modifyBasis extends Component {
                                 </Form.Item>
                             </Col>
                         </Row>
+                        <Row>
+                            <Col md={24} sm={24}>
+                                <Form.Item label="文件名称" {...formItemLayout}>
+                                    {getFieldDecorator('fileStatus', {
+                                        rules: [
+                                            { required: true, message: '不允许为空' },
+                                        ],
+                                        initialValue: this.props.modifypass.fileStatus
+                                    })(
+                                        <Select>
+                                            <Option value='无'>无</Option>
+                                            <Option value='作废'>作废</Option>
+                                            <Option value='运行'>运行</Option>
+                                            <Option value='试运行'>试运行</Option>
+                                        </Select>
+                                    )}
+
+                                </Form.Item>
+                            </Col>
+                        </Row>
                     </Form>
                 </Modal>
             </div>

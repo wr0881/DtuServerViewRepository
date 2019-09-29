@@ -144,15 +144,15 @@ export async function bindingSector(userId, body) {
 /* 检测依据 */
 // 获取检测依据列表
 export async function getListBasis(params) {
-    return axios.get('/basis/listBasis', { params });
+    return axios.get('/basis/listBasisNew', { params });
 }
 // 增加检测依据
 export async function addBasisInfo(body) {
-    return axios.post('/basis/addBasis', body);
+    return axios.post('/basis/addBasisNew', body);
 }
 // 修改检测依据
 export async function updateBasis(body) {
-    return axios.put('/basis/updateBasis', body);
+    return axios.put('/basis/updateBasisNew', body);
 }
 // 删除检测依据
 export async function removeBasis(body) {
@@ -185,11 +185,11 @@ export async function addUnbindMember(sectorId, body) {
 
 // 区间下绑定监测依据信息
 export async function getBindingMonitorBasis(params) {
-    return axios.get('/binding/listSectorMoniBas', { params });
+    return axios.get('/binding/listSectorMoniBasNew', { params });
 }
 // 区间下没有绑定的监测依据信息
 export async function notSectorMoniBas(params) {
-    return axios.get('/binding/listNotSectorMoniBas', { params });
+    return axios.get('/binding/listNotSectorMoniBasNew', { params });
 }
 // 删除监测依据和区间的绑定关系
 export async function removeBindingMoniBas(body) {

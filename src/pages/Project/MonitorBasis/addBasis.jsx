@@ -112,7 +112,23 @@ class addBasis extends Component {
                 </Form.Item>
               </Col>
             </Row>
-            
+            <Row gutter={16}>
+              <Col span={24}>
+                <Form.Item label="文件状态">
+                  {getFieldDecorator('fileStatus', {
+                    rules: [{ required: true, message: '不允许为空' }],
+                    initialValue: '无',
+                  })(
+                    <Select>
+                      <Option value='无'>无</Option>
+                      <Option value='作废'>作废</Option>
+                      <Option value='运行'>运行</Option>
+                      <Option value='试运行'>试运行</Option>
+                    </Select>
+                  )}
+                </Form.Item>
+              </Col>
+            </Row>
             < div
               style={{
                 position: 'absolute',
