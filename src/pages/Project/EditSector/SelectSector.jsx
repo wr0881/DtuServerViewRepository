@@ -37,7 +37,7 @@ class SelectSector extends Component {
     })
   }
   
-  //获取项目下区间
+  //获取项目下子项目
   getProjectSector = () => {
     let projectId = this.projectId;
     //console.log(this.projectId);
@@ -59,7 +59,7 @@ class SelectSector extends Component {
     const options = [];
     
     return (
-      <PageHeaderWrapper title='选择区间'>
+      <PageHeaderWrapper title='选择子项目'>
         <Card bordered={false}>
           <div style={{
             height: '500px',
@@ -83,7 +83,7 @@ class SelectSector extends Component {
               size="large" 
               style={{ width: '200px',marginLeft: '20px' }} 
               options={options}  
-              placeholder="选择区间"
+              placeholder="选择子项目"
               onChange={e => {this.sectorId=e}} 
               showSearch
               optionFilterProp="children"
@@ -104,7 +104,7 @@ class SelectSector extends Component {
     if(sectorId !== undefined){
       router.push('/project/editSector');
     }else{
-      message.info('请选择区间！');
+      message.info('请选择子项目！');
     }
     
   }

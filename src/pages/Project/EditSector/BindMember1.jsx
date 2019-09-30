@@ -299,7 +299,7 @@ class AddMember extends Component {
     });
   };
 
-  // 区间下没有绑定的人员
+  // 子项目下没有绑定的人员
   // NotSectorMember = () => {
   //   let params = { sectorId:sectormodel.sectorId }
   //   notSectorMember(params).then(res => {

@@ -46,16 +46,18 @@ class addUser extends Component {
     this.setState({
       userName:value
     },() => {
-      this.nameChange(callback)
+      this.nameChange(callback);
     })
+    
   }
   nameChange = (callback) => {
     axios.get('/user/checkOnlyUser',{params:{userName: this.state.userName}}).then(res =>{
       const { code, msg, data } = res.data;
+      //console.log(data,msg);
       if(data === false){
         callback(msg)
       }else{
-        //callback(msg)
+        callback()
       }
     })
   }
@@ -72,6 +74,7 @@ class addUser extends Component {
         ...fieldsValue,
         "status": true,
       }
+      console.log(values);
       addUserInfo(values).then(res => {
         const { code, msg } = res.data;
         if (code === 0) {
@@ -104,7 +107,7 @@ class addUser extends Component {
         >
           <Form
             layout="vertical"
-            hideRequiredMark
+            //hideRequiredMark
             onSubmit={this.handleSubmit}
           >
             <Row gutter={16}>

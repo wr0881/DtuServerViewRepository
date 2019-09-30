@@ -60,8 +60,8 @@ class modifyMember extends Component {
 
     render() {
         const formItemLayout = {
-            labelCol: { sm: { span: 8 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'center' } },
-            wrapperCol: { sm: { span: 16 }, xs: { span: 24 } }
+            labelCol: { sm: { span: 4 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'left' } },
+            wrapperCol: { sm: { span: 20 }, xs: { span: 24 } }
         }
         const { form: { getFieldDecorator, getFieldValue } } = this.props;
         return (
@@ -75,7 +75,7 @@ class modifyMember extends Component {
                     onCancel={this.handleOkOrCancel}
                 >
                     <Form layout="vertical"
-                        style={{ textAlign: 'right', paddingLeft: '30px', paddingRight: '60px' }}
+                        style={{ textAlign: 'right', paddingLeft: '40px', paddingRight: '40px' }}
                         hideRequiredMark
                         onSubmit={this.handleSubmit}
                     >
@@ -108,7 +108,7 @@ class modifyMember extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.memberCompany
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>
@@ -125,7 +125,7 @@ class modifyMember extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.memberEmail
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>
@@ -142,7 +142,7 @@ class modifyMember extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.memberPhone
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>

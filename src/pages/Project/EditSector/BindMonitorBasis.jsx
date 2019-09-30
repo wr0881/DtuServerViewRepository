@@ -168,6 +168,26 @@ class BindMonitorBasis extends Component {
         align: 'center',
       },
       {
+        title: '文件状态',
+        dataIndex: 'fileStatus',
+        align: 'center',
+        render: (text) => {
+          //let status = 'default';
+          let color = 'green'; 
+          //let text = '运行';
+          if(text === '运行'){
+            color = 'green'
+          }else if(text === '作废'){
+            color = 'red'
+          }else if(text === '无'){
+            color = '#000'
+          }else if(text === '试运行'){
+            color='#d9d9d9'
+          }
+          return <Badge color={color} text={text} />
+        }
+      },
+      {
         title: '操作',
         align: 'center',
         render: (text, record) => (
@@ -256,7 +276,7 @@ class AddMonitorBasis extends Component {
     })
   }
 
-  // 区间下没有绑定的监测依据
+  // 子项目下没有绑定的监测依据
   NotSectorMoniBas = (value, type, i) =>{
     let params = { sectorId:sectormodel.sectorId,number:value }
     //console.log(sectormodel.sectorId)
@@ -284,21 +304,21 @@ class AddMonitorBasis extends Component {
     return (
       <Drawer
         title="绑定监测依据"
-        width={600}
+        width={800}
         onClose={_ => { this.props.handleDrawerVisible(false) }}
         visible={this.props.drawerVisible}
         destroyOnClose
       >
         <Form
           layout="vertical"
-          hideRequiredMark
+          //hideRequiredMark
           onSubmit={this.handleSubmit}
         >
           {this.state.addMoniBasNum.map(i => {
             if(i !== undefined){
               return(
                 <Row gutter={16} key={i}>
-                  <Col span={7}>
+                  <Col span={5}>
                     <FormItem label={i > 0 ? '' : '文件编号'}>
                       {getFieldDecorator(`monitoringBasis_${i}`)(
                         <Select 
@@ -313,6 +333,7 @@ class AddMonitorBasis extends Component {
                               let select = this.state[`monitoringBasis${i}Data`].filter(v => v.monitoringBasis.toString() === value)[0];
                               this.props.form.setFieldsValue({
                                 [`fileName_${i}`]: select.fileName,
+                                [`fileStatus_${i}`]: select.fileStatus,
                               });
                             }
                           }}
@@ -328,18 +349,26 @@ class AddMonitorBasis extends Component {
                       )}
                     </FormItem>
                   </Col>
-                  <Col span={11}>
+                  <Col span={9}>
                     <FormItem label={i > 0 ? '' : '文件名称'}>
                       {getFieldDecorator(`fileName_${i}`, {
                         rules: [
-                          { required: true, message: '不允许为空' },
+                          { required: false, message: '不允许为空' },
                         ]
                       })(
-                        <Input placeholder="文件名" />
+                        <Input placeholder="文件名" disabled/>
                       )}
                     </FormItem>
                   </Col>
                   <Col span={6}>
+                    <FormItem label={i > 0 ? '' : '文件状态'}>
+                      {getFieldDecorator(`fileStatus_${i}`
+                      )(
+                        <Input placeholder="文件状态" disabled/>
+                      )}
+                    </FormItem>
+                  </Col>
+                  <Col span={4}>
                     <FormItem>
                       <Button
                         type='dashed'

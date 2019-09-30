@@ -279,7 +279,7 @@ class AddImg extends Component {
             multiple="multiple"
             accept=".jpg,.png"
           />
-          <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="区间ID" value={sectorModel.sectorId}></input>
+          <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="子项目ID" value={sectorModel.sectorId}></input>
           <select style={{ display: 'none' }} name="type" value='1'>
             <option value="1">布点图</option>
             <option value="2">现场图</option>

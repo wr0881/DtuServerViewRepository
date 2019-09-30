@@ -27,10 +27,13 @@ import {
   Upload,
   Spin
 } from 'antd';
+import { autorun, toJS } from 'mobx';
+import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
 import { getTerminlaNumber, getSersorNumber, addMonitorPoint, listMonitorType } from '@/services/project';
 import styles from './style.less';
 
+@observer
 @Form.create()
 class EditPoint extends Component {
   constructor(props) {
@@ -154,7 +157,7 @@ class EditPoint extends Component {
                       rules: [
                         { required: true, message: '不允许为空' }
                       ],
-                      initialValue: sectorModel.selectPointInfo.monitorPointNumber
+                      // initialValue: sectorModel.selectPointInfo.monitorPointNumber
                     })(<Input style={{ width: '210px' }} />)}
                   </Form.Item>
                 </Col>
@@ -164,7 +167,7 @@ class EditPoint extends Component {
                       rules: [
                         { required: true, message: '不允许为空' },
                       ],
-                      initialValue: sectorModel.selectPointInfo.monitorTypeName
+                      // initialValue: sectorModel.selectPointInfo.monitorTypeName
                     })(
                       <Select
                         placeholder="示例：监测类型"
@@ -199,7 +202,7 @@ class EditPoint extends Component {
                           message: '只允许数字',
                         },
                       ],
-                      initialValue: parseInt(sectorModel.selectPointInfo.picx)
+                      // initialValue: parseInt(sectorModel.selectPointInfo.picx)
                     })(<Input style={{ width: '210px' }} />)}
                   </Form.Item>
                 </Col>
@@ -213,7 +216,7 @@ class EditPoint extends Component {
                           message: '只允许数字',
                         },
                       ],
-                      initialValue: parseInt(sectorModel.selectPointInfo.picy)
+                      // initialValue: parseInt(sectorModel.selectPointInfo.picy)
                     })(<Input style={{ width: '210px' }} />)}
                   </Form.Item>
                 </Col>
@@ -231,7 +234,7 @@ class EditPoint extends Component {
                             message: '只允许数字',
                           },
                         ],
-                        initialValue: sectorModel.selectPointInfo.sensorDeep
+                        // initialValue: sectorModel.selectPointInfo.sensorDeep
                       })(<Input style={{ width: '210px' }} disabled={!this.state.isDeep} />)}
                     </Form.Item>
                   </Col>
@@ -241,7 +244,7 @@ class EditPoint extends Component {
                         rules: [
                           { required: true, message: '不允许为空' },
                         ],
-                        initialValue: sectorModel.selectPointInfo.sensorNumber
+                        // initialValue: sectorModel.selectPointInfo.sensorNumber
                       })(
                         <Select
                           showSearch
@@ -271,7 +274,7 @@ class EditPoint extends Component {
                             message: '只允许1-34数字',
                           },
                         ],
-                        initialValue: sectorModel.selectPointInfo.terminalChannel
+                        // initialValue: sectorModel.selectPointInfo.terminalChannel
                       })(<Input style={{ width: '210px' }} />)}
                     </Form.Item>
                   </Col>
@@ -281,7 +284,7 @@ class EditPoint extends Component {
                         rules: [
                           { required: true, message: '不允许为空' },
                         ],
-                        initialValue: sectorModel.selectPointInfo.terminalNumber
+                        // initialValue: sectorModel.selectPointInfo.terminalNumber
                       })(
                         <Select
                           showSearch
@@ -327,6 +330,22 @@ class EditPoint extends Component {
         </Drawer >
       </Fragment>
     );
+  }
+  componentDidMount() {
+    autorun(() => {
+      if (sectorModel.selectPointInfo) {
+        this.props.form.setFieldsValue({
+          monitorPointNumber:sectorModel.selectPointInfo.monitorPointNumber,
+          monitorType:sectorModel.selectPointInfo.monitorTypeName,
+          picx:parseInt(sectorModel.selectPointInfo.picx),
+          picy: parseInt(sectorModel.selectPointInfo.picy),
+          sensorDeep:sectorModel.selectPointInfo.sensorDeep,
+          sensorNumber:sectorModel.selectPointInfo.sensorNumber,
+          terminalChannel:sectorModel.selectPointInfo.terminalChannel,
+          terminalNumber:sectorModel.selectPointInfo.terminalNumber
+        });
+      }
+    })
   }
 }
 

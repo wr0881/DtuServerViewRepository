@@ -248,7 +248,7 @@ class AddMonitorBasis extends Component {
     })
   }
 
-  // 区间下没有绑定的监测依据
+  // 子项目下没有绑定的监测依据
   NotSectorMoniBas = () =>{
     let params = { sectorId:sectormodel.sectorId }
     console.log(sectormodel.sectorId)

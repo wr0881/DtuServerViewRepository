@@ -17,7 +17,7 @@ const actions = (
     <Button onClick={_=>{
       router.push('/project/add-project/add-sector-name');
     }}>
-      新建区间
+      新建子项目
     </Button>
     {/* <Button onClick={_=>{
       router.push('/project/add-project/add-sector-info');

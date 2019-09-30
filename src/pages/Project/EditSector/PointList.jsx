@@ -181,6 +181,7 @@ class PointList extends Component {
           <span>
             <a onClick={_ => {
               this.handleEditPointVisible(true);
+              console.log(text);
               sectorModel.selectPointInfo = text;
             }}>编辑</a>
             <Divider type="vertical" />

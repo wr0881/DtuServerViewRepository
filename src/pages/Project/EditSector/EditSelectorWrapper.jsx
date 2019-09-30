@@ -39,7 +39,7 @@ class EditSelectorWrapper extends Component {
     }
   };
 
-  //根据区间id获取区间名称
+  //根据子项目id获取子项目名称
   GetSectorName(){
     const sectorId = sectorModel.sectorId;
     getSectorName(sectorId).then(res => {
@@ -47,7 +47,7 @@ class EditSelectorWrapper extends Component {
       if(code === 0){
         const sectorName = data;
         this.setState({sectorName});
-        //console.log('获取区间名称',this.state.sectorName);
+        //console.log('获取子项目名称',this.state.sectorName);
       }
     })
   }

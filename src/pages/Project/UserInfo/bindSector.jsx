@@ -37,7 +37,7 @@ class bindSector extends Component {
 
     //获取数据
     getMock = () => {
-        //获取未绑定的区间
+        //获取未绑定的子项目
         const { pagination } = this.state;
         let params = {
             userId: this.props.bindSector.key
@@ -65,7 +65,7 @@ class bindSector extends Component {
         bindingSector(userId,body).then(res =>{
             const { code, msg, data } = res.data;
             if(code === 0){
-                message.success('绑定区间成功！');
+                message.success('绑定子项目成功！');
                 //this.props.handleBindSector();
                 //this.getMock(); 
             }else{
@@ -133,21 +133,21 @@ class bindSector extends Component {
         const leftTableColumns = [
             {
                 dataIndex: 'title',
-                title: '区间',
+                title: '子项目',
             },
         ];
         const rightTableColumns = [
             {
                 dataIndex: 'title',
-                title: '区间',
+                title: '子项目',
             },
         ];
         const { targetKeys } = this.state;
         return (
             <div style={{ display: 'inline-block' }}>
-                <Button size="small" onClick={this.handlePopup}>绑定区间</Button>
+                <Button size="small" onClick={this.handlePopup}>绑定子项目</Button>
                 <Modal
-                    title="绑定区间"
+                    title="绑定子项目"
                     width='730px'
                     visible={this.state.visible}
                     onOk={this.handleSubmit}
@@ -160,7 +160,7 @@ class bindSector extends Component {
                         }}
                         dataSource={this.state.mockData}
                         targetKeys={targetKeys}
-                        titles={['未绑定的区间','需绑定的区间']}
+                        titles={['未绑定的子项目','需绑定的子项目']}
                         showSearch
                         onChange={this.onChange}
                         filterOption={(inputValue, item) =>

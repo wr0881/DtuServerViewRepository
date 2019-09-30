@@ -42,7 +42,7 @@ class Project extends Component {
               <Step title="新建项目名" />
               <Step title="新建子项目名" />
               {/* <Step title="添加人员信息" />
-              <Step title="新建区间信息" /> */}
+              <Step title="新建子项目信息" /> */}
               <Step title="新建成功" />
             </Steps>
             {children}

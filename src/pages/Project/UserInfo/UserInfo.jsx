@@ -192,7 +192,7 @@ class UserInfo extends Component {
   table = () => {
     const children = [];
     for (let i = 1; i < 36; i++) {
-      children.push(<Option key={'区间' + i}>{'区间' + i}</Option>);
+      children.push(<Option key={'子项目' + i}>{'子项目' + i}</Option>);
     }
     const columns = [
       {
@@ -242,7 +242,7 @@ class UserInfo extends Component {
         ),
       },
       {
-        title: '区间操作',
+        title: '子项目操作',
         align: 'center',
         //width: '300px',
         render: (text, record) => (

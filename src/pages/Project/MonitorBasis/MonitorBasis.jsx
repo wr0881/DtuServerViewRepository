@@ -131,6 +131,18 @@ class MonitorBasis extends Component {
             </FormItem>
           </Col>
           <Col md={6} sm={24}>
+            <FormItem label="文件状态">
+              {getFieldDecorator('fileStatus')(
+                <Select placeholder="请选择">
+                  <Option value='增加'>增加</Option>
+                  <Option value='作废'>作废</Option>
+                  <Option value='运行'>运行</Option>
+                  <Option value='试运行'>试运行</Option>
+                </Select>
+              )}
+            </FormItem>
+          </Col>
+          <Col md={6} sm={24}>
             <span className={styles.submitButtons}>
               <Button type="primary" htmlType="submit">
                 查询
@@ -194,6 +206,26 @@ class MonitorBasis extends Component {
         title: '文件名称',
         dataIndex: 'fileName',
         align: 'center',
+      },
+      {
+        title: '文件状态',
+        dataIndex: 'fileStatus',
+        align: 'center',
+        render: (text) => {
+          //let status = 'default';
+          let color = 'green'; 
+          //let text = '运行';
+          if(text === '运行'){
+            color = 'green'
+          }else if(text === '作废'){
+            color = 'red'
+          }else if(text === '无'){
+            color = '#000'
+          }else if(text === '试运行'){
+            color='#d9d9d9'
+          } 
+          return <Badge color={color} text={text} />
+        }
       },
       {
         title: '操作',

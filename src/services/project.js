@@ -16,7 +16,7 @@ export async function getAllProject() {
     return axios.get('/project/getAllProject');
 }
 
-/* 获取区间类型 */
+/* 获取子项目类型 */
 export async function getsectorType() {
     return axios.get('/sysCode/getsectorType');
 }
@@ -26,7 +26,7 @@ export async function listMonitorType() {
     return axios.get('/sysCode/listMonitorType');
 }
 
-/* 添加区间 */
+/* 添加子项目 */
 export async function addSector(body) {
     return axios.post('/monitorPoint/addSector', body);
 }
@@ -117,8 +117,13 @@ export async function removeUser(param) {
     return axios.delete('/user/removeUser?userId=' + param);
 }
 
+//用户唯一性验证
+// export async function checkOnlyUser(param) {
+//     return axios.get('/user/checkOnlyUser',{ param })
+// }
 
-// 已绑定的区间
+
+// 已绑定的子项目
 export async function getBindSector(params) {
     return axios.get('/user/listUserSector', { params });
 }
@@ -127,84 +132,84 @@ export async function unbindSector(userId, body) {
     return axios.delete('/us/unbind?userId=' + userId, { data: body });
 }
 
-// 未绑定的区间
+// 未绑定的子项目
 export async function getUnbindSector(params) {
     return axios.get('/user/listUserNotOwnedSector', { params });
 }
-// 绑定未绑定的区间
+// 绑定未绑定的子项目
 export async function bindingSector(userId, body) {
     return axios.post('/us/binding?userId=' + userId, body);
 }
 
 // 未绑定的项目
 export async function getUnbindProject(params) {
-    return axios.get('/project/listProject', { params });
+    return axios.get('/binding/listProjectNotInUser', { params });
 }
 // 绑定未绑定的项目
 export async function bindingProject(userId, body) {
     return axios.post('/us/bindingProject?userId=' + userId, body);
 }
 
-/* 检测依据 */
-// 获取检测依据列表
+/* 监测依据 */
+// 获取监测依据列表
 export async function getListBasis(params) {
-    return axios.get('/basis/listBasis', { params });
+    return axios.get('/basis/listBasisNew', { params });
 }
-// 增加检测依据
+// 增加监测依据
 export async function addBasisInfo(body) {
-    return axios.post('/basis/addBasis', body);
+    return axios.post('/basis/addBasisNew', body);
 }
-// 修改检测依据
+// 修加监测依据
 export async function updateBasis(body) {
-    return axios.put('/basis/updateBasis', body);
+    return axios.put('/basis/updateBasisNew', body);
 }
-// 删除检测依据
+// 删加监测依据
 export async function removeBasis(body) {
     return axios.delete('/basis/removeBasis', { data: body });
 }
 
-/* 区间管理 */
-// 选择区间
+/* 子项目管理 */
+// 选择子项目
 // 获取所有项目(已有)
-// 获取项目下区间
+// 获取项目下子项目
 export async function getProjectSector(projectId) {
     return axios.get('/sector/getSectorByProId?projectId=' + projectId);
 }
-// 区间下绑定人员信息
+// 子项目下绑定人员信息
 export async function getBindingMember(params) {
     return axios.get('/binding/sectorMember', { params });
 }
-// 区间下没有绑定的人员信息
+// 子项目下没有绑定的人员信息
 export async function notSectorMember(params) {
     return axios.get('/binding/notSectorMember', { params })
 }
-// 删除区间绑定人员关系
+// 删除子项目绑定人员关系
 export async function removeSectorMember(body) {
     return axios.delete('/binding/removeSectorMember', { data: body });
 }
-// 新增区间和人员绑定关系
+// 新增子项目和人员绑定关系
 export async function addUnbindMember(sectorId, body) {
     return axios.post('/binding/addSectorMember?sectorId=' + sectorId, body);
 }
 
-// 区间下绑定监测依据信息
+// 子项目下绑定监测依据信息
 export async function getBindingMonitorBasis(params) {
-    return axios.get('/binding/listSectorMoniBas', { params });
+    return axios.get('/binding/listSectorMoniBasNew', { params });
 }
-// 区间下没有绑定的监测依据信息
+// 子项目下没有绑定的监测依据信息
 export async function notSectorMoniBas(params) {
-    return axios.get('/binding/listNotSectorMoniBas', { params });
+    return axios.get('/binding/listNotSectorMoniBasNew', { params });
 }
-// 删除监测依据和区间的绑定关系
+// 删除监测依据和子项目的绑定关系
 export async function removeBindingMoniBas(body) {
     return axios.delete('/binding/removeSectorMoniBasis', { data: body });
 }
-// 添加区间监测依据关系
+// 添加子项目监测依据关系
 export async function addSectorMoniBas(sectorId, body) {
-    return axios.post('/binding/addSectorMoniBasis?sectorId='+sectorId, body);
+    return axios.post('/binding/addSectorMoniBasis?sectorId=' + sectorId, body);
 }
 
-// 根据区间id获取区间名称
-export async function getSectorName(sectorId){
-    return axios.get('/sector/getSectorName?sectorId='+sectorId);
+// 根据子项目id获取子项目名称
+export async function getSectorName(sectorId) {
+    return axios.get('/sector/getSectorName?sectorId=' + sectorId);
 }

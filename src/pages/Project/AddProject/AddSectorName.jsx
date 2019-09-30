@@ -72,7 +72,7 @@ class AddSectorName extends Component {
           sectorLongitude: this.state.JW.lng,
           sectorName: values.sectorName,
           sectorStatus: values.sectorStatus,
-          sectorType: values.sectorType
+          sectorType: 48
         };
 
         //console.log(result);
@@ -114,7 +114,7 @@ class AddSectorName extends Component {
             rules: [{ required: true, message: '请输入子项目名称' }],
           })(<Input placeholder="示例: xxx子项目" />)}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="子项目类型">
+        {/* <Form.Item {...formItemLayout} label="子项目类型">
           {getFieldDecorator('sectorType', {
             rules: [{ required: true, message: '请输入子项目类型' }],
           })(
@@ -127,7 +127,7 @@ class AddSectorName extends Component {
               <Select.Option value='49'>子项目</Select.Option>
             </Select>
           )}
-        </Form.Item>
+        </Form.Item> */}
         <Form.Item {...formItemLayout} label="创建时间">
           {getFieldDecorator('sectorBegin_time', {
             initialValue: moment(),

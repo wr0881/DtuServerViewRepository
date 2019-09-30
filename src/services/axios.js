@@ -1,11 +1,12 @@
 /* eslint-disable dot-notation */
 import axios from 'axios';
 
-// axios.defaults.baseURL = 'http://123.207.88.210:9093'; // 测试环境
-// axios.defaults.baseURL = 'http://123.207.88.210:8880'; // 正式环境
+// axios.defaults.baseURL = 'http://123.207.88.210:8880'; // 线上
+axios.defaults.baseURL = 'http://123.207.88.210:9093'; // 测试
 // axios.defaults.baseURL = 'http://10.88.89.101:8880'; //邓泽民
 // axios.defaults.baseURL = 'http://10.88.89.170:8880'; //徐善斌
-axios.defaults.baseURL = 'http://10.88.89.116:9093'; //李茂平
+// axios.defaults.baseURL = 'http://10.88.89.116:9093'; //李茂平
+// axios.defaults.baseURL = 'http://10.88.89.84:9093'; //石璞麟
 // axios.defaults.baseURL = 'http://10.88.89.224:8880'; // 蒋雄威
 
 window.uploadImgAddress = 'http://123.207.88.210:8091';

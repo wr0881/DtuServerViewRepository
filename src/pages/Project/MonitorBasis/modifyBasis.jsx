@@ -59,8 +59,8 @@ class modifyBasis extends Component {
 
     render() {
         const formItemLayout = {
-            labelCol: { sm: { span: 8 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'center' } },
-            wrapperCol: { sm: { span: 16 }, xs: { span: 24 } }
+            labelCol: { sm: { span: 6 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'left' } },
+            wrapperCol: { sm: { span: 18 }, xs: { span: 24 } }
         }
         const { form: { getFieldDecorator, getFieldValue } } = this.props;
         return (
@@ -74,7 +74,7 @@ class modifyBasis extends Component {
                     onCancel={this.handleOkOrCancel}
                 >
                     <Form layout="vertical"
-                        style={{ textAlign: 'right', paddingLeft: '30px', paddingRight: '60px' }}
+                        style={{ textAlign: 'right', paddingLeft: '40px', paddingRight: '40px' }}
                         hideRequiredMark
                         onSubmit={this.handleSubmit}
                     >
@@ -90,7 +90,7 @@ class modifyBasis extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.number
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
 
                                 </Form.Item>
                             </Col>
@@ -107,7 +107,27 @@ class modifyBasis extends Component {
                                             },
                                         ],
                                         initialValue: this.props.modifypass.fileName
-                                    })(<Input style={{ width: '210px' }} />)}
+                                    })(<Input />)}
+
+                                </Form.Item>
+                            </Col>
+                        </Row>
+                        <Row>
+                            <Col md={24} sm={24}>
+                                <Form.Item label="文件状态" {...formItemLayout}>
+                                    {getFieldDecorator('fileStatus', {
+                                        rules: [
+                                            { required: true, message: '不允许为空' },
+                                        ],
+                                        initialValue: this.props.modifypass.fileStatus
+                                    })(
+                                        <Select>
+                                            <Option value='无'>无</Option>
+                                            <Option value='作废'>作废</Option>
+                                            <Option value='运行'>运行</Option>
+                                            <Option value='试运行'>试运行</Option>
+                                        </Select>
+                                    )}
 
                                 </Form.Item>
                             </Col>

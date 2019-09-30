@@ -79,7 +79,7 @@ class addMember extends Component {
         >
           <Form
             layout="vertical"
-            hideRequiredMark
+            //hideRequiredMark
             onSubmit={this.handleSubmit}
           >
             <Row gutter={16}>
@@ -117,7 +117,7 @@ class addMember extends Component {
                 <Form.Item label="邮箱">
                   {getFieldDecorator('memberEmail', {
                     rules: [
-                      { required: true, message: '不允许为空' },
+                      { required: false, message: '不允许为空' },
                       {
                         pattern: /^[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]@[a-zA-Z0-9][\w\.-]*[a-zA-Z0-9]\.[a-zA-Z][a-zA-Z\.]*[a-zA-Z]$/,
                         message: '请输入正确的邮箱',

@@ -92,7 +92,7 @@ export default [
               },
               {
                 path: '/project/add-project/add-sector-info',
-                name: '新建区间信息',
+                name: '新建子项目信息',
                 component: './Project/AddProject/AddSectorInfo',
               },
               {
@@ -119,13 +119,13 @@ export default [
           },
           {
             path: '/project/selectSector',
-            name: '区间管理',
+            name: '子项目管理',
             component: './Project/EditSector/SelectSector',
             hideChildrenInMenu: true,
           },
           {
             path: '/project/editSector',
-            name: '区间管理',
+            name: '子项目管理',
             component: './Project/EditSector/EditSelectorWrapper',
             hideChildrenInMenu: true,
             hideInMenu: true,

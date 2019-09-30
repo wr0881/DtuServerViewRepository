@@ -26,7 +26,7 @@ class SectorModel {
   @observable ProjectSectorData = [];
   @observable notBindMemberData = [];
 
-  // 区间下没有绑定的人员
+  // 子项目下没有绑定的人员
   @action NotSectorMember = () => {
     let params = { sectorId:this.sectorId }
     notSectorMember(params).then(res => {
@@ -58,7 +58,7 @@ class SectorModel {
   //   })
   // }
 
-  // //获取项目下区间
+  // //获取项目下子项目
   // @action getProjectSector(){
   //   let projectId = this.projectId;
   //   console.log(this.projectId);
