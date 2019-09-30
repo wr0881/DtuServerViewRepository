@@ -41,18 +41,18 @@ class AddSectorName extends Component {
   }
 
   setJW = v => {
-    this.setState({ JW: v },_=>{
-      this.props.form.setFieldsValue({longitude:this.state.JW.lng});
-      this.props.form.setFieldsValue({latitude:this.state.JW.lat});
-    });    
+    this.setState({ JW: v }, _ => {
+      this.props.form.setFieldsValue({ longitude: this.state.JW.lng });
+      this.props.form.setFieldsValue({ latitude: this.state.JW.lat });
+    });
   }
   //地图缩放
   setScale = v => {
     this.setState({
-      scale:v
-    },_=>{
+      scale: v
+    }, _ => {
       //console.log('获取的地图缩放比例为:',this.state.scale);
-      this.props.form.setFieldsValue({mapScale:this.state.scale});
+      this.props.form.setFieldsValue({ mapScale: this.state.scale });
     })
   }
   onValidateForm = () => {
@@ -74,7 +74,7 @@ class AddSectorName extends Component {
           sectorStatus: values.sectorStatus,
           sectorType: values.sectorType
         };
-        
+
         //console.log(result);
         addSector(result).then(res => {
           const { code, data, msg } = res.data;
@@ -103,59 +103,59 @@ class AddSectorName extends Component {
       })
     }
   }
- 
+
   detailForm = (record) => {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     return (
       <Form layout="horizontal" className={`${styles.stepForm} ${styles.disabled}`}>
-        <Form.Item {...formItemLayout} label="区段名称">
+        <Form.Item {...formItemLayout} label="子项目名称">
           {getFieldDecorator('sectorName', {
-            rules: [{ required: true, message: '请输入区段名称' }],
-          })(<Input placeholder="示例: xxx区段" />)}
+            rules: [{ required: true, message: '请输入子项目名称' }],
+          })(<Input placeholder="示例: xxx子项目" />)}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="区段类型">
+        <Form.Item {...formItemLayout} label="子项目类型">
           {getFieldDecorator('sectorType', {
-            rules: [{ required: true, message: '请输入区段类型' }],
+            rules: [{ required: true, message: '请输入子项目类型' }],
           })(
             <Select
-              placeholder="示例：区段类型"
-              onFocus={this.getsectorType}
-              dropdownMatchSelectWidth={false}
+              placeholder="示例：子项目类型"
               style={{ width: '100%' }}
             >
-              {this.state.sectorType.map((type, i) => <Select.Option key={type.id} value={type.id}>{type.itemName}</Select.Option>)}
+              <Select.Option value='48'>无</Select.Option>
+              <Select.Option value='48'>标段</Select.Option>
+              <Select.Option value='49'>子项目</Select.Option>
             </Select>
           )}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="区段创建时间">
+        <Form.Item {...formItemLayout} label="创建时间">
           {getFieldDecorator('sectorBegin_time', {
             initialValue: moment(),
-            rules: [{ required: true, message: '请选择区段创建时间' }],
+            rules: [{ required: true, message: '请选择子项目创建时间' }],
           })(
             <DatePicker />
           )}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="区段结束时间">
+        <Form.Item {...formItemLayout} label="结束时间">
           {getFieldDecorator('sectorEnd_time', {
-            rules: [{ required: true, message: '请选择区段结束时间' }],
+            rules: [{ required: true, message: '请选择子项目结束时间' }],
           })(
             <DatePicker />
           )}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="区段描述">
+        <Form.Item {...formItemLayout} label="子项目描述">
           {getFieldDecorator('sectorDescription', {
-            rules: [{ required: true, message: '请输入区段描述' }],
+            rules: [{ required: true, message: '请输入子项目描述' }],
           })(
             <TextArea
-              placeholder="示例: 这是一个什么什么区段"
+              placeholder="示例: 这是一个什么什么子项目"
               autosize={{ minRows: 3 }}
             />
           )}
         </Form.Item>
-        <Form.Item {...formItemLayout} label="区段状态">
+        <Form.Item {...formItemLayout} label="子项目状态">
           {getFieldDecorator('sectorStatus', {
-            rules: [{ required: true, message: '请选择区段状态' }],
+            rules: [{ required: true, message: '请选择子项目状态' }],
           })(
             <Select
               placeholder="示例: 未开始"
@@ -170,14 +170,14 @@ class AddSectorName extends Component {
         </Form.Item>
         <Form.Item {...formItemLayout} label="所在省市">
           {getFieldDecorator('adress', {
-            rules: [{ required: true, message: '请选择区段所在省市' }],
+            rules: [{ required: true, message: '请选择子项目所在省市' }],
           })(
             <Cascader options={getLocation()} placeholder="示例: 湖南省长沙市岳麓区" />
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="街道地址">
           {getFieldDecorator('adress_detail', {
-            rules: [{ required: true, message: '请输入区段街道地址' }],
+            rules: [{ required: true, message: '请输入子项目街道地址' }],
           })(
             <Input placeholder="示例: 学士路学士街道755号" />
           )}
@@ -187,9 +187,9 @@ class AddSectorName extends Component {
             initialValue: 10,
             rules: [{ required: true, message: '请选择地图缩放比例' }],
           })(
-            <Slider min={4} max={19} tipFormatter={v => `缩放比例: ${v}`} 
-            tooltipPlacement='right'
-            tooltipVisible={true}
+            <Slider min={4} max={19} tipFormatter={v => `缩放比例: ${v}`}
+              tooltipPlacement='right'
+              tooltipVisible={true}
             //value={10}
             />
           )}
@@ -203,35 +203,35 @@ class AddSectorName extends Component {
           /> */}
         </Form.Item>
         <Input.Group compact>
-        <Form.Item {...formItemLayout1} label="经纬度">
-          
-          
+          <Form.Item {...formItemLayout1} label="经纬度">
+
+
             {/* <Input style={{ width: 170, textAlign: 'center' }} placeholder="经度" value={this.state.JW.lng} disabled />  */}
             {getFieldDecorator('longitude')(
               <Input style={{ width: 120, borderTopRightRadius: 0, borderBottomRightRadius: 0, textAlign: 'center' }} placeholder="经度" />
             )}
-            
-        </Form.Item>
-        <Form.Item>
-          <Input
-            style={{
-              width: 30,
-              borderLeft: 0,
-              marginLeft: 47,
-              pointerEvents: 'none',
-              backgroundColor: '#fff',
-              borderRadius: 0
-            }}
-            placeholder="~"
-            disabled
-          />
 
-        </Form.Item>
-        <Form.Item {...formItemLayout1}>
+          </Form.Item>
+          <Form.Item>
+            <Input
+              style={{
+                width: 30,
+                borderLeft: 0,
+                marginLeft: 47,
+                pointerEvents: 'none',
+                backgroundColor: '#fff',
+                borderRadius: 0
+              }}
+              placeholder="~"
+              disabled
+            />
+
+          </Form.Item>
+          <Form.Item {...formItemLayout1}>
             {getFieldDecorator('latitude')(
               <Input style={{ width: 120, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, textAlign: 'center' }} placeholder="纬度" />
             )}
-        </Form.Item>
+          </Form.Item>
         </Input.Group>
         <Form.Item {...formItemLayout} label="标点">
           {/* {getFieldDecorator('map',{
@@ -254,7 +254,7 @@ class AddSectorName extends Component {
             lat={this.props.form.getFieldValue('latitude')}
             //getZoom={(mapzoom) => {this.zoomChange(mapzoom);console.log('Map的mapzoom:',mapzoom)}}
             setScale={this.setScale}
-            
+
           />
         </Form.Item>
         <Form.Item

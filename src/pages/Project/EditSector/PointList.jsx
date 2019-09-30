@@ -230,18 +230,13 @@ class PointList extends Component {
               textAlign: 'right',
             }}
           >
-            <Button onClick={_ => { this.props.handlePointListVisible(false) }} style={{ marginRight: 8 }}>
-              取消
-            </Button>
-            <Button type="primary">
-              提交
-            </Button>
           </div>
         </Drawer >
         {/* 编辑测点 */}
         <EditPoint
           visible={this.state.handleEditPointVisible}
           handleEditPointVisible={this.handleEditPointVisible}
+          getPointInfoList={this.getPointInfoList}
         />
         {/* 新增测点 */}
         <AddPoint
@@ -286,53 +281,53 @@ class PointList extends Component {
       console.log(err);
     });
   }
-  formatData(ary) {
-    let formatData = [];
-    // ary.forEach(v => {
-    //   let obj = {};
-    //   let obj2 = {
-    //     benchmarkId: [],
-    //     monitorTypeName: [],
-    //     picx: [],
-    //     picy: [],
-    //     sensorDeep: [],
-    //     sensorNumber: [],
-    //     terminalChannel: [],
-    //     terminalNumber: [],
-    //   };
-    //   obj.key = v.mpId;
-    //   obj.monitorPointNumber = v.monitorPointNumber;
-    //   v.pointSensorInfos.forEach(v2 => {
-    //     obj2.benchmarkId.push(v2.benchmarkId);
-    //     obj2.monitorTypeName.push(v2.monitorTypeName);
-    //     obj2.picx.push(v2.picx);
-    //     obj2.picy.push(v2.picy);
-    //     obj2.sensorDeep.push(v2.sensorDeep);
-    //     obj2.sensorNumber.push(v2.sensorNumber);
-    //     obj2.terminalChannel.push(v2.terminalChannel);
-    //     obj2.terminalNumber.push(v2.terminalNumber);
-    //   });
-    //   formatData.push({ ...obj, ...obj2 });
-    // });
-    ary.forEach(v => {
-      let monitorPointNumber = v.monitorPointNumber;
-      v.pointSensorInfos.forEach(v2 => {
-        let obj = { monitorPointNumber };
-        obj.mpId = v2.mpId;
-        // obj.key = v2.sensorNumber;
-        obj.benchmarkId = v2.benchmarkId === undefined || v2.benchmarkId === null ? '无' : v2.benchmarkId;
-        obj.monitorTypeName = v2.monitorTypeName;
-        obj.picx = v2.picx;
-        obj.picy = v2.picy;
-        obj.sensorDeep = v2.sensorDeep;
-        obj.sensorNumber = v2.sensorNumber;
-        obj.terminalChannel = v2.terminalChannel;
-        obj.terminalNumber = v2.terminalNumber;
-        formatData.push(obj);
-      });
-    });
-    return formatData;
-  }
+  // formatData(ary) {
+  //   let formatData = [];
+  //   // ary.forEach(v => {
+  //   //   let obj = {};
+  //   //   let obj2 = {
+  //   //     benchmarkId: [],
+  //   //     monitorTypeName: [],
+  //   //     picx: [],
+  //   //     picy: [],
+  //   //     sensorDeep: [],
+  //   //     sensorNumber: [],
+  //   //     terminalChannel: [],
+  //   //     terminalNumber: [],
+  //   //   };
+  //   //   obj.key = v.mpId;
+  //   //   obj.monitorPointNumber = v.monitorPointNumber;
+  //   //   v.pointSensorInfos.forEach(v2 => {
+  //   //     obj2.benchmarkId.push(v2.benchmarkId);
+  //   //     obj2.monitorTypeName.push(v2.monitorTypeName);
+  //   //     obj2.picx.push(v2.picx);
+  //   //     obj2.picy.push(v2.picy);
+  //   //     obj2.sensorDeep.push(v2.sensorDeep);
+  //   //     obj2.sensorNumber.push(v2.sensorNumber);
+  //   //     obj2.terminalChannel.push(v2.terminalChannel);
+  //   //     obj2.terminalNumber.push(v2.terminalNumber);
+  //   //   });
+  //   //   formatData.push({ ...obj, ...obj2 });
+  //   // });
+  //   ary.forEach(v => {
+  //     let monitorPointNumber = v.monitorPointNumber;
+  //     v.pointSensorInfos.forEach(v2 => {
+  //       let obj = { monitorPointNumber };
+  //       obj.mpId = v2.mpId;
+  //       // obj.key = v2.sensorNumber;
+  //       obj.benchmarkId = v2.benchmarkId === undefined || v2.benchmarkId === null ? '无' : v2.benchmarkId;
+  //       obj.monitorTypeName = v2.monitorTypeName;
+  //       obj.picx = v2.picx;
+  //       obj.picy = v2.picy;
+  //       obj.sensorDeep = v2.sensorDeep;
+  //       obj.sensorNumber = v2.sensorNumber;
+  //       obj.terminalChannel = v2.terminalChannel;
+  //       obj.terminalNumber = v2.terminalNumber;
+  //       formatData.push(obj);
+  //     });
+  //   });
+  //   return formatData;
+  // }
 }
 
 export default PointList;

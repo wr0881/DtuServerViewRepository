@@ -40,7 +40,7 @@ class Project extends Component {
           <Fragment>
             <Steps current={this.getCurrentStep()} style={{ margin: '0 auto', width: '700px' }}>
               <Step title="新建项目名" />
-              <Step title="新建区间名" />
+              <Step title="新建子项目名" />
               {/* <Step title="添加人员信息" />
               <Step title="新建区间信息" /> */}
               <Step title="新建成功" />

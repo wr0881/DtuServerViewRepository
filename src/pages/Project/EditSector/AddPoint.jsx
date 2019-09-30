@@ -231,14 +231,16 @@ class AddPoint extends Component {
               </Row>
               <Divider style={{ marginTop: '0' }} />
 
-              {this.state.addSensorNum.map((v,i) => {
+              {this.state.addSensorNum.map((v, i) => {
                 return (
                   <div style={{ position: 'relative' }}>
-                    <Icon 
-                      type="close-circle" 
-                      style={{ display:this.state.length>0?'block':'none',position: 'absolute', top: '40px', right: '-50px', zIndex: '1000' ,fontSize:'20px',cursor:'pointer'}}
-                      onClick={_=>{
-                        this.state.addSensorNum.splice(i,1);
+                    <Icon
+                      type="close-circle"
+                      style={{ display: this.state.addSensorNum.length > 1 ? 'block' : 'none', position: 'absolute', top: '40px', right: '-50px', zIndex: '1000', fontSize: '20px', cursor: 'pointer' }}
+                      onClick={_ => {
+                        let { addSensorNum } = this.state;
+                        addSensorNum.splice(i, 1);
+                        this.setState({ addSensorNum });
                       }}
                     />
                     <Row gutter={8}>

@@ -82,7 +82,7 @@ export default [
               },
               {
                 path: '/project/add-project/add-sector-name',
-                name: '新建区间名',
+                name: '新建子项目名',
                 component: './Project/AddProject/AddSectorName',
               },
               {

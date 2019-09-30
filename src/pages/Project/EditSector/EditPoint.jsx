@@ -106,12 +106,18 @@ class EditPoint extends Component {
     const { validateFields } = form;
     validateFields((err, values) => {
       if (!err) {
-        console.log(values);
+        values = {
+          ...values,
+          picx: values.picx + 'px',
+          picy: values.picy + 'px',
+          monitorType: !isNaN(parseFloat(values.monitorType)) ? values.monitorType : sectorModel.selectPointInfo.monitorType
+        };
         axios.put('/monitorPoint/updateMonitorPoint', { ...values, mpId: sectorModel.selectPointInfo.mpId }).then(res => {
           const { code, msg, data } = res.data;
           if (code === 0) {
             message.info('修改成功');
             this.props.handleEditPointVisible(false);
+            this.props.getPointInfoList();
           }
         })
       }
@@ -176,7 +182,7 @@ class EditPoint extends Component {
                           })
                         }}
                       >
-                        {this.state.listMonitorType.map(type => <Select.Option key={type.scId}>{type.itemName}</Select.Option>)}
+                        {this.state.listMonitorType.map(type => <Select.Option value={type.scId}>{type.itemName}</Select.Option>)}
                       </Select>
                     )}
                   </Form.Item>

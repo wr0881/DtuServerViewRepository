@@ -27,6 +27,7 @@ import {
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import AddUser from './addUser';
 import ModifyUser from './modifyUser';
+import BindProject from './bindProject';
 import BindSector from './bindSector';
 import UnbindSector from './unbindSector';
 //import TerminalDetail from './terminalDetail'
@@ -64,9 +65,9 @@ class UserInfo extends Component {
   handleDrawerAddUserVisible = (boolen) => {
     this.setState({ drawerAddUserVisible: boolen });
   }
-  
+
   /* 表格数据 */
-  queryDataSource = (loading = true) => {   
+  queryDataSource = (loading = true) => {
     this.setState({ tableLoading: true && loading });
     const { formValues, pagination } = this.state;
     let param = {
@@ -75,13 +76,13 @@ class UserInfo extends Component {
       ...formValues,
     };
     getListUser(param).then(res => {
-      this.setState({ tableLoading: false });   
+      this.setState({ tableLoading: false });
       const { code, data } = res.data;
-      if (code === 0) {       
+      if (code === 0) {
         this.setState({ dataSource: data.list });
         //console.log(this.state.dataSource);
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
-      }else{
+      } else {
         this.setState({ dataSource: [] });
         router.push('/user/login');
       }
@@ -122,7 +123,7 @@ class UserInfo extends Component {
     const formItemLayout = {
       labelCol: { sm: { span: 6 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'right' } },
       wrapperCol: { sm: { span: 18 }, xs: { span: 24 } }
-  }
+    }
     return (
       <Form onSubmit={this.handleSearch} layout="inline">
         <Row gutter={8}>
@@ -177,10 +178,10 @@ class UserInfo extends Component {
     removeUser(param).then(res => {
       let result = res.data;
       console.log(result);
-      if(result.code === 0){
+      if (result.code === 0) {
         message.success(result.msg);
         this.queryDataSource();
-      }else{
+      } else {
         message.info(result.msg);
       }
     }).catch(err => {
@@ -229,11 +230,11 @@ class UserInfo extends Component {
         align: 'center',
         render: (text, record) => (
           <div>
-            <ModifyUser className="user_modify" modifypass={record} handleUpdate={this.queryDataSource}/>
+            <ModifyUser className="user_modify" modifypass={record} handleUpdate={this.queryDataSource} />
             <Divider type="vertical" />
             <Popconfirm
               title="确定删除?"
-              onConfirm={()=>this.handleDelUser(record)}
+              onConfirm={() => this.handleDelUser(record)}
             >
               <a>删除</a>
             </Popconfirm>
@@ -246,6 +247,8 @@ class UserInfo extends Component {
         //width: '300px',
         render: (text, record) => (
           <div style={{}}>
+            <BindProject bindSector={record} handleBindSector={this.queryDataSource} />
+            <Divider type="vertical" />
             <BindSector bindSector={record} handleBindSector={this.queryDataSource} />
             <Divider type="vertical" />
             <UnbindSector unbindSector={record} handleUnBindSector={this.queryDataSource} />
@@ -262,7 +265,7 @@ class UserInfo extends Component {
       getCheckboxProps: record => ({
       }),
     };
-    
+
     return (
       <Table
         loading={this.state.tableLoading}
@@ -272,14 +275,14 @@ class UserInfo extends Component {
         onChange={(pagination) => {
           this.setState({ pagination }, this.queryDataSource.bind(this));
         }}
-        //rowSelection={rowSelection}
+      //rowSelection={rowSelection}
       />
     )
   }
-  
-  handleEditSensor(record){
+
+  handleEditSensor(record) {
     //console.log(record);
-    this.setState({modalVisible:true,record});
+    this.setState({ modalVisible: true, record });
   }
 
   render() {
@@ -288,7 +291,7 @@ class UserInfo extends Component {
         <Card bordered={false}>
           <div className={styles.tableList}>
             <div className={styles.tableListForm}>{this.renderSimpleForm()}</div>
-            <div className={styles.tableListOperator} style={{marginBottom:'16px'}}>
+            <div className={styles.tableListOperator} style={{ marginBottom: '16px' }}>
               <Button icon="plus" type="primary" onClick={e => {
                 e.preventDefault();
                 this.handleDrawerAddUserVisible(true);

@@ -131,9 +131,18 @@ export async function unbindSector(userId, body) {
 export async function getUnbindSector(params) {
     return axios.get('/user/listUserNotOwnedSector', { params });
 }
-// 绑定
+// 绑定未绑定的区间
 export async function bindingSector(userId, body) {
     return axios.post('/us/binding?userId=' + userId, body);
+}
+
+// 未绑定的项目
+export async function getUnbindProject(params) {
+    return axios.get('/project/listProject', { params });
+}
+// 绑定未绑定的项目
+export async function bindingProject(userId, body) {
+    return axios.post('/us/bindingProject?userId=' + userId, body);
 }
 
 /* 检测依据 */
