@@ -196,7 +196,7 @@ class AddProjectName extends Component {
               optionFilterProp='children'
               style={{ width: '100%' }}
             >
-              {this.state.allProject.map(project => <Select.Option key={project.projectId}><Tooltip title={project.projectName}>{project.projectName}</Tooltip></Select.Option>)}
+              {this.state.allProject.map(project => <Select.Option key={project.projectId}><Tooltip placement="topLeft" title={project.projectName}>{project.projectName}</Tooltip></Select.Option>)}
             </Select>
           )}
           <a
