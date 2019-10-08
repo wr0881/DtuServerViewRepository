@@ -134,7 +134,7 @@ class MonitorBasis extends Component {
             <FormItem label="文件状态">
               {getFieldDecorator('fileStatus')(
                 <Select placeholder="请选择">
-                  <Option value='增加'>增加</Option>
+                  <Option value='无'>无</Option>
                   <Option value='作废'>作废</Option>
                   <Option value='运行'>运行</Option>
                   <Option value='试运行'>试运行</Option>

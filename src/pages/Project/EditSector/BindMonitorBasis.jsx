@@ -30,6 +30,7 @@ import sectormodel from './sectorModel';
 import debounce from 'lodash/debounce';
 
 const FormItem = Form.Item;
+const { Option } = Select;
 
 @Form.create()
 class BindMonitorBasis extends Component {
@@ -131,6 +132,16 @@ class BindMonitorBasis extends Component {
         </FormItem>
         <FormItem label="文件名称">
           {getFieldDecorator('fileName')(<Input placeholder="请输入文件名称" style={{ width: '200px' }} />)}
+        </FormItem>
+        <FormItem label="文件状态">
+          {getFieldDecorator('fileStatus')(
+            <Select placeholder="请选择" style={{ width: '200px' }}>
+              <Option value='无'>无</Option>
+              <Option value='作废'>作废</Option>
+              <Option value='运行'>运行</Option>
+              <Option value='试运行'>试运行</Option>
+            </Select>
+          )}
         </FormItem>
         <FormItem>
           <Button type="primary" htmlType="submit">
