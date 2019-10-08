@@ -1,7 +1,7 @@
 import React, { Component } from 'react';
 import router from 'umi/router';
 import { toJS } from 'mobx';
-import { Cascader, Card, Button, Select, message } from 'antd';
+import { Cascader, Card, Button, Select, message, Tooltip } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
 import { getAllProject,getProjectSector } from '@/services/project';
 import { observer } from 'mobx-react';
@@ -77,7 +77,7 @@ class SelectSector extends Component {
               optionFilterProp="children"
               //value={this.projectId}
             >
-              {this.state.ProjectData.map(v => <Select.Option key={v.projectId} value={v.projectId}>{v.projectName}</Select.Option>)}
+              {this.state.ProjectData.map(v => <Select.Option key={v.projectId} value={v.projectId}><Tooltip title={v.projectName}>{v.projectName}</Tooltip></Select.Option>)}
             </Select>
             <Select
               size="large" 
@@ -88,7 +88,7 @@ class SelectSector extends Component {
               showSearch
               optionFilterProp="children"
             >
-              {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v.sectorId}>{v.sectorName}</Select.Option>)}
+              {this.state.ProjectSectorData.map(v => <Select.Option key={v.sectorId} value={v.sectorId}><Tooltip title={v.sectorName}>{v.sectorName}</Tooltip></Select.Option>)}
             </Select>
             <div style={{ paddingLeft: '25px' }}><Button size="large" type='primary' onClick={this.onOk.bind(this)}>确认</Button></div>
           </div>

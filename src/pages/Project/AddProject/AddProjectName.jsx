@@ -1,7 +1,7 @@
 import React, { Component, Fragment } from 'react';
 import router from 'umi/router';
 import { observer } from 'mobx-react';
-import { Form, Input, Button, Select, Divider, Cascader, Spin, message } from 'antd';
+import { Form, Input, Button, Select, Divider, Cascader, Spin, message, Tooltip } from 'antd';
 import { getAllProjectType, getAllProject, addProject } from '@/services/project';
 import { getLocation } from '@/utils/getLocation';
 import projectState from './project';
@@ -196,7 +196,7 @@ class AddProjectName extends Component {
               optionFilterProp='children'
               style={{ width: '100%' }}
             >
-              {this.state.allProject.map(project => <Select.Option key={project.projectId}>{project.projectName}</Select.Option>)}
+              {this.state.allProject.map(project => <Select.Option key={project.projectId}><Tooltip title={project.projectName}>{project.projectName}</Tooltip></Select.Option>)}
             </Select>
           )}
           <a
