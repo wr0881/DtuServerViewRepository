@@ -89,8 +89,8 @@ class addBasis extends Component {
                     rules: [
                       { required: true, message: '不允许为空' },
                       {
-                        pattern: /^[a-zA-Z0-9/]+$|[a-zA-Z0-9]+-+[\w]*[a-zA-Z0-9]+$/,
-                        message: '只允许输入英文和数字,中间可以用‘-’符号',
+                        pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\[\]/]+$|[a-zA-Z0-9\u4E00-\u9FA5\[\]]+-+[\w]*[a-zA-Z0-9\u4E00-\u9FA5\[\]]+$/,
+                        message: '只允许输入中文、英文和数字,中间可以用‘-’符号',
                       },
                     ],
                   })(<Input placeholder="文件编号" />)}
@@ -104,7 +104,7 @@ class addBasis extends Component {
                     rules: [
                       { required: true, message: '不允许为空' },
                       {
-                        pattern: /^《+[a-zA-Z0-9\u4E00-\u9FA5]+》+$|《+[a-zA-Z0-9\u4E00-\u9FA5]+、+[\w]*[a-zA-Z0-9\u4E00-\u9FA5]+》+$/,
+                        pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\《\》]+$|[a-zA-Z0-9\u4E00-\u9FA5\《]+、+[\w]*[a-zA-Z0-9\u4E00-\u9FA5\》]+$/,
                         message: '需要以书名号的方式录入。示例：《地下铁道工程施工及验收规范》',
                       },
                     ],
