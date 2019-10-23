@@ -76,9 +76,17 @@ export async function getTerminlaNumber(params) {
     return axios.get('/terminal/getInstrTerminlaNumber', { params });
 }
 
+export async function getTerminlaNumber1(params) {
+    return axios.get('/terminal/getInstrTerminlaNumberNotBoundProject', { params });
+}
+
 /* 获取传感器编号 */
 export async function getSersorNumber(params) {
     return axios.get('/sensor/getInstrSensorNumber', { params });
+}
+
+export async function getSersorNumber1(params) {
+    return axios.get('/sensor/getInstrSensorNumberNotBoundProject', { params });
 }
 
 /* 人员信息 */

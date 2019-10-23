@@ -30,7 +30,7 @@ import {
 import { autorun, toJS } from 'mobx';
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
-import { getTerminlaNumber, getSersorNumber, addMonitorPoint, listMonitorType } from '@/services/project';
+import { getTerminlaNumber1, getSersorNumber1, addMonitorPoint, listMonitorType } from '@/services/project';
 import styles from './style.less';
 
 @observer
@@ -55,7 +55,7 @@ class EditPoint extends Component {
   getTerminlaNumber = value => {
     if (value) {
       this.setState({ getTerminlaNumberLoading: true });
-      getTerminlaNumber({ terminalNumber: value }).then(res => {
+      getTerminlaNumber1({ terminalNumber: value }).then(res => {
         const { code, data, msg } = res.data;
         if (code === 0) {
           this.setState({ terminlaNumberAry: data });
@@ -73,7 +73,7 @@ class EditPoint extends Component {
   getSersorNumber = value => {
     if (value) {
       this.setState({ getSersorNumberLoading: true });
-      getSersorNumber({ sensorNumber: value }).then(res => {
+      getSersorNumber1({ sensorNumber: value }).then(res => {
         const { code, data, msg } = res.data;
         if (code === 0) {
           this.setState({ sersorNumberAry: data });
