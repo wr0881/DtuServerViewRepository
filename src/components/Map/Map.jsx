@@ -25,6 +25,7 @@ class BaiduMap extends Component {
     }
     componentDidMount() {
         this.initBMap();
+        //this.getLocation();
     }
     componentDidUpdate(prevProps) {
         if (prevProps.scale !== this.props.scale) {
@@ -36,7 +37,7 @@ class BaiduMap extends Component {
     }
     initBMap() {
         this.map = new BMap.Map(this.refs.BMap);
-        this.map.centerAndZoom(new BMap.Point(116.404, 39.915), 10);
+        this.map.centerAndZoom(new BMap.Point(116.457593, 39.898451), 10);
         this.map.enableScrollWheelZoom(true);
 
         this.map.addEventListener("click", e => {
@@ -78,7 +79,7 @@ class BaiduMap extends Component {
                 this.map.clearOverlays();
                 this.map.addOverlay(new BMap.Marker(point));
             } else {
-                //alert("请先选择地址!");
+                alert("请先选择所在省市!");
             }
         });
     }

@@ -58,8 +58,9 @@ class AddSectorName extends Component {
   onValidateForm = () => {
     const { form } = this.props;
     const { validateFields } = form;
+    //console.log(this.props.form.getFieldValue('adress'));
     validateFields((err, values) => {
-      if (!err) {
+      if (!err && this.props.form.getFieldValue('adress') !== undefined) {
         let result = {
           projectId: projectState.projectId,
           sectorAddress: values.adress.join('') + values.adress_detail,
@@ -74,8 +75,7 @@ class AddSectorName extends Component {
           sectorStatus: values.sectorStatus,
           sectorType: 48
         };
-
-        //console.log(result);
+        console.log(result);
         addSector(result).then(res => {
           const { code, data, msg } = res.data;
           if (code === 0) {
@@ -87,22 +87,22 @@ class AddSectorName extends Component {
     });
   }
 
-  getsectorType = () => {
-    const { sectorType } = this.state;
-    if (sectorType.length === 0) {
-      getsectorType().then(res => {
-        const { code, data } = res.data;
-        console.log(data);
-        if (code === 0) {
-          this.setState({ sectorType: data });
-        } else {
-          this.setState({ sectorType: [] });
-        }
-      }).catch(err => {
-        console.log(err);
-      })
-    }
-  }
+  // getsectorType = () => {
+  //   const { sectorType } = this.state;
+  //   if (sectorType.length === 0) {
+  //     getsectorType().then(res => {
+  //       const { code, data } = res.data;
+  //       console.log(data);
+  //       if (code === 0) {
+  //         this.setState({ sectorType: data });
+  //       } else {
+  //         this.setState({ sectorType: [] });
+  //       }
+  //     }).catch(err => {
+  //       console.log(err);
+  //     })
+  //   }
+  // }
 
   detailForm = (record) => {
     const { form } = this.props;
@@ -171,8 +171,9 @@ class AddSectorName extends Component {
         <Form.Item {...formItemLayout} label="所在省市">
           {getFieldDecorator('adress', {
             rules: [{ required: true, message: '请选择子项目所在省市' }],
+            //initialValue:['北京市','市辖区','东城区']
           })(
-            <Cascader options={getLocation()} placeholder="示例: 湖南省长沙市岳麓区" />
+            <Cascader options={getLocation()} placeholder="示例: 湖南省/长沙市/岳麓区" />
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="街道地址">
@@ -189,25 +190,17 @@ class AddSectorName extends Component {
           })(
             <Slider min={4} max={19} tipFormatter={v => `缩放比例: ${v}`}
               tooltipPlacement='right'
-              tooltipVisible={true}
+              //tooltipVisible={true}
             //value={10}
             />
           )}
-          {/* <Slider min={3} max={19} tipFormatter={v => `缩放比例: ${v}`}
-            //value={this.state.zoom}
-            value={this.state.zoom}
-            tooltipPlacement='right'
-            tooltipVisible={true}
-            //onChange={v => {v===this.state.zoom}} 
-            //defaultValue={10}
-          /> */}
         </Form.Item>
         <Input.Group compact>
           <Form.Item {...formItemLayout1} label="经纬度">
-
-
             {/* <Input style={{ width: 170, textAlign: 'center' }} placeholder="经度" value={this.state.JW.lng} disabled />  */}
-            {getFieldDecorator('longitude')(
+            {getFieldDecorator('longitude',
+              //{initialValue:116.457593}
+            )(
               <Input style={{ width: 120, borderTopRightRadius: 0, borderBottomRightRadius: 0, textAlign: 'center' }} placeholder="经度" />
             )}
 
@@ -228,7 +221,9 @@ class AddSectorName extends Component {
 
           </Form.Item>
           <Form.Item {...formItemLayout1}>
-            {getFieldDecorator('latitude')(
+            {getFieldDecorator('latitude',
+              //{initialValue:39.898451}
+            )(
               <Input style={{ width: 120, borderTopLeftRadius: 0, borderBottomLeftRadius: 0, textAlign: 'center' }} placeholder="纬度" />
             )}
           </Form.Item>
@@ -247,7 +242,7 @@ class AddSectorName extends Component {
           )} */}
           <Map
             setJW={this.setJW}
-            address={this.props.form.getFieldValue('adress') + this.props.form.getFieldValue('adress_detail')}
+            address={this.props.form.getFieldValue('adress')}
             scale={this.props.form.getFieldValue('mapScale')}
             //输入框的经纬度
             lng={this.props.form.getFieldValue('longitude')}
