@@ -84,7 +84,7 @@ class BaiduMap extends Component {
             } else {
                 alert("请先选择所在省市!");
             }
-        });
+        },address);
     }
     scaleChange() {
         const { scale } = this.props;
