@@ -137,11 +137,11 @@ class BindMember extends Component {
         <FormItem label="人员类型">
           {getFieldDecorator('memberType')(
             <Select placeholder="请选择人员类型" style={{ width: '200px' }}>
-              <Select.Option value="">全部</Select.Option>
-              <Select.Option value="建设单位">建设单位</Select.Option>
-              <Select.Option value="施工单位">施工单位</Select.Option>
-              <Select.Option value="监测单位">监测单位</Select.Option>
-              <Select.Option value="监理单位">监理单位</Select.Option>
+              <Select.Option key={Math.random()} value="">全部</Select.Option>
+              <Select.Option key={Math.random()} value="建设单位">建设单位</Select.Option>
+              <Select.Option key={Math.random()} value="施工单位">施工单位</Select.Option>
+              <Select.Option key={Math.random()} value="监测单位">监测单位</Select.Option>
+              <Select.Option key={Math.random()} value="监理单位">监理单位</Select.Option>
             </Select>
           )}
         </FormItem>
@@ -442,10 +442,10 @@ class AddMember extends Component {
                           ],
                         })(
                         <Select placeholder="请选择人员类型">
-                          <Select.Option value={0}>建设单位</Select.Option>
-                          <Select.Option value={1}>施工单位</Select.Option>
-                          <Select.Option value={2}>监测单位</Select.Option>
-                          <Select.Option value={3}>监理单位</Select.Option>
+                          <Select.Option key={Math.random()} value={0}>建设单位</Select.Option>
+                          <Select.Option key={Math.random()} value={1}>施工单位</Select.Option>
+                          <Select.Option key={Math.random()} value={2}>监测单位</Select.Option>
+                          <Select.Option key={Math.random()} value={3}>监理单位</Select.Option>
                         </Select>
                       )}
                     </Form.Item>

@@ -281,9 +281,9 @@ class AddImg extends Component {
           />
           <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="子项目ID" value={sectorModel.sectorId}></input>
           <select style={{ display: 'none' }} name="type" value='1'>
-            <option value="1">布点图</option>
-            <option value="2">现场图</option>
-            <option value="3">剖面图</option>
+            <option key={Math.random()} value="1">布点图</option>
+            <option key={Math.random()} value="2">现场图</option>
+            <option key={Math.random()} value="3">剖面图</option>
           </select>
           <div style={{ height: '30px' }}></div>
           <Button type='primary' htmlType='submit'>上传</Button>

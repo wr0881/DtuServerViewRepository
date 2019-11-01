@@ -194,7 +194,7 @@ class AddPoint extends Component {
                           })
                         }}
                       >
-                        {this.state.listMonitorType.map(type => <Select.Option value={type.scId}>{type.itemName}</Select.Option>)}
+                        {this.state.listMonitorType.map(type => <Select.Option key={type.scId} value={type.scId}>{type.itemName}</Select.Option>)}
                       </Select>
                     )}
                   </Form.Item>
@@ -273,7 +273,7 @@ class AddPoint extends Component {
                               style={{ width: '100%' }}
                             >
                               {this.state.sersorNumberAry.map(v => (
-                                <Option key={v}>{v}</Option>
+                                <Select.Option key={v}>{v}</Select.Option>
                               ))}
                             </Select>
                           )}
@@ -311,7 +311,7 @@ class AddPoint extends Component {
                               style={{ width: '100%' }}
                             >
                               {this.state.terminlaNumberAry.map(v => (
-                                <Option key={v}>{v}</Option>
+                                <Select.Option key={v}>{v}</Select.Option>
                               ))}
                             </Select>
                           )}
