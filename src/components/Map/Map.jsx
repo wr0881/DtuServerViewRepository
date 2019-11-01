@@ -37,7 +37,7 @@ class BaiduMap extends Component {
     }
     initBMap() {
         this.map = new BMap.Map(this.refs.BMap);
-        this.map.centerAndZoom(new BMap.Point(116.457593, 39.898451), 10);
+        this.map.centerAndZoom(new BMap.Point(112.890736, 28.120049), 10);
         this.map.enableScrollWheelZoom(true);
 
         this.map.addEventListener("click", e => {
@@ -48,13 +48,13 @@ class BaiduMap extends Component {
             this.map.addOverlay(new BMap.Marker(e.point));
             //console.log('获取定位:',e.point.lng,e.point.lat);  
             
-        });
+        },{passive: true});
         //鼠标滚动缩放监听
         this.map.addEventListener("zoomend", () => {
             const zoom = this.map.getZoom();
             //console.log('当前缩放比例:',zoom);
             this.setState( _ =>{this.props.setScale(zoom)} );
-        })
+        },{passive: true});
     }
     
     //获取定位
@@ -72,9 +72,12 @@ class BaiduMap extends Component {
     }
     addressChange() {
         const { MapCenter, scale, address } = this.props;
-        new BMap.Geocoder().getPoint(address, point => {
+        console.log(address);
+        new BMap.Geocoder().getPoint(address.join(''), point => {
+            //console.log(point);
             if (point) {
                 this.setState({ point }, _ => { this.props.setJW(point) });
+                console.log(point);
                 this.map.centerAndZoom(point, scale);
                 this.map.clearOverlays();
                 this.map.addOverlay(new BMap.Marker(point));
@@ -85,7 +88,14 @@ class BaiduMap extends Component {
     }
     scaleChange() {
         const { scale } = this.props;
-        this.map.centerAndZoom(this.state.point, scale);
+        console.log(scale);
+        console.log(this.state.point);
+        if(this.state.point === null) {
+            this.map.centerAndZoom(new BMap.Point(112.890736, 28.120049), scale);
+        } else {
+            this.map.centerAndZoom(this.state.point, scale);
+        }
+        
     }
     JWChange() {
 

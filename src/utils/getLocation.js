@@ -24,5 +24,5 @@ export function getLocation() {
       obj2.children = option3;
     }
   }
-  return options;
+  return options;  
 }

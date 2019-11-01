@@ -87,23 +87,6 @@ class AddSectorName extends Component {
     });
   }
 
-  // getsectorType = () => {
-  //   const { sectorType } = this.state;
-  //   if (sectorType.length === 0) {
-  //     getsectorType().then(res => {
-  //       const { code, data } = res.data;
-  //       console.log(data);
-  //       if (code === 0) {
-  //         this.setState({ sectorType: data });
-  //       } else {
-  //         this.setState({ sectorType: [] });
-  //       }
-  //     }).catch(err => {
-  //       console.log(err);
-  //     })
-  //   }
-  // }
-
   detailForm = (record) => {
     const { form } = this.props;
     const { getFieldDecorator } = form;
