@@ -44,6 +44,18 @@ export default class ServerTerminal extends Component {
       });
   }
 
+  /**
+   * 根据 antd 定制化的 alert 提醒
+   * type info/success/error/warn/confirm
+   */
+  remindMsg = (type, text) => {
+    // type info/success/error/warn/confirm
+    const modal = Modal[type];
+    modal({
+      title: text,
+    });
+  }
+
   handleSubmit = (e) => {
     e.preventDefault();
     this.props.form.validateFields((err, values) => {
@@ -194,7 +206,7 @@ export default class ServerTerminal extends Component {
           </Form.Item>
         </Col>
         <Col span={10} >
-          <Form.Item label="项目名称"  {...formItemLayout1}>
+          <Form.Item label="项目名称"  {...formItemLayout1} className='formClassName'>
             {getFieldDecorator('projectId')(
               <Select
                 placeholder="项目名称"
@@ -203,6 +215,7 @@ export default class ServerTerminal extends Component {
                 onDropdownVisibleChange={this.getProjectNames}
                 style={{ width: '100%' }}
                 allowClear
+                // dropdownMatchSelectWidth={false}
               >
                 {this.state.projectNames.map(project => <Select.Option key={project.projectId}>{project.projectName}</Select.Option>)}
               </Select>
@@ -237,9 +250,9 @@ export default class ServerTerminal extends Component {
             .then(response => {
               let result = response.data
               if (result.code == 0) {
-                message.info("修改终端采集频率为 " + changedValue + " 成功，如需要使定时任务生效，请点击操作中的[ 修改生效 ]按钮");
+                this.remindMsg('info', "修改终端采集频率为[ " + changedValue + " ]成功，如需要使定时任务生效，请点击操作中的[ 修改生效 ]按钮");
               } else {
-                message.info("终端采集频率修改失败");
+                message.error("终端采集频率修改失败");
               }
               this.flush();
             })
@@ -327,7 +340,6 @@ export default class ServerTerminal extends Component {
         callCheckTaskStatus();
       })
       .catch(function (error) {
-        message.error(error);
         console.log(error);
       });
   }
@@ -370,10 +382,10 @@ export default class ServerTerminal extends Component {
                   } else {
                     // this.changeCollectionFrequency(changedValue, item, index, this);
                     this.setState({
-                        modalVisible: true,
-                        terminalNumber: item.terminalNumber,
-                        collectionFrequency: changedValue,
-                      })
+                      modalVisible: true,
+                      terminalNumber: item.terminalNumber,
+                      collectionFrequency: changedValue,
+                    })
                   }
                 }
               }}>{text + ""}</Typography.Paragraph></div>
@@ -438,7 +450,6 @@ export default class ServerTerminal extends Component {
                   }
                 })
                 .catch(function (error) {
-                  hide.then(() => message.error(error));
                   console.log(error);
                 });
             }}>修改生效</Button>
@@ -463,7 +474,6 @@ export default class ServerTerminal extends Component {
                       this.flush();
                     })
                     .catch(function (error) {
-                      message.error(error);
                       console.log(error);
                     });
                 }
@@ -490,7 +500,6 @@ export default class ServerTerminal extends Component {
                       this.flush();
                     })
                     .catch(function (error) {
-                      message.error(error);
                       console.log(error);
                     });
                 } else if (taskStatus === 'PAUSED') {
@@ -520,7 +529,6 @@ export default class ServerTerminal extends Component {
                       this.flush();
                     })
                     .catch(function (error) {
-                      message.error(error);
                       console.log(error);
                     });
                 } else {
@@ -532,18 +540,17 @@ export default class ServerTerminal extends Component {
               <Button>删除任务</Button>
             </Popconfirm>
             <Button onClick={() => {
-              axios.get(`/quartz/getSimpleTaskInterval`, {params: {'taskName': item.terminalNumber}})
+              axios.get(`/quartz/getSimpleTaskInterval`, { params: { 'taskName': item.terminalNumber } })
                 .then(response => {
                   let result = response.data
                   console.log(result.msg);
                   if (result.code == 0) {
-                    message.info(result.msg);
+                    this.remindMsg('info', result.msg);
                   } else {
                     message.error(result.msg);
                   }
                 })
                 .catch(function (error) {
-                  message.error(error);
                   console.log(error);
                 });
             }}>任务信息</Button>
