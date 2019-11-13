@@ -75,7 +75,7 @@ class AddSectorName extends Component {
           sectorStatus: values.sectorStatus,
           sectorType: 48
         };
-        console.log(result);
+        //console.log(result);
         addSector(result).then(res => {
           const { code, data, msg } = res.data;
           if (code === 0) {

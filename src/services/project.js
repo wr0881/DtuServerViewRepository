@@ -16,6 +16,11 @@ export async function getAllProject() {
     return axios.get('/project/getAllProject');
 }
 
+//模糊查询项目
+export async function getSearchProject(projecKeyWord) {
+    return axios.get('/project/getInstrProject?projecKeyWord=' + projecKeyWord);
+}
+
 /* 获取子项目类型 */
 export async function getsectorType() {
     return axios.get('/sysCode/getsectorType');

@@ -72,12 +72,12 @@ class BaiduMap extends Component {
     }
     addressChange() {
         const { MapCenter, scale, address } = this.props;
-        console.log(address);
+        //console.log(address);
         new BMap.Geocoder().getPoint(address.join(''), point => {
             //console.log(point);
             if (point) {
                 this.setState({ point }, _ => { this.props.setJW(point) });
-                console.log(point);
+                //console.log(point);
                 this.map.centerAndZoom(point, scale);
                 this.map.clearOverlays();
                 this.map.addOverlay(new BMap.Marker(point));
@@ -88,8 +88,8 @@ class BaiduMap extends Component {
     }
     scaleChange() {
         const { scale } = this.props;
-        console.log(scale);
-        console.log(this.state.point);
+        //console.log(scale);
+        //console.log(this.state.point);
         if(this.state.point === null) {
             this.map.centerAndZoom(new BMap.Point(112.890736, 28.120049), scale);
         } else {
