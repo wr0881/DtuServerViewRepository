@@ -226,3 +226,13 @@ export async function addSectorMoniBas(sectorId, body) {
 export async function getSectorName(sectorId) {
     return axios.get('/sector/getSectorName?sectorId=' + sectorId);
 }
+
+/* 获取子项目基本信息 */ 
+export async function getSectorBaseInfo(sectorId) {
+    return axios.get('/sector/querySectorBaseInfo?sectorId=' + sectorId)
+}
+
+/* 更新子项目基本信息 */
+export async function updateSectorBaseInfo(body) {
+    return axios.put('/sector/updateSector', body);
+} 

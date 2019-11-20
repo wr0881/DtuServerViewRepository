@@ -103,7 +103,7 @@ class modifyBasis extends Component {
                                             { required: true, message: '不允许为空' },
                                             {
                                                 pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\《\》]+$|[a-zA-Z0-9\u4E00-\u9FA5\《]+、+[\w]*[a-zA-Z0-9\u4E00-\u9FA5\》]+$/,
-                                                message: '需要以书名号的方式录入。示例：《地下铁道工程施工及验收规范》',
+                                                message: '需要以中文书名号的方式录入。示例：《地下铁道工程施工及验收规范》',
                                             },
                                         ],
                                         initialValue: this.props.modifypass.fileName

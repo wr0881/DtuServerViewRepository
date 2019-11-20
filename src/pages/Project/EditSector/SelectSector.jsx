@@ -129,7 +129,10 @@ class SelectSector extends Component {
   onOk() {
     const { match } = this.props;
     const sectorId = this.sectorId;
+    const projectId = this.projectId;
     sectorModel.sectorId = sectorId;
+    sectorModel.projectId = projectId;
+    console.log(sectorModel.sectorId,sectorModel.projectId);
     // sectorModel.sectorName = this.sectorName;
     if(sectorId !== undefined){
       router.push('/project/editSector');

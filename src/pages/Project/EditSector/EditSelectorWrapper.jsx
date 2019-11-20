@@ -34,6 +34,9 @@ class EditSelectorWrapper extends Component {
       case 'bindBenchmark':
         router.push(`${match.url}/bindBenchmark`);
         break;
+      case 'modifySectorBasicInfo':
+        router.push(`${match.url}/modifySectorBasicInfo`);
+        break;
       default:
         break;
     }
@@ -73,6 +76,10 @@ class EditSelectorWrapper extends Component {
       {
         key: 'bindBenchmark',
         tab: '绑定基准点',
+      },
+      {
+        key: 'modifySectorBasicInfo',
+        tab: '修改子项目基本信息',
       },
     ];
 

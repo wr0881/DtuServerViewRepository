@@ -159,10 +159,28 @@ export default [
                 name: '绑定基准点',
                 component: './Project/EditSector/bindBenchmark',
               },
+              {
+                path: '/project/editSector/modifySectorBasicInfo',
+                name: '修改子项目基本信息',
+                component: './Project/EditSector/ModifySectorBasicInfo',
+              },
             ],
           },
         ],
       },
+      //报告管理
+      // {
+      //   path: '/report',
+      //   name: '报告管理',
+      //   icon: 'read',
+      //   routes: [
+      //     {
+      //       path: '/report/updateReport',
+      //       name: '报告下载',
+      //       component: './Report/updateReport',
+      //     }
+      //   ]
+      // },
       // // dashboard
       // { path: '/', redirect: '/in-out-library/sensor', authority: ['admin', 'user'] },
       // { path: '/', redirect: '/in-out-library/sensor' },
