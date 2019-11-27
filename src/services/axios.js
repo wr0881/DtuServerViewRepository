@@ -6,8 +6,8 @@ import axios from 'axios';
 // axios.defaults.baseURL = 'http://10.88.89.101:8880'; //邓泽民
 // axios.defaults.baseURL = 'http://10.88.89.170:8880'; //徐善斌
 // axios.defaults.baseURL = 'http://10.88.89.116:9093'; //李茂平
-// axios.defaults.baseURL = 'http://10.88.89.84:9093'; //石璞麟
-axios.defaults.baseURL = 'http://10.88.89.224:8880'; // 蒋雄威
+axios.defaults.baseURL = 'http://10.88.89.84:9093'; //石璞麟
+// axios.defaults.baseURL = 'http://10.88.89.224:8880'; // 蒋雄威
 
 window.uploadImgAddress = 'http://123.207.88.210:8091';
 window.imgAddress = 'http://123.207.88.210';

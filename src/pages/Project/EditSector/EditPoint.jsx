@@ -29,6 +29,7 @@ import {
 } from 'antd';
 import { autorun, toJS } from 'mobx';
 import { observer } from 'mobx-react';
+import ImgMark from '@/components/ImgMark/ImgMark';
 import sectorModel from './sectorModel';
 import { getTerminlaNumber1, getSersorNumber1, addMonitorPoint, listMonitorType } from '@/services/project';
 import styles from './style.less';
@@ -48,7 +49,9 @@ class EditPoint extends Component {
 
       getTerminlaNumberLoading: false,
       getSersorNumberLoading: false,
-      listMonitorTypeLoading: false
+      listMonitorTypeLoading: false,
+
+      dot: []
     };
   }
 
@@ -132,7 +135,7 @@ class EditPoint extends Component {
       labelCol: { sm: { span: 8 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'center' } },
       wrapperCol: { sm: { span: 16 }, xs: { span: 24 } }
     }
-    const { form: { getFieldDecorator, getFieldValue } } = this.props;
+    const { form: { getFieldDecorator, getFieldValue, setFieldsValue } } = this.props;
     return (
       <Fragment>
         <Drawer
@@ -308,6 +311,19 @@ class EditPoint extends Component {
             </Form>
           </div>
 
+          <ImgMark
+            style={{ width: '100%' }}
+            src='http://123.207.88.210/monitor/images/three/pointMap/cfl.png'
+            dot={this.state.dot}
+            onChange={dot => {
+              this.setState({ dot });
+              setFieldsValue({
+                picx: dot[0].realX,
+                picy: dot[0].realY
+              })
+            }}
+          />
+
           <div
             style={{
               position: 'absolute',
@@ -335,14 +351,14 @@ class EditPoint extends Component {
     autorun(() => {
       if (sectorModel.selectPointInfo) {
         this.props.form.setFieldsValue({
-          monitorPointNumber:sectorModel.selectPointInfo.monitorPointNumber,
-          monitorType:sectorModel.selectPointInfo.monitorTypeName,
-          picx:parseInt(sectorModel.selectPointInfo.picx),
+          monitorPointNumber: sectorModel.selectPointInfo.monitorPointNumber,
+          monitorType: sectorModel.selectPointInfo.monitorTypeName,
+          picx: parseInt(sectorModel.selectPointInfo.picx),
           picy: parseInt(sectorModel.selectPointInfo.picy),
-          sensorDeep:sectorModel.selectPointInfo.sensorDeep,
-          sensorNumber:sectorModel.selectPointInfo.sensorNumber,
-          terminalChannel:sectorModel.selectPointInfo.terminalChannel,
-          terminalNumber:sectorModel.selectPointInfo.terminalNumber
+          sensorDeep: sectorModel.selectPointInfo.sensorDeep,
+          sensorNumber: sectorModel.selectPointInfo.sensorNumber,
+          terminalChannel: sectorModel.selectPointInfo.terminalChannel,
+          terminalNumber: sectorModel.selectPointInfo.terminalNumber
         });
       }
     })
