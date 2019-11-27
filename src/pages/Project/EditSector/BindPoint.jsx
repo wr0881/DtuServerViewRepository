@@ -233,7 +233,7 @@ class BindPoint extends Component {
     }).then(res => {
       const { code, msg, data } = res.data;
       if (code === 0) {
-        console.log(data);
+        // console.log(data);
         this.setState({ PointImageList: data });
       } else {
         this.setState({ PointImageList: [] });

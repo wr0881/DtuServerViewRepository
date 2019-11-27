@@ -236,3 +236,8 @@ export async function getSectorBaseInfo(sectorId) {
 export async function updateSectorBaseInfo(body) {
     return axios.put('/sector/updateSector', body);
 } 
+
+// 重置测点信息
+export async function clearPointInfo(body) {
+    return axios.put('/monitorPoint/removeSensorData', body );
+}
