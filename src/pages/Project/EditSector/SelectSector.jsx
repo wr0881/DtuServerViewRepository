@@ -3,9 +3,10 @@ import router from 'umi/router';
 import { toJS } from 'mobx';
 import { Cascader, Card, Button, Select, message, Tooltip } from 'antd';
 import PageHeaderWrapper from '@/components/PageHeaderWrapper';
-import { getAllProject,getProjectSector } from '@/services/project';
+import { getAllProject,getProjectSector,getSearchProject } from '@/services/project';
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
+import { get } from 'https';
 
 @observer
 class SelectSector extends Component {
@@ -36,7 +37,24 @@ class SelectSector extends Component {
       
     })
   }
-  
+  //模糊查询项目
+  getSearchProject = () => {
+    const searchProject = this.searchProject;
+    console.log(searchProject);
+    if(searchProject !== ''){
+      getSearchProject(searchProject).then(res => {
+        const { code,msg,data } = res.data;
+        if(code === 0) {
+          this.setState({ ProjectData:data });
+        }else{
+          this.setState({ ProjectData:[] });
+        }
+      }).catch(err => {
+        console.log(err);      
+      })
+    }
+  }
+
   //获取项目下子项目
   getProjectSector = () => {
     let projectId = this.projectId;
@@ -70,12 +88,24 @@ class SelectSector extends Component {
             <Select
               size="large" 
               style={{ width: '200px' }} 
-              options={options}  
+              options={options} 
+              filterOption={false} 
               placeholder="选择项目" 
               onChange={e => {this.projectId=JSON.parse(e);this.getProjectSector();}}
               showSearch
-              optionFilterProp="children"
-              //value={this.projectId}
+              optionFilterProp="children"              
+              //filterOption={(input, option) => option.props.children.toString().toLowerCase().indexOf(input.toLowerCase()) >= 0 }
+              
+              onSearch={v => {
+                console.log(v);
+                this.searchProject = v;
+                if(v !== ''){
+                  this.getSearchProject(this.searchProject);
+                }else{
+                  this.getAllProject();
+                }
+                
+              }}
             >
               {this.state.ProjectData.map(v => <Select.Option key={v.projectId} value={v.projectId}><Tooltip placement="topLeft" title={v.projectName}>{v.projectName}</Tooltip></Select.Option>)}
             </Select>
@@ -99,7 +129,10 @@ class SelectSector extends Component {
   onOk() {
     const { match } = this.props;
     const sectorId = this.sectorId;
+    const projectId = this.projectId;
     sectorModel.sectorId = sectorId;
+    sectorModel.projectId = projectId;
+    console.log(sectorModel.sectorId,sectorModel.projectId);
     // sectorModel.sectorName = this.sectorName;
     if(sectorId !== undefined){
       router.push('/project/editSector');

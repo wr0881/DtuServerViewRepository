@@ -147,7 +147,7 @@ export default class LogInfo extends Component {
                         <Form.Item label="关键字" {...formItemLayout}>
                             {getFieldDecorator('keyword')
                                 (
-                                    <Input placeholder="关键字" />
+                                    <Input allowClear={true} placeholder="关键字" />
                                 )}
                         </Form.Item>
                     </Col>

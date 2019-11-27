@@ -2,7 +2,7 @@ import React, { Component, Fragment } from 'react';
 import router from 'umi/router';
 import { observer } from 'mobx-react';
 import { Form, Input, Button, Select, Divider, Cascader, Spin, message, Tooltip } from 'antd';
-import { getAllProjectType, getAllProject, addProject } from '@/services/project';
+import { getAllProjectType, getAllProject, getSearchProject, addProject } from '@/services/project';
 import { getLocation } from '@/utils/getLocation';
 import projectState from './project';
 import styles from './style.less';
@@ -67,6 +67,23 @@ class AddProjectName extends Component {
       }).catch(err => {
         this.setState({ getAllProjectLoading: false });
         console.log(err);
+      })
+    }
+  }
+  //模糊查询项目
+  getSearchProject = () => {
+    const searchProject = this.searchProject;
+    console.log(searchProject);
+    if(searchProject !== ''){
+      getSearchProject(searchProject).then(res => {
+        const { code,msg,data } = res.data;
+        if(code === 0) {
+          this.setState({ allProject:data });
+        }else{
+          this.setState({ allProject:[] });
+        }
+      }).catch(err => {
+        console.log(err);      
       })
     }
   }
@@ -191,10 +208,19 @@ class AddProjectName extends Component {
               showSearch
               placeholder="示例: xxx项目"
               loading={this.state.getAllProjectLoading}
-              notFoundContent={this.state.getAllProjectTypeLoading ? <Spin size="small" /> : null}
-              onFocus={this.getAllProject}
+              //notFoundContent={this.getAllProject}
+              //onFocus={this.getAllProject()}
               optionFilterProp='children'
               style={{ width: '100%' }}
+              filterOption={false} 
+              onSearch={v => {
+                this.searchProject = v;
+                if(v !== ''){
+                  this.getSearchProject(this.searchProject);
+                }else{
+                  this.getAllProject();
+                }
+              }}
             >
               {this.state.allProject.map(project => <Select.Option key={project.projectId}><Tooltip placement="topLeft" title={project.projectName}>{project.projectName}</Tooltip></Select.Option>)}
             </Select>
@@ -237,6 +263,9 @@ class AddProjectName extends Component {
         </div> */}
       </Fragment>
     );
+  }
+  componentDidMount(){
+    this.getAllProject();
   }
 }
 

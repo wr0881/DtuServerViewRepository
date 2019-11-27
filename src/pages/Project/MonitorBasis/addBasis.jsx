@@ -93,7 +93,7 @@ class addBasis extends Component {
                         message: '只允许输入中文、英文和数字,中间可以用‘-’符号',
                       },
                     ],
-                  })(<Input placeholder="文件编号" />)}
+                  })(<Input placeholder="输入中文、英文和数字,中间可以用‘-’符号" />)}
                 </Form.Item>
               </Col>
             </Row>
@@ -105,10 +105,10 @@ class addBasis extends Component {
                       { required: true, message: '不允许为空' },
                       {
                         pattern: /^[a-zA-Z0-9\u4E00-\u9FA5\《\》]+$|[a-zA-Z0-9\u4E00-\u9FA5\《]+、+[\w]*[a-zA-Z0-9\u4E00-\u9FA5\》]+$/,
-                        message: '需要以书名号的方式录入。示例：《地下铁道工程施工及验收规范》',
+                        message: '需要以中文书名号的方式录入.示例:《地下铁道工程施工及验收规范》',
                       },
                     ],
-                  })(<Input placeholder="文件名称" />)}
+                  })(<Input placeholder="以中文书名号的方式录入.示例:《测量规范》" />)}
                 </Form.Item>
               </Col>
             </Row>
