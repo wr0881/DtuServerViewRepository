@@ -155,6 +155,11 @@ export default [
                 component: './Project/EditSector/BindPoint',
               },
               {
+                path: '/project/editSector/thresholdList',
+                name: '绑定阈值',
+                component: './Project/EditSector/ThresholdList',
+              },
+              {
                 path: '/project/editSector/bindBenchmark',
                 name: '绑定基准点',
                 component: './Project/EditSector/bindBenchmark',

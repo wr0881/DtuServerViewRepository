@@ -27,6 +27,7 @@ import {
   Upload,
   Spin
 } from 'antd';
+import ImgMark from '@/components/ImgMark/ImgMark';
 import sectorModel from './sectorModel';
 import { getTerminlaNumber1, getSersorNumber1, addMonitorPoint, listMonitorType } from '@/services/project';
 import styles from './style.less';
@@ -45,7 +46,9 @@ class AddPoint extends Component {
 
       getTerminlaNumberLoading: false,
       getSersorNumberLoading: false,
-      listMonitorTypeLoading: false
+      listMonitorTypeLoading: false,
+
+      dot: []
     };
   }
 
@@ -129,6 +132,7 @@ class AddPoint extends Component {
           if (code === 0) {
             this.props.getPointInfoList();
             this.props.handleAddPointVisible(false);
+            message.info('增添成功');
           } else {
             message.info('增添失败');
           }
@@ -142,7 +146,7 @@ class AddPoint extends Component {
       labelCol: { sm: { span: 8 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'center' } },
       wrapperCol: { sm: { span: 16 }, xs: { span: 24 } }
     }
-    const { form: { getFieldDecorator, getFieldValue } } = this.props;
+    const { form: { getFieldDecorator, getFieldValue, setFieldsValue } } = this.props;
     return (
       <Fragment>
         <Drawer
@@ -334,6 +338,19 @@ class AddPoint extends Component {
               </Row>
             </Form>
           </div>
+
+          <ImgMark
+            style={{ width: '100%' }}
+            src='http://123.207.88.210/monitor/images/three/pointMap/cfl.png'
+            dot={this.state.dot}
+            onChange={dot => {
+              this.setState({ dot });
+              setFieldsValue({
+                picx: dot[0].realX,
+                picy: dot[0].realY
+              })
+            }}
+          />
 
           <div
             style={{

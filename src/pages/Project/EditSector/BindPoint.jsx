@@ -31,6 +31,7 @@ import { observer } from 'mobx-react';
 import { uploadImage } from '@/services/project';
 import sectorModel from './sectorModel';
 import styles from './style.less';
+import $ from 'jquery';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -256,6 +257,16 @@ class AddImg extends Component {
     };
   }
 
+  handleSubmit = () => {
+    const { form } = this.props;
+    const { validateFields } = form;
+    validateFields((err, values) => {
+      if (!err) {
+        console.log(values);
+      }
+    });
+  }
+
   render() {
     const {
       form: { getFieldDecorator },
@@ -267,7 +278,7 @@ class AddImg extends Component {
         onClose={_ => { this.props.handleAddImgVisible(false) }}
         visible={this.props.visible}
       >
-        <form
+        {/* <form
           method="POST"
           target="form"
           enctype="multipart/form-data"
@@ -291,7 +302,33 @@ class AddImg extends Component {
         <iframe name="form" id="form" style={{ display: 'none' }} onLoad={_ => {
           this.props.handleAddImgVisible(false);
           this.props.getPointImageList();
-        }} ></iframe>
+        }} ></iframe> */}
+        <Upload
+          multiple
+          customRequest={files => {
+            const { file, onProgress, onSuccess, onError } = files;
+            let formData = new FormData();
+            formData.append('image', file);
+            formData.append('sectorId', sectorModel.sectorId);
+            formData.append('type', 1);
+            axios.post(`${window.uploadImgAddress}/upload/uploadImageList`, formData, {
+              onUploadProgress: ({ total, loaded }) => {
+                onProgress({ percent: Math.round(loaded / total * 100).toFixed(2) }, file);
+              },
+            }).then(({ data: response }) => {
+              if (response.code === 0) {
+                onSuccess(response, file);
+                this.props.handleAddImgVisible(false);
+                this.props.getPointImageList();
+              } else {
+                onError(response.msg);
+              }
+            }).catch(onError);
+          }}>
+          <Button>
+            <Icon type="upload" /> 选择图片上传
+          </Button>
+        </Upload>
       </Drawer >
     );
   }

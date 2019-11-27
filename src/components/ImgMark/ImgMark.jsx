@@ -8,44 +8,15 @@ class ImgMark extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      imgSize: {
-        width: '0',
-        height: '0'
-      },
       dot: [],
     };
   }
-  // computeRowCol = e => {
-  //   if (e) {
-  //     const boxW = this.box.clientWidth;
-  //     const boxH = this.box.clientHeight;
-
-  //     const imgWidth = e.currentTarget.naturalWidth;
-  //     const imgHeight = e.currentTarget.naturalHeight;
-
-  //     const scale = boxW / imgWidth;
-
-  //     if (imgHeight * scale > boxH) {
-  //       let size = {
-  //         width: 'auto',
-  //         height: boxH
-  //       }
-  //       this.setState({ imgSize: size });
-  //     } else {
-  //       let size = {
-  //         width: boxW,
-  //         height: 'auto'
-  //       }
-  //       this.setState({ imgSize: size });
-  //     }
-  //   }
-  // }
   clickXY = e => {
     const currentTarget = e.currentTarget;
     const eleToScreenX = currentTarget.getBoundingClientRect().x;
-    const eleToScreenY = currentTarget.getBoundingClientRect().y + 71;
-    const clickToScreenX = e.screenX;
-    const clickToScreenY = e.screenY;
+    const eleToScreenY = currentTarget.getBoundingClientRect().y;
+    const clickToScreenX = e.clientX;
+    const clickToScreenY = e.clientY;
     return {
       x: clickToScreenX - eleToScreenX,
       y: clickToScreenY - eleToScreenY
@@ -56,8 +27,8 @@ class ImgMark extends Component {
     const imgWrapperH = this.imgWrapper.clientHeight;
     const imgWidth = this.img.naturalWidth;
     const imgHeight = this.img.naturalHeight;
-    const realX = imgWidth * index.x / imgWrapperW;
-    const realY = imgHeight * index.y / imgWrapperH;
+    const realX = (imgWidth * index.x / imgWrapperW).toFixed();
+    const realY = (imgHeight * index.y / imgWrapperH).toFixed();
     return { ...index, realX, realY };
   }
   markClick = e => {
@@ -65,8 +36,7 @@ class ImgMark extends Component {
     markXY.number = this.props.dot.length;
     markXY.visible = false;
     let result = this.computeRealXY(markXY);
-    console.log(result);
-    this.props.onChange([...this.props.dot, result]);
+    this.props.onChange([result]);
   }
   render() {
     const { style, src } = this.props;
@@ -74,15 +44,12 @@ class ImgMark extends Component {
       <div ref={ref => { this.box = ref }} style={style} className={styles.imgMark}>
         <div
           ref={ref => { this.imgWrapper = ref }}
-          // className={styles.CurImg}
           onClick={this.markClick}
         >
           <img
             ref={ref => { this.img = ref }}
-            // style={this.state.imgSize}
             style={{ width: '100%', height: 'auto' }}
             src={src}
-            // onLoad={this.computeRowCol}
             alt=""
           />
         </div>
@@ -94,30 +61,13 @@ class ImgMark extends Component {
                 style={{ top: v.y - 25, left: v.x - 12.5 }}
                 className={styles.CurMarkDot}
               >
-                <Tooltip
-                  visible={v.visible}
-                  title={
-                    <div onClick={_ => {
-                      let dot = this.props.dot;
-                      dot.splice(i, 1);
-                      this.props.onChange(dot);
-                    }}>
-                      {v.indexName ? v.indexName : `编号${i}`}
-                      &nbsp;&nbsp;
-                    <Icon type="close-circle" />
-                    </div>
-                  }>
-                  <img src={v.isMark ? isMark : mark} style={{ width: '100%', height: 'auto' }} alt="" />
-                </Tooltip >
+                <img src={v.isMark ? isMark : mark} style={{ width: '100%', height: 'auto' }} alt="" />
               </div>
             )
           })}
         </div>
       </div>
     );
-  }
-  componentDidMount() {
-    // console.log(this.computeRowCol());
   }
 }
 

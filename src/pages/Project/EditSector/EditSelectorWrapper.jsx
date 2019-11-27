@@ -31,6 +31,9 @@ class EditSelectorWrapper extends Component {
       case 'bindPoint':
         router.push(`${match.url}/bindPoint`);
         break;
+      case 'thresholdList':
+        router.push(`${match.url}/thresholdList`);
+        break;
       case 'bindBenchmark':
         router.push(`${match.url}/bindBenchmark`);
         break;
@@ -43,13 +46,13 @@ class EditSelectorWrapper extends Component {
   };
 
   //根据子项目id获取子项目名称
-  GetSectorName(){
+  GetSectorName() {
     const sectorId = sectorModel.sectorId;
     getSectorName(sectorId).then(res => {
-      const { code,msg,data } = res.data;
-      if(code === 0){
+      const { code, msg, data } = res.data;
+      if (code === 0) {
         const sectorName = data;
-        this.setState({sectorName});
+        this.setState({ sectorName });
         //console.log('获取子项目名称',this.state.sectorName);
       }
     })
@@ -72,6 +75,10 @@ class EditSelectorWrapper extends Component {
       {
         key: 'bindPoint',
         tab: '绑定测点',
+      },
+      {
+        key: 'thresholdList',
+        tab: '绑定阈值',
       },
       {
         key: 'bindBenchmark',
@@ -100,7 +107,7 @@ class EditSelectorWrapper extends Component {
       </PageHeaderWrapper>
     );
   }
-  componentDidMount(){
+  componentDidMount() {
     this.GetSectorName();
   }
 }
