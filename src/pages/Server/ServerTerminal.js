@@ -39,7 +39,6 @@ export default class ServerTerminal extends Component {
         }
       })
       .catch(function (error) {
-        message.error("系统异常，请联系管理员");
         console.log(error);
       });
   }
@@ -215,7 +214,7 @@ export default class ServerTerminal extends Component {
                 onDropdownVisibleChange={this.getProjectNames}
                 style={{ width: '100%' }}
                 allowClear
-                // dropdownMatchSelectWidth={false}
+              // dropdownMatchSelectWidth={false}
               >
                 {this.state.projectNames.map(project => <Select.Option key={project.projectId}>{project.projectName}</Select.Option>)}
               </Select>
@@ -226,7 +225,7 @@ export default class ServerTerminal extends Component {
           <Form.Item >
             <Button
               type="primary"
-              style={{width:'100%',paddingLeft:'8px',paddingRight:'8px'}}
+              style={{ width: '100%', paddingLeft: '8px', paddingRight: '8px' }}
               htmlType="submit">
               搜索
             </Button>
@@ -257,7 +256,6 @@ export default class ServerTerminal extends Component {
               this.flush();
             })
             .catch(function (error) {
-              message.info("系统异常，请联系管理员");
               console.log(error);
             });
       }}
@@ -322,7 +320,6 @@ export default class ServerTerminal extends Component {
             this.flush();
           })
           .catch(function (error) {
-            message.error(error);
             console.log(error);
           });
       }
@@ -554,6 +551,20 @@ export default class ServerTerminal extends Component {
                   console.log(error);
                 });
             }}>任务信息</Button>
+            <Button onClick={() => {
+              axios.delete('/data/deleteFirstAndLastDataByTerminal', { params: { terminalNumber: item.terminalNumber } })
+                .then(response => {
+                  let result = response.data
+                  if (result.code == 0) {
+                    this.remindMsg('info', result.msg);
+                  } else {
+                    message.error(result.msg);
+                  }
+                })
+                .catch(function (error) {
+                  console.log(error);
+                });
+            }}>重置数据</Button>
           </div>;
         }
       }];
