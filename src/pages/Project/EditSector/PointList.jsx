@@ -250,6 +250,7 @@ class PointList extends Component {
           visible={this.state.handleAddPointVisible}
           handleAddPointVisible={this.handleAddPointVisible}
           getPointInfoList={this.getPointInfoList}
+          key={Math.random()}
         />
       </Fragment>
     );
@@ -276,7 +277,7 @@ class PointList extends Component {
       if (code === 0) {
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
         this.setState({ PointInfoList: data.list }, _ => {
-          console.log(this.state.PointInfoList);
+          //console.log(this.state.PointInfoList);
         });
       } else {
         this.setState({ PointInfoList: [] });
@@ -295,8 +296,10 @@ class PointList extends Component {
       terminalChannel:record.terminalChannel,
       terminalNumber:record.terminalNumber
     };
+    console.log(body);
     clearPointInfo(body).then(res => {
       const { code, msg, data } = res.data;
+      console.log(code);
       if(code === 0) {
         message.info("重置成功!");
       }else{

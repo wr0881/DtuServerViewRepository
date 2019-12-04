@@ -86,7 +86,7 @@ class ThresholdList extends Component {
 
     const columns = [
       {
-        title: '测点名称',
+        title: '指标',
         dataIndex: 'monitorPointNumber',
         key: 'name',
       },
@@ -117,7 +117,7 @@ class ThresholdList extends Component {
       {
         title: '操作',
         key: 'action',
-        render: (text, record) => (
+        render: (text, record, index) => (
           <span>
             <a onClick={_ => {
               this.setState({ editValue: record });
@@ -132,6 +132,10 @@ class ThresholdList extends Component {
             >
               <a>删除</a>
             </Popconfirm>
+            <Divider type="vertical" />
+            {index===1?<a id='valid'>取消生效</a>:<a id='valid'>生效</a>}
+            {/* <a id='valid'>生效</a> */}
+            {/* <a id='invalid' style={{display:'none'}}>取消生效</a> */}
           </span>
         ),
       },
@@ -294,7 +298,7 @@ class AddThreshold extends Component {
         >
           <Row gutter={8}>
             <Col md={12} sm={24}>
-              <Form.Item label="测点名称" {...formItemLayout}>
+              <Form.Item label="指标" {...formItemLayout}>
                 {getFieldDecorator('mpId', {
                   rules: [
                     { required: true, message: '不允许为空' }
@@ -518,7 +522,7 @@ class EditThreshold extends Component {
         >
           <Row gutter={8}>
             <Col md={12} sm={24}>
-              <Form.Item label="测点名称" {...formItemLayout}>
+              <Form.Item label="指标" {...formItemLayout}>
                 {getFieldDecorator('monitorPointNumber', {
                   initialValue: this.state.editValue && this.state.editValue.monitorPointNumber,
                   rules: [

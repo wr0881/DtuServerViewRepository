@@ -241,3 +241,8 @@ export async function updateSectorBaseInfo(body) {
 export async function clearPointInfo(body) {
     return axios.put('/monitorPoint/removeSensorData', body );
 }
+
+// 查询图片地址
+export async function getListImageUrl(imageListId) {
+    return axios.post('/image/listImageUrlNew?imageListId='+ imageListId);
+}
