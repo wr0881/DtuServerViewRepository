@@ -105,7 +105,7 @@ export default class LogInfo extends Component {
                                         placeholder="日志日期"
                                         showSearch={true}
                                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                        style={{ width: '100%' }}
+                                        style={{ width: '120%' }}
                                         allowClear={true}
                                         onSelect={this.getLogFileNameFun}
                                     >
@@ -135,7 +135,7 @@ export default class LogInfo extends Component {
                                         placeholder="日志文件"
                                         showSearch={true}
                                         filterOption={(input, option) => option.props.children.toLowerCase().indexOf(input.toLowerCase()) >= 0}
-                                        style={{ width: '100%' }}
+                                        style={{ width: '120%' }}
                                         allowClear={true}
                                     >
                                         {this.state.logFileNameList.map(logFileName => <Select.Option key={logFileName}>{logFileName}</Select.Option>)}
@@ -145,9 +145,14 @@ export default class LogInfo extends Component {
                     </Col>
                     <Col span={4} offset={2} >
                         <Form.Item label="关键字" {...formItemLayout}>
-                            {getFieldDecorator('keyword')
+                            {getFieldDecorator('keyword', {
+                                rules: [{
+                                    required: true,
+                                    message: '请选择关键字',
+                                }],
+                            })
                                 (
-                                    <Input allowClear={true} placeholder="关键字" />
+                                    <Input allowClear={true} placeholder="例如：ZD2019010101" style={{ width: '120%' }} />
                                 )}
                         </Form.Item>
                     </Col>
