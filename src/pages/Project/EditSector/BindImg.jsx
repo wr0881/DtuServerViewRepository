@@ -452,108 +452,59 @@ class AddImg extends Component {
                   message.success('现场缩略图上传至COS成功');
                   console.log('this:',this);
                   this.props.handleDrawerVisible(false); this.props.getImageList();
-                  //读取完成获取宽高
-                  reader.onload = function() {
-                    var imgURL = this.result;
-                    console.log('this.result',this.result);
-                    var imgURL1 = document.getElementById('thumbnailImg').src;
-                    var image = new Image();
-                    var image1 = new Image();
-                    image.src = imgURL;
-                    image1.src = imgURL1;
-                    image.onload = function(){
-                      //获取Image对象的宽高
-                      var fileWidth = this.width;
-                      var fileHeight = this.height;
-                      console.log('图片宽高:',fileWidth,fileHeight);
-                      
-                      let result = [];
-                      result.push({
-                        imageType:fieldsValue.type,
-                        originalImage:{
-                          imageDescription: imageDescription,
-                          imageHeight: fileHeight,
-                          imageWidth: fileWidth,
-                          imageName: imageName,
-                          imageUrl: imageUrl,
-                          imageType: 3,
-                        },
-                        sectorId: sectorId,
-                        thumbnail:{
-                          imageHeight: image1.height,
-                          imageWidth: image1.width,
-                          imageName: imageName1,
-                          imageUrl: imageUrl1,
-                          imageType: 1,
-                        }
-                      });
-                      console.log(result);
-                      //上传至数据库
-                      axios.post('/image/addListImage',result)
-                      .then(res => {
-                        const { code, msg, data } = res.data;
-                        console.log(code,msg,data);
-                        if( code === 0) {
-                          message.success('添加现场图成功！');
-                        }else{
-                          message.info(msg);
-                        }
-                      })
-                    };
-                  }
               }     
             })
           }).catch(e=>{
           })
-          // //读取完成获取宽高
-          // reader.onload = function() {
-          //   var imgURL = this.result;
-          //   console.log('this.result',this.result);
-          //   var imgURL1 = document.getElementById('thumbnailImg').src;
-          //   var image = new Image();
-          //   var image1 = new Image();
-          //   image.src = imgURL;
-          //   image1.src = imgURL1;
-          //   image.onload = function(){
-          //     //获取Image对象的宽高
-          //     var fileWidth = this.width;
-          //     var fileHeight = this.height;
-          //     console.log('图片宽高:',fileWidth,fileHeight);
+          //读取完成获取宽高
+          reader.onload = function() {
+            var imgURL = this.result;
+            console.log('this.result',this.result);
+            var imgURL1 = document.getElementById('thumbnailImg').src;
+            var image = new Image();
+            var image1 = new Image();
+            image.src = imgURL;
+            image1.src = imgURL1;
+            image.onload = function(){
+              //获取Image对象的宽高
+              var fileWidth = this.width;
+              var fileHeight = this.height;
+              console.log('图片宽高:',fileWidth,fileHeight);
               
-          //     let result = [];
-          //     result.push({
-          //       imageType:fieldsValue.type,
-          //       originalImage:{
-          //         imageDescription: imageDescription,
-          //         imageHeight: fileHeight,
-          //         imageWidth: fileWidth,
-          //         imageName: imageName,
-          //         imageUrl: imageUrl,
-          //         imageType: 3,
-          //       },
-          //       sectorId: sectorId,
-          //       thumbnail:{
-          //         imageHeight: image1.height,
-          //         imageWidth: image1.width,
-          //         imageName: imageName1,
-          //         imageUrl: imageUrl1,
-          //         imageType: 1,
-          //       }
-          //     });
-          //     console.log(result);
-          //     //上传至数据库
-          //     axios.post('/image/addListImage',result)
-          //     .then(res => {
-          //       const { code, msg, data } = res.data;
-          //       console.log(code,msg,data);
-          //       if( code === 0) {
-          //         message.success('添加现场图成功！');
-          //       }else{
-          //         message.info(msg);
-          //       }
-          //     })
-          //   };
-          // }         
+              let result = [];
+              result.push({
+                imageType:fieldsValue.type,
+                originalImage:{
+                  imageDescription: imageDescription,
+                  imageHeight: fileHeight,
+                  imageWidth: fileWidth,
+                  imageName: imageName,
+                  imageUrl: imageUrl,
+                  imageType: 3,
+                },
+                sectorId: sectorId,
+                thumbnail:{
+                  imageHeight: image1.height,
+                  imageWidth: image1.width,
+                  imageName: imageName1,
+                  imageUrl: imageUrl1,
+                  imageType: 1,
+                }
+              });
+              console.log(result);
+              //上传至数据库
+              axios.post('/image/addListImage',result)
+              .then(res => {
+                const { code, msg, data } = res.data;
+                console.log(code,msg,data);
+                if( code === 0) {
+                  message.success('添加现场图成功！');
+                }else{
+                  message.info(msg);
+                }
+              })
+            };
+          }         
         }
         //剖面图上传
         if(fieldsValue.type===3){
@@ -577,7 +528,8 @@ class AddImg extends Component {
             if(!err){
                 message.success('剖面图上传至COS成功');
                 console.log('剖面图上传的图片数据:',data);
-            }           
+            }
+            
           })
           //上传剖面缩略图
           imageCompression(firstFile,{
@@ -593,105 +545,58 @@ class AddImg extends Component {
                   message.success('剖面缩略图上传至COS成功');
                   console.log('this:',this);
                   this.props.handleDrawerVisible(false); this.props.getImageList();
-                  reader.onload = function() {
-                    var imgURL = this.result;
-                    console.log('imgURL:',imgURL)
-                    var imgURL1 = document.getElementById('thumbnailImg').src;
-                    var image = new Image();
-                    var image1 = new Image();
-                    image.src = imgURL;
-                    image1.src = imgURL1;
-                    image.onload = function(){
-                      //获取Image对象的宽高
-                      var fileWidth = this.width;
-                      var fileHeight = this.height;
-                      console.log('图片宽高:',fileWidth,fileHeight);
-                      let result = [];
-                      result.push({
-                        imageType:fieldsValue.type,
-                        originalImage:{
-                          imageDescription: imageDescription,
-                          imageHeight: fileHeight,
-                          imageWidth: fileWidth,
-                          imageName: imageName,
-                          imageUrl: imageUrl,
-                          imageType: 3,
-                        },
-                        sectorId: sectorId,
-                        thumbnail:{
-                          imageHeight: image1.height,
-                          imageWidth: image1.width,
-                          imageName: imageName1,
-                          imageUrl: imageUrl1,
-                          imageType: 1,
-                        }
-                      });
-                      console.log(result);
-                      //上传至数据库
-                      axios.post('/image/addListImage',result)
-                      .then(res => {
-                        const { code, msg, data } = res.data;
-                        console.log(code,msg,data);
-                        if( code === 0) {
-                          message.success('添加剖面图成功！');
-                        }else{
-                          message.info(msg);
-                        }
-                      })
-                    };
-                  }
               }     
             })
           }).catch(e=>{
           })
 
-          // reader.onload = function() {
-          //   var imgURL = this.result;
-          //   console.log('imgURL:',imgURL)
-          //   var imgURL1 = document.getElementById('thumbnailImg').src;
-          //   var image = new Image();
-          //   var image1 = new Image();
-          //   image.src = imgURL;
-          //   image1.src = imgURL1;
-          //   image.onload = function(){
-          //     //获取Image对象的宽高
-          //     var fileWidth = this.width;
-          //     var fileHeight = this.height;
-          //     console.log('图片宽高:',fileWidth,fileHeight);
-          //     let result = [];
-          //     result.push({
-          //       imageType:fieldsValue.type,
-          //       originalImage:{
-          //         imageDescription: imageDescription,
-          //         imageHeight: fileHeight,
-          //         imageWidth: fileWidth,
-          //         imageName: imageName,
-          //         imageUrl: imageUrl,
-          //         imageType: 3,
-          //       },
-          //       sectorId: sectorId,
-          //       thumbnail:{
-          //         imageHeight: image1.height,
-          //         imageWidth: image1.width,
-          //         imageName: imageName1,
-          //         imageUrl: imageUrl1,
-          //         imageType: 1,
-          //       }
-          //     });
-          //     console.log(result);
-          //     //上传至数据库
-          //     axios.post('/image/addListImage',result)
-          //     .then(res => {
-          //       const { code, msg, data } = res.data;
-          //       console.log(code,msg,data);
-          //       if( code === 0) {
-          //         message.success('添加剖面图成功！');
-          //       }else{
-          //         message.info(msg);
-          //       }
-          //     })
-          //   };
-          // }
+          reader.onload = function() {
+            var imgURL = this.result;
+            console.log('imgURL:',imgURL)
+            var imgURL1 = document.getElementById('thumbnailImg').src;
+            var image = new Image();
+            var image1 = new Image();
+            image.src = imgURL;
+            image1.src = imgURL1;
+            image.onload = function(){
+              //获取Image对象的宽高
+              var fileWidth = this.width;
+              var fileHeight = this.height;
+              console.log('图片宽高:',fileWidth,fileHeight);
+              let result = [];
+              result.push({
+                imageType:fieldsValue.type,
+                originalImage:{
+                  imageDescription: imageDescription,
+                  imageHeight: fileHeight,
+                  imageWidth: fileWidth,
+                  imageName: imageName,
+                  imageUrl: imageUrl,
+                  imageType: 3,
+                },
+                sectorId: sectorId,
+                thumbnail:{
+                  imageHeight: image1.height,
+                  imageWidth: image1.width,
+                  imageName: imageName1,
+                  imageUrl: imageUrl1,
+                  imageType: 1,
+                }
+              });
+              console.log(result);
+              //上传至数据库
+              axios.post('/image/addListImage',result)
+              .then(res => {
+                const { code, msg, data } = res.data;
+                console.log(code,msg,data);
+                if( code === 0) {
+                  message.success('添加剖面图成功！');
+                }else{
+                  message.info(msg);
+                }
+              })
+            };
+          }
         }        
       }
     })
@@ -819,7 +724,6 @@ class EditImage extends Component {
               console.log("替换原图上传至COS失败!!!");
           }
           if(!err){
-
               message.success('替换原图上传至COS成功');
               console.log('替换原图上传的图片数据:',data);
           }
@@ -837,99 +741,55 @@ class EditImage extends Component {
             }
             if(!err){
                 message.success('替换缩略图上传至COS成功');
-                console.log('this:',this);
                 this.props.handleEditImageVisible(false); this.props.getImageList();
-                reader.onload = function() {
-                  var imgURL = this.result;
-                  var imgURL1 = document.getElementById('thumbnailImg').src;
-                  var image = new Image();
-                  var image1 = new Image();
-                  image.src = imgURL;
-                  image1.src = imgURL1;
-                  image.onload = function(){
-                    //获取Image对象的宽高
-                    var fileWidth = this.width;
-                    var fileHeight = this.height;
-                    let result = {
-                      imageType: 2,
-                      originalImage:{
-                        imageHeight: fileHeight,
-                        imageWidth: fileWidth,
-                        imageListId: imageListId,
-                        imageType: 3,
-                      },
-                      sectorId: sectorId,
-                      thumbnail:{
-                        imageHeight: image1.height,
-                        imageWidth: image1.width,
-                        imageListId: imageListId,
-                        imageType: 1,
-                      }
-                    };
-                    console.log(result);
-                    //上传至数据库
-                    axios.post('/image/updateImageInfo',result)
-                    .then(res => {
-                      const { code, msg, data } = res.data;
-        
-                      if( code === 0) {
-                        message.success('替换图片成功！');
-                        // this.setState({updateImageData:data});
-                        // console.log(this.state.updateImageData);
-                      }else{
-                        message.info(msg);
-                      }
-                    });
-                  }      
-                }
             }     
           })
         }).catch(e=>{
         })
 
-        // reader.onload = function() {
-        //   var imgURL = this.result;
-        //   var imgURL1 = document.getElementById('thumbnailImg').src;
-        //   var image = new Image();
-        //   var image1 = new Image();
-        //   image.src = imgURL;
-        //   image1.src = imgURL1;
-        //   image.onload = function(){
-        //     //获取Image对象的宽高
-        //     var fileWidth = this.width;
-        //     var fileHeight = this.height;
-        //     let result = {
-        //       imageType: 2,
-        //       originalImage:{
-        //         imageHeight: fileHeight,
-        //         imageWidth: fileWidth,
-        //         imageListId: imageListId,
-        //         imageType: 3,
-        //       },
-        //       sectorId: sectorId,
-        //       thumbnail:{
-        //         imageHeight: image1.height,
-        //         imageWidth: image1.width,
-        //         imageListId: imageListId,
-        //         imageType: 1,
-        //       }
-        //     };
-        //     console.log(result);
-        //     //上传至数据库
-        //     axios.post('/image/updateImageInfo',result)
-        //     .then(res => {
-        //       const { code, msg, data } = res.data;
+        reader.onload = function() {
+          var imgURL = this.result;
+          var imgURL1 = document.getElementById('thumbnailImg').src;
+          var image = new Image();
+          var image1 = new Image();
+          image.src = imgURL;
+          image1.src = imgURL1;
+          image.onload = function(){
+            //获取Image对象的宽高
+            var fileWidth = this.width;
+            var fileHeight = this.height;
+            let result = {
+              imageType: 2,
+              originalImage:{
+                imageHeight: fileHeight,
+                imageWidth: fileWidth,
+                imageListId: imageListId,
+                imageType: 3,
+              },
+              sectorId: sectorId,
+              thumbnail:{
+                imageHeight: image1.height,
+                imageWidth: image1.width,
+                imageListId: imageListId,
+                imageType: 1,
+              }
+            };
+            console.log(result);
+            //上传至数据库
+            axios.post('/image/updateImageInfo',result)
+            .then(res => {
+              const { code, msg, data } = res.data;
 
-        //       if( code === 0) {
-        //         message.success('替换图片成功！');
-        //         // this.setState({updateImageData:data});
-        //         // console.log(this.state.updateImageData);
-        //       }else{
-        //         message.info(msg);
-        //       }
-        //     });
-        //   }      
-        // }
+              if( code === 0) {
+                message.success('替换图片成功！');
+                // this.setState({updateImageData:data});
+                // console.log(this.state.updateImageData);
+              }else{
+                message.info(msg);
+              }
+            });
+          }      
+        }
       }
       if(this.props.imageType===3){
         const selectImageData = this.state.selectImageData;
@@ -963,97 +823,53 @@ class EditImage extends Component {
             if(!err){
                 message.success('替换剖面图上传至COS成功');
                 this.props.handleEditImageVisible(false); this.props.getImageList();
-                reader.onload = function() {
-          
-                  var imgURL = this.result;
-                  var imgURL1 = document.getElementById('thumbnailImg').src;
-                  var image = new Image();
-                  var image1 = new Image();
-                  image.src = imgURL;
-                  image1.src = imgURL1;
-                  image.onload = function(){
-                    //获取Image对象的宽高
-                    var fileWidth = this.width;
-                    var fileHeight = this.height;
-                    let result = {
-                      imageType: 3,
-                      originalImage:{
-                        imageHeight: fileHeight,
-                        imageWidth: fileWidth,
-                        imageListId: imageListId,
-                        imageType: 3,
-                      },
-                      sectorId: sectorId,
-                      thumbnail:{
-                        imageHeight: image1.height,
-                        imageWidth: image1.width,
-                        imageListId: imageListId,
-                        imageType: 1,
-                      }
-                    };
-                    console.log(result);
-                    //上传至数据库
-                    axios.post('/image/updateImageInfo',result)
-                    .then(res => {
-                      const { code, msg, data } = res.data;
-                      console.log(code,msg,data);
-                      if( code === 0) {
-                        message.success('替换剖面图成功！');
-                        //this.props.handleEditImageVisible(false); this.props.getImageList();
-                      }else{
-                        message.info(msg);
-                      }
-                    });
-                  }      
-                }
             }     
           })
         }).catch(e=>{
         })
 
-        // reader.onload = function() {
+        reader.onload = function() {
           
-        //   var imgURL = this.result;
-        //   var imgURL1 = document.getElementById('thumbnailImg').src;
-        //   var image = new Image();
-        //   var image1 = new Image();
-        //   image.src = imgURL;
-        //   image1.src = imgURL1;
-        //   image.onload = function(){
-        //     //获取Image对象的宽高
-        //     var fileWidth = this.width;
-        //     var fileHeight = this.height;
-        //     let result = {
-        //       imageType: 3,
-        //       originalImage:{
-        //         imageHeight: fileHeight,
-        //         imageWidth: fileWidth,
-        //         imageListId: imageListId,
-        //         imageType: 3,
-        //       },
-        //       sectorId: sectorId,
-        //       thumbnail:{
-        //         imageHeight: image1.height,
-        //         imageWidth: image1.width,
-        //         imageListId: imageListId,
-        //         imageType: 1,
-        //       }
-        //     };
-        //     console.log(result);
-        //     //上传至数据库
-        //     axios.post('/image/updateImageInfo',result)
-        //     .then(res => {
-        //       const { code, msg, data } = res.data;
-        //       console.log(code,msg,data);
-        //       if( code === 0) {
-        //         message.success('替换剖面图成功！');
-        //         //this.props.handleEditImageVisible(false); this.props.getImageList();
-        //       }else{
-        //         message.info(msg);
-        //       }
-        //     });
-        //   }      
-        // }
+          var imgURL = this.result;
+          var imgURL1 = document.getElementById('thumbnailImg').src;
+          var image = new Image();
+          var image1 = new Image();
+          image.src = imgURL;
+          image1.src = imgURL1;
+          image.onload = function(){
+            //获取Image对象的宽高
+            var fileWidth = this.width;
+            var fileHeight = this.height;
+            let result = {
+              imageType: 3,
+              originalImage:{
+                imageHeight: fileHeight,
+                imageWidth: fileWidth,
+                imageListId: imageListId,
+                imageType: 3,
+              },
+              sectorId: sectorId,
+              thumbnail:{
+                imageHeight: image1.height,
+                imageWidth: image1.width,
+                imageListId: imageListId,
+                imageType: 1,
+              }
+            };
+            console.log(result);
+            //上传至数据库
+            axios.post('/image/updateImageInfo',result)
+            .then(res => {
+              const { code, msg, data } = res.data;
+              console.log(code,msg,data);
+              if( code === 0) {
+                message.success('替换剖面图成功！');
+              }else{
+                message.info(msg);
+              }
+            });
+          }      
+        }
       }
       }    
     })
