@@ -183,6 +183,8 @@ class BindPoint extends Component {
             <a onClick={_ => {
               this.handlePointListVisible(true);
               sectorModel.selectImageId = text.imageId;
+              console.log('text:',text);
+              sectorModel.selectImageUrl = text.imageUrl;
             }}>详情</a>
             <Divider type="vertical" />
             <Popconfirm
@@ -374,60 +376,104 @@ class AddImg extends Component {
         if(!err){
             message.success('布点图缩略图上传至COS成功');
             console.log('this:',this);
-            this.props.handleAddImgVisible(false);this.props.getPointImageList()
+            this.props.handleAddImgVisible(false);this.props.getPointImageList();
+            //读取完成获取宽高
+            reader.onload = function() {
+              var imgURL = this.result;
+              var imgURL1 = document.getElementById('thumbnailImg').src;
+              var image = new Image();
+              var image1 = new Image();
+              image.src = imgURL;
+              image1.src = imgURL1;
+              image.onload = function(){
+                //获取Image对象的宽高
+                var fileWidth = this.width;
+                var fileHeight = this.height;
+                let result = [];
+                result.push({
+                  imageType:1,
+                  originalImage:{
+                    imageDescription: imageDescription,
+                    imageHeight: fileHeight,
+                    imageWidth: fileWidth,
+                    imageName: imageName,
+                    imageUrl: url,
+                    imageType: 3,
+                  },
+                  sectorId: sectorId,
+                  thumbnail:{
+                    imageHeight: image1.height,
+                    imageWidth: image1.width,
+                    imageName: imageName1,
+                    imageUrl: url1,
+                    imageType: 1,
+                  }
+                });
+                console.log(result);
+                //上传至数据库
+                axios.post('/image/addListImage',result)
+                .then(res => {
+                  const { code, msg, data } = res.data;
+                  if( code === 0) {
+                    message.success('添加布点图成功！');
+                    console.log('开始关闭！！')
+                    
+                  }else{
+                    message.info(msg);
+                  }
+                });       
+              };
+            }
         }     
       })
     }).catch(e=>{
     })   
-    //读取完成获取宽高
-    reader.onload = function() {
-      var imgURL = this.result;
-      var imgURL1 = document.getElementById('thumbnailImg').src;
-      var image = new Image();
-      var image1 = new Image();
-      image.src = imgURL;
-      image1.src = imgURL1;
-      image.onload = function(){
-        //获取Image对象的宽高
-        var fileWidth = this.width;
-        var fileHeight = this.height;
-        let result = [];
-        result.push({
-          imageType:1,
-          originalImage:{
-            imageDescription: imageDescription,
-            imageHeight: fileHeight,
-            imageWidth: fileWidth,
-            imageName: imageName,
-            imageUrl: url,
-            imageType: 3,
-          },
-          sectorId: sectorId,
-          thumbnail:{
-            imageHeight: image1.height,
-            imageWidth: image1.width,
-            imageName: imageName1,
-            imageUrl: url1,
-            imageType: 1,
-          }
-        });
-        console.log(result);
-        //上传至数据库
-        axios.post('/image/addListImage',result)
-        .then(res => {
-          const { code, msg, data } = res.data;
-          if( code === 0) {
-            message.success('添加布点图成功！');
-            console.log('开始关闭！！')
+    // //读取完成获取宽高
+    // reader.onload = function() {
+    //   var imgURL = this.result;
+    //   var imgURL1 = document.getElementById('thumbnailImg').src;
+    //   var image = new Image();
+    //   var image1 = new Image();
+    //   image.src = imgURL;
+    //   image1.src = imgURL1;
+    //   image.onload = function(){
+    //     //获取Image对象的宽高
+    //     var fileWidth = this.width;
+    //     var fileHeight = this.height;
+    //     let result = [];
+    //     result.push({
+    //       imageType:1,
+    //       originalImage:{
+    //         imageDescription: imageDescription,
+    //         imageHeight: fileHeight,
+    //         imageWidth: fileWidth,
+    //         imageName: imageName,
+    //         imageUrl: url,
+    //         imageType: 3,
+    //       },
+    //       sectorId: sectorId,
+    //       thumbnail:{
+    //         imageHeight: image1.height,
+    //         imageWidth: image1.width,
+    //         imageName: imageName1,
+    //         imageUrl: url1,
+    //         imageType: 1,
+    //       }
+    //     });
+    //     console.log(result);
+    //     //上传至数据库
+    //     axios.post('/image/addListImage',result)
+    //     .then(res => {
+    //       const { code, msg, data } = res.data;
+    //       if( code === 0) {
+    //         message.success('添加布点图成功！');
+    //         console.log('开始关闭！！')
             
-          }else{
-            message.info(msg);
-          }
-        });       
-      };
-      
-      
-    }
+    //       }else{
+    //         message.info(msg);
+    //       }
+    //     });       
+    //   };
   }
   //根据子项目id获取子项目名称
   GetSectorName() {

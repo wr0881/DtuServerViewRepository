@@ -7,6 +7,7 @@ class SectorModel {
   @observable sectorName = '';
 
   @observable selectImageId = '';
+  @observable selectImageUrl = '';
   @observable selectImageListId = '';
   @observable selectBenchmarkId = '';
   @observable selectBenchmarkPointList = [];

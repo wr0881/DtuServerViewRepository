@@ -342,6 +342,7 @@ class AddPoint extends Component {
           <ImgMark
             style={{ width: '100%' }}
             src='http://123.207.88.210/monitor/images/three/pointMap/cfl.png'
+            //src={'https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com'+sectorModel.selectImageUrl}
             dot={this.state.dot}
             onChange={dot => {
               this.setState({ dot });
