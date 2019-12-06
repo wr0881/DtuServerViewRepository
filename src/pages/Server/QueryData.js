@@ -294,9 +294,9 @@ export default class QueryData extends Component {
       }, {
         title: '测点编号', dataIndex: 'monitorPointNumber', key: 'monitorPointNumber', align: 'center',
       }, {
-        title: 'X数据', dataIndex: 'measuredDataX', key: 'measuredDataX', align: 'center',
+        title: 'X数据', dataIndex: 'measuredDatax', key: 'measuredDatax', align: 'center',
       }, {
-        title: 'Y数据', dataIndex: 'measuredDataY', key: 'measuredDataY', align: 'center',
+        title: 'Y数据', dataIndex: 'measuredDatay', key: 'measuredDatay', align: 'center',
       }, {
         title: '采集时间', dataIndex: 'createDate', key: 'createDate', align: 'center',
       }];
@@ -313,11 +313,11 @@ export default class QueryData extends Component {
       }, {
         title: '测点编号', dataIndex: 'monitorPointNumber', key: 'monitorPointNumber', align: 'center',
       }, {
-        title: 'X数据', dataIndex: 'measuredDataX', key: 'measuredDataX', align: 'center',
+        title: 'X数据', dataIndex: 'measuredDatax', key: 'measuredDatax', align: 'center',
       }, {
-        title: 'Y数据', dataIndex: 'measuredDataY', key: 'measuredDataY', align: 'center',
+        title: 'Y数据', dataIndex: 'measuredDatay', key: 'measuredDatay', align: 'center',
       }, {
-        title: 'Z数据', dataIndex: 'measuredDataZ', key: 'measuredDataZ', align: 'center',
+        title: 'Z数据', dataIndex: 'measuredDataz', key: 'measuredDataz', align: 'center',
       }, {
         title: '采集时间', dataIndex: 'createDate', key: 'createDate', align: 'center',
       }];
