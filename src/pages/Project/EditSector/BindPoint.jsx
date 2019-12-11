@@ -286,9 +286,18 @@ class AddImg extends Component {
       <Drawer
         title="布点图"
         width={500}
+        key={Math.random()}
         onClose={_ => { this.props.handleAddImgVisible(false);this.props.getPointImageList() }}
         visible={this.props.visible}
       >
+        {/* <Upload
+          multiple
+          listType="picture"
+        >
+          <Button>
+            <Icon type="upload" /> 选择图片
+          </Button>
+        </Upload> */}
         <div id="dropbox">
           <input multiple type='file' ref='file' name="file" />
           <Button onClick={_ => { this.handleFiles() }} style={{marginTop:'10px'}}>生成缩略图</Button>

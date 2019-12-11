@@ -237,6 +237,11 @@ export async function updateSectorBaseInfo(body) {
     return axios.put('/sector/updateSector', body);
 } 
 
+// 子项目中的指标
+export async function getMonitorType(sectorId){
+    return axios.get('/threshold/getMonitorTypeBySectorId?sectorId=' + sectorId);
+}
+
 // 重置测点信息
 export async function clearPointInfo(body) {
     return axios.put('/monitorPoint/removeSensorData', body );
@@ -245,4 +250,8 @@ export async function clearPointInfo(body) {
 // 查询图片地址
 export async function getListImageUrl(imageListId) {
     return axios.post('/image/listImageUrlNew?imageListId='+ imageListId);
+}
+//修改指标阈值状态
+export async function updateThresholdStatus(thresholdInfoId,thresholdStatus) {
+    return axios.put('/threshold/updateThresholdStatus?thresholdInfoId='+thresholdInfoId+'&thresholdStatus='+thresholdStatus);
 }

@@ -332,6 +332,7 @@ class AddImg extends Component {
     } = this.props;
     return (
       <Drawer
+        key={Math.random()}
         title="添加图片"
         width={500}
         onClose={_ => { this.props.handleDrawerVisible(false); this.props.getImageList();}}
@@ -407,18 +408,17 @@ class AddImg extends Component {
     const { form } = this.props;
     form.validateFields((err, fieldsValue) => {
       if(!err){
-        console.log('图片类型:',fieldsValue.type);
         const sectorId = sectorModel.sectorId;
         let file = this.refs.file;
-        console.log(file.files);
         let firstFile = file.files[0];
-        console.log('文件属性',firstFile);
+        let imageType = firstFile.name.split('.')[1];
         //现场图上传
         if(fieldsValue.type===2){
           console.log('现场图上传!')
-          let imageUrl = `/images/siteMap/${sectorId}/${Math.random()+firstFile.name}`;
+          let imageUrl = `/images/siteMap/${sectorId}/${Math.random()}.${imageType}`;
+          console.log('现场图原图地址:',imageUrl);
           //缩略图
-          let imageUrl1 = `/images/siteMap/${sectorId}/${Math.random()+firstFile.name}`;
+          let imageUrl1 = `/images/siteMap/${sectorId}/${Math.random()}.${imageType}`;
 
           let imageName = `${this.state.sectorName}现场图`;
           let imageName1 = `${this.state.sectorName}现场缩略图`;
@@ -443,7 +443,6 @@ class AddImg extends Component {
             maxWidthOrHeight:400
           }).then(tbFile=>{
             //reader.readAsDataURL(tbfile);
-            console.log('现场缩略图上传至cos!!!');
             upload(imageUrl1, tbFile, (err, data) => {
               if(err){
                   message.info('现场缩略图上传至COS失败!');
@@ -459,7 +458,6 @@ class AddImg extends Component {
           //读取完成获取宽高
           reader.onload = function() {
             var imgURL = this.result;
-            console.log('this.result',this.result);
             var imgURL1 = document.getElementById('thumbnailImg').src;
             var image = new Image();
             var image1 = new Image();
@@ -469,7 +467,6 @@ class AddImg extends Component {
               //获取Image对象的宽高
               var fileWidth = this.width;
               var fileHeight = this.height;
-              console.log('图片宽高:',fileWidth,fileHeight);
               
               let result = [];
               result.push({
@@ -509,9 +506,9 @@ class AddImg extends Component {
         //剖面图上传
         if(fieldsValue.type===3){
           console.log('剖面图上传!')
-          let imageUrl = `/images/sectionalView/${sectorId}/${Math.random()+firstFile.name}`;
+          let imageUrl = `/images/sectionalView/${sectorId}/${Math.random()}.${imageType}`;
           //缩略图
-          let imageUrl1 = `/images/sectionalView/${sectorId}/${Math.random()+firstFile.name}`;
+          let imageUrl1 = `/images/sectionalView/${sectorId}/${Math.random()}.${imageType}`;
 
           let imageName = `${this.state.sectorName}剖面图`;
           let imageName1 = `${this.state.sectorName}剖面缩略图`;
@@ -633,6 +630,7 @@ class EditImage extends Component {
     } = this.props;
     return (
       <Drawer
+        key={Math.random()}
         title="替换图片"
         width={500}
         onClose={_ => { this.props.handleEditImageVisible(false); this.props.getImageList(); }}
@@ -713,6 +711,7 @@ class EditImage extends Component {
         if(this.props.imageType===2){
         const selectImageData = this.state.selectImageData;
         let imageUrl = selectImageData[0].imageUrl;
+        console.log('替换现场图地址:',imageUrl);
         let imageUrl1 = selectImageData[1].imageUrl;
 
         let reader = new FileReader();
@@ -733,8 +732,6 @@ class EditImage extends Component {
         imageCompression(firstFile,{
           maxWidthOrHeight:400
         }).then(tbFile=>{
-
-          console.log('替换缩略图上传至cos!!!');
           upload(imageUrl1, tbFile, (err, data) => {
             if(err){
                 message.info('替换缩略图上传至COS失败!');
@@ -815,7 +812,6 @@ class EditImage extends Component {
           maxWidthOrHeight:400
         }).then(tbFile=>{
           //reader.readAsDataURL(tbfile);
-          console.log('替换剖面图上传至cos!!!');
           upload(imageUrl1, tbFile, (err, data) => {
             if(err){
                 message.info('替换剖面图上传至COS失败!');
