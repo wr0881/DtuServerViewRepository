@@ -233,8 +233,6 @@ class AddThreshold extends Component {
       getMonitorPointLoading: false,
       monitorPoints: [],
       monitorTypeName: [],
-
-      newThresholdTrue: false,
     };
   }
 
@@ -297,18 +295,18 @@ class AddThreshold extends Component {
     const { form } = this.props;
     const { validateFields } = form;
     
-    this.setState({newThresholdTrue:true});
+    //this.setState({newThresholdTrue:false});
     validateFields((err, values) => {
       const thresholdData = this.props.getThresholdData;
       //判断指标和阈值类型是否存在
+      let newThresholdTrue = true;
       for(let i=0;i<thresholdData.length;i++){
-        if(values.itemName === thresholdData[i].itemName && values.type === thresholdData[i].thresholdType){
-          this.setState({newThresholdTrue:false});
-        }else{
-          this.setState({newThresholdTrue:true});
+        if(values.itemName === thresholdData[i].itemName && values.type === thresholdData[i].thresholdType+''){
+          newThresholdTrue=false;         
         }
       }
-      if(!err && this.state.newThresholdTrue === true){
+      console.log(newThresholdTrue);
+      if(!err && newThresholdTrue === true){
         let params = {
           sectorId: sectorModel.sectorId,
           itemName: values.itemName,
@@ -323,11 +321,12 @@ class AddThreshold extends Component {
           if (code === 0) {
             this.props.getThresholdList();
             this.props.handleAddThresholdVisible(false);
+            
           } else {
             message.info('增添失败');
           }
         })
-      }else if(this.state.newThresholdTrue === false){
+      }else if(newThresholdTrue === false){
         message.error('指标和阈值类型重复!');
         console.log('指标和阈值类型重复!');
       }
@@ -354,6 +353,7 @@ class AddThreshold extends Component {
         </div>
         <Form
           layout="vertical"
+          
         // style={{ textAlign: 'right', paddingLeft: '30px', paddingRight: '60px' }}
         >
           <Row gutter={8}>
