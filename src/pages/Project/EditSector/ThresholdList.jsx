@@ -30,6 +30,7 @@ import {
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
 import styles from './style.less';
+import { getMonitorType, updateThresholdStatus } from '@/services/project';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -65,9 +66,9 @@ class ThresholdList extends Component {
   }
 
   delectThreshold = id => {
-    axios.delete('/threshold/removeMonitorInThreshold', {
+    axios.delete('/threshold/removeThreshold', {
       params: {
-        mpId: id
+        thresholdInfoId: id
       }
     }).then(res => {
       const { code, msg, data } = res.data;
@@ -80,14 +81,18 @@ class ThresholdList extends Component {
     });
   }
 
+  Effect() {
+    
+  }
+
   render() {
     const { form } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
 
     const columns = [
       {
-        title: '测点名称',
-        dataIndex: 'monitorPointNumber',
+        title: '指标',
+        dataIndex: 'itemName',
         key: 'name',
       },
       {
@@ -115,9 +120,34 @@ class ThresholdList extends Component {
         key: 'threshold3',
       },
       {
+        title: '',
+        dataIndex: 'thresholdStatus',
+        align: 'center',
+        render: (text, record, index) => {
+          const checked = text === 1 ? true : false;
+          return (
+            <Switch 
+              checkedChildren="生效"
+              unCheckedChildren="不生效"
+              checked={checked}
+              onChange={checked => {
+                const thresholdStatus = checked ? 1 : 0;
+                const thresholdInfoId = record.thresholdInfoId;                
+                updateThresholdStatus(thresholdInfoId,thresholdStatus).then(res => {
+                  const { code, msg } = res.data;
+                  if(code === 0){
+                    this.getThresholdList();
+                  }
+                })
+              }}
+            />
+          )
+        }
+      },
+      {
         title: '操作',
         key: 'action',
-        render: (text, record) => (
+        render: (text, record, index) => (
           <span>
             <a onClick={_ => {
               this.setState({ editValue: record });
@@ -126,7 +156,7 @@ class ThresholdList extends Component {
             <Divider type="vertical" />
             <Popconfirm
               title="确定删除?"
-              onConfirm={this.delectThreshold.bind(this, record.mpId)}
+              onConfirm={this.delectThreshold.bind(this, record.thresholdInfoId)}
               okText="是"
               cancelText="否"
             >
@@ -156,6 +186,7 @@ class ThresholdList extends Component {
           visible={this.state.handleAddThresholdVisible}
           handleAddThresholdVisible={this.handleAddThresholdVisible}
           getThresholdList={this.getThresholdList}
+          getThresholdData = {this.state.thresholdList}
         />
 
         <EditThreshold
@@ -178,7 +209,7 @@ class ThresholdList extends Component {
       pageSize: pagination.pageSize,
       sectorId: sectorModel.sectorId,
     };
-    axios.get('/threshold/getMonitorInThreshold', { params }).then(res => {
+    axios.get('/threshold/getThresholdInfo', { params }).then(res => {
       const { code, msg, data } = res.data;
       if (code === 0) {
         this.setState({ thresholdList: data.list });
@@ -200,7 +231,8 @@ class AddThreshold extends Component {
     super(props);
     this.state = {
       getMonitorPointLoading: false,
-      monitorPoints: []
+      monitorPoints: [],
+      monitorTypeName: [],
     };
   }
 
@@ -244,29 +276,59 @@ class AddThreshold extends Component {
     ];
     return <Table bordered size="small" dataSource={dataSource} columns={columns} pagination={false} />
   }
+  //获取子区间下的指标
+  getMonitorTypeName(){
+    const sectorId = sectorModel.sectorId;
+    getMonitorType(sectorId).then(res=>{
+      const {code,msg,data} = res.data;
+      if(code === 0){
+        this.setState({monitorTypeName:data});
+      }else{
+        this.setState({monitorTypeName:[]});
+      }
+    }).catch(err=>{
+      console.log(err);
+    })
+  }
 
   handleSubmit = () => {
     const { form } = this.props;
     const { validateFields } = form;
+    
+    //this.setState({newThresholdTrue:false});
     validateFields((err, values) => {
-      if (!err) {
+      const thresholdData = this.props.getThresholdData;
+      //判断指标和阈值类型是否存在
+      let newThresholdTrue = true;
+      for(let i=0;i<thresholdData.length;i++){
+        if(values.itemName === thresholdData[i].itemName && values.type === thresholdData[i].thresholdType+''){
+          newThresholdTrue=false;         
+        }
+      }
+      console.log(newThresholdTrue);
+      if(!err && newThresholdTrue === true){
         let params = {
           sectorId: sectorModel.sectorId,
-          mpId: values.mpId,
+          itemName: values.itemName,
+          thresholdStatus: 0,
           thresholdType: values.type,
           oneThresholdValue: values.threshold1,
           twoThresholdValue: values.threshold2,
           threeThresholdValue: values.threshold3,
         };
-        axios.post('/threshold/addMonitorInThreshold', params, { headers: { 'Content-Type': 'application/json' } }).then(res => {
+        axios.post('/threshold/addThreshold', params, { headers: { 'Content-Type': 'application/json' } }).then(res => {
           const { code, msg, data } = res.data;
           if (code === 0) {
             this.props.getThresholdList();
             this.props.handleAddThresholdVisible(false);
+            
           } else {
             message.info('增添失败');
           }
         })
+      }else if(newThresholdTrue === false){
+        message.error('指标和阈值类型重复!');
+        console.log('指标和阈值类型重复!');
       }
     });
   }
@@ -280,6 +342,7 @@ class AddThreshold extends Component {
     return (
       <Drawer
         title="添加阈值"
+        //key={Math.random()}
         width={800}
         onClose={_ => { this.props.handleAddThresholdVisible(false) }}
         visible={this.props.visible}
@@ -290,25 +353,26 @@ class AddThreshold extends Component {
         </div>
         <Form
           layout="vertical"
+          
         // style={{ textAlign: 'right', paddingLeft: '30px', paddingRight: '60px' }}
         >
           <Row gutter={8}>
             <Col md={12} sm={24}>
-              <Form.Item label="测点名称" {...formItemLayout}>
-                {getFieldDecorator('mpId', {
+              <Form.Item label="指标" {...formItemLayout}>
+                {getFieldDecorator('itemName', {
                   rules: [
                     { required: true, message: '不允许为空' }
                   ],
                 })(<Select
                   showSearch
                   placeholder="示例：ZC45"
-                  onFocus={this.getMonitorPoint}
-                  loading={this.state.getMonitorPointLoading}
-                  notFoundContent={this.state.getMonitorPointLoading ? <Spin size="small" /> : null}
+                  //onFocus={this.MonitorTypeName}
+                  //loading={this.state.getMonitorPointLoading}
+                  //notFoundContent={this.state.getMonitorPointLoading ? <Spin size="small" /> : null}
                   dropdownMatchSelectWidth={false}
                   style={{ width: '210px' }}
                 >
-                  {this.state.monitorPoints.map(item => <Select.Option key={item.mpId} value={item.mpId}>{item.monitorPointNumber}</Select.Option>)}
+                  {this.state.monitorTypeName.map(item => <Select.Option key={item} value={item}>{item}</Select.Option>)}
                 </Select>)}
               </Form.Item>
             </Col>
@@ -322,8 +386,8 @@ class AddThreshold extends Component {
                 })(
                   <Select style={{ width: '210px' }}>
                     <Select.Option value='1'>当前值</Select.Option>
-                    <Select.Option value='2'>累计变化量</Select.Option>
-                    <Select.Option value='3'>单次变化量</Select.Option>
+                    <Select.Option value='2'>单次变化量</Select.Option>
+                    <Select.Option value='3'>累计变化量</Select.Option>
                     <Select.Option value='4'>变化速率</Select.Option>
                   </Select>
                 )}
@@ -396,6 +460,9 @@ class AddThreshold extends Component {
         </div>
       </Drawer >
     );
+  }
+  componentDidMount() {
+    this.getMonitorTypeName();
   }
 
   getMonitorPoint = () => {
@@ -471,18 +538,20 @@ class EditThreshold extends Component {
   handleSubmit = () => {
     const { form } = this.props;
     const { validateFields } = form;
+    console.log(this.state.editValue);
     validateFields((err, values) => {
       if (!err) {
         let params = {
           sectorId: sectorModel.sectorId,
-          monitorPointNumber: this.state.editValue.monitorPointNumber,
-          mpId: this.state.editValue.mpId,
+          thresholdInfoId: this.state.editValue.thresholdInfoId,
+          thresholdStatus: this.state.editValue.thresholdStatus, 
+          itemName: this.state.editValue.itemName,
           thresholdType: values.type,
           oneThresholdValue: values.threshold1,
           twoThresholdValue: values.threshold2,
           threeThresholdValue: values.threshold3,
         };
-        axios.put('/threshold/modifyThreshold', params).then(res => {
+        axios.put('/threshold/updateThreshold', params).then(res => {
           const { code, msg, data } = res.data;
           if (code === 0) {
             this.props.getThresholdList();
@@ -518,9 +587,9 @@ class EditThreshold extends Component {
         >
           <Row gutter={8}>
             <Col md={12} sm={24}>
-              <Form.Item label="测点名称" {...formItemLayout}>
-                {getFieldDecorator('monitorPointNumber', {
-                  initialValue: this.state.editValue && this.state.editValue.monitorPointNumber,
+              <Form.Item label="指标" {...formItemLayout}>
+                {getFieldDecorator('itemName', {
+                  initialValue: this.state.editValue && this.state.editValue.itemName,
                   rules: [
                     { required: true, message: '不允许为空' }
                   ],
@@ -535,10 +604,11 @@ class EditThreshold extends Component {
                     { required: true, message: '不允许为空' }
                   ],
                 })(
-                  <Select style={{ width: '210px' }}>
+                  // <Input style={{ width: '210px' }} disabled />
+                  <Select style={{ width: '210px' }} disabled>
                     <Select.Option value={1}>当前值</Select.Option>
-                    <Select.Option value={2}>累计变化量</Select.Option>
-                    <Select.Option value={3}>单次变化量</Select.Option>
+                    <Select.Option value={2}>单次变化量</Select.Option>
+                    <Select.Option value={3}>累计变化量</Select.Option>
                     <Select.Option value={4}>变化速率</Select.Option>
                   </Select>
                 )}

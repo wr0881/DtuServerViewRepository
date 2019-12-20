@@ -30,6 +30,9 @@ import {
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
 import styles from './style.less';
+import { upload } from './upload';
+import { uploadImage, getSectorName, getListImageUrl } from '@/services/project';
+import imageCompression from 'browser-image-compression';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -42,6 +45,7 @@ class BindImg extends Component {
       formValues: {},
       editImageInfo: {},
       previewUrl: '',
+      imageType: '',
 
       drawerVisible: false,
       handleEditImageVisible: false,
@@ -158,13 +162,14 @@ class BindImg extends Component {
         key: 'imageUrl',
         render: text => (
           <Upload
-            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            //action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
             listType="picture-card"
             fileList={[{
               uid: '-1',
               name: 'image.png',
               status: 'done',
-              url: `${window.imgAddress}${text}?time=${new Date().toString(32)}`
+              //url: `${window.imgAddress}${text}?time=${new Date().toString(32)}`
+              url: `https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com${text}?time=${new Date().toString(32)}`
             },]}
             onPreview={_ => { this.setState({ previewVisible: 'true', previewUrl: text }) }}
           // onChange={this.handleChange}
@@ -194,8 +199,20 @@ class BindImg extends Component {
         render: (text, record) => (
           <span>
             <a onClick={_ => {
-              sectorModel.selectImageListId = text.imageListId
+              sectorModel.selectImageListId = text.imageListId;
+              console.log('图片ListId:',sectorModel.selectImageListId);
               this.setState({ handleEditImageVisible: true });
+              if(text.imageType==='现场图'){
+                const imageType = 2;
+                this.setState({imageType: imageType});
+                console.log('图片类型:',imageType);
+              }
+              if(text.imageType==='剖面图'){
+                const imageType = 3;
+                this.setState({imageType: imageType});
+                console.log('图片类型:',imageType);
+              }
+              
             }}>替换</a>
             <Divider type="vertical" />
             <a onClick={_ => {
@@ -237,6 +254,7 @@ class BindImg extends Component {
           visible={this.state.handleEditImageVisible}
           handleEditImageVisible={this.handleEditImageVisible}
           getImageList={this.getImageList}
+          imageType={this.state.imageType}
         />
 
         <EditImageInfo
@@ -247,7 +265,7 @@ class BindImg extends Component {
         />
 
         <Modal visible={this.state.previewVisible} footer={null} onCancel={_ => { this.setState({ previewVisible: false }) }}>
-          <img alt="example" style={{ width: '100%' }} src={window.imgAddress + this.state.previewUrl} />
+          <img alt="example" style={{ width: '100%' }} src={'https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com'+this.state.previewUrl} />
         </Modal>
       </Fragment>
     );
@@ -270,6 +288,7 @@ class BindImg extends Component {
       if (code === 0) {
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
         this.setState({ ImageList: data.list });
+        console.log('图片信息:',this.state.ImageList);
       } else {
         this.setState({ ImageList: [] });
       }
@@ -313,34 +332,24 @@ class AddImg extends Component {
     } = this.props;
     return (
       <Drawer
+        key={Math.random()}
         title="添加图片"
-        width={420}
-        onClose={_ => { this.props.handleDrawerVisible(false) }}
+        width={500}
+        onClose={_ => { this.props.handleDrawerVisible(false); this.props.getImageList();}}
         visible={this.props.drawerVisible}
       >
-        <form
-          method="POST"
-          target="form"
-          enctype="multipart/form-data"
-          action={`${window.uploadImgAddress}/upload/uploadImageList`}
-        >
-          <input
-            type="file"
-            name="image"
-            multiple="multiple"
-            accept=".jpg,.png"
-          />
-          <div style={{ height: '30px' }}></div>
-          <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="子项目ID" value={sectorModel.sectorId}></input>
-          <select style={{ display: 'none' }} name="type" value={this.state.values.type}>
-            <option value="2">现场图</option>
-            <option value="3">剖面图</option>
-          </select>
-          <button style={{ display: 'none' }} type="submit" ref='addImgUpload'>上传</button>
-        </form>
         <Form
           layout="vertical"
         >
+          <Form.Item>
+            <div>
+            <input multiple type='file' ref='file' name="file" />
+            <Button onClick={_ => { this.handleFiles() }} style={{marginTop:'10px'}}>生成缩略图</Button>
+            </div>
+            <div id="previewtitle" style={{display:'none',marginTop:'20px'}}>缩略图</div>
+            <div id="preview"></div>
+            <img src="" alt="" id="show" />
+          </Form.Item>
           <Form.Item label="图片类型">
             {getFieldDecorator('type', {
               initialValue: 2,
@@ -349,15 +358,18 @@ class AddImg extends Component {
               <Select
                 placeholder="请选择图片类型"
               >
-                <Option value={2}>现场图</Option>
-                <Option value={3}>剖面图</Option>
+                <Select.Option value={2}>现场图</Select.Option>
+                <Select.Option value={3}>剖面图</Select.Option>
               </Select>
             )}
           </Form.Item>
-          <Form.Item>
-            <Button type='primary' onClick={this.handleSubmit}>上传</Button>
-          </Form.Item>
+            
         </Form>
+        <Button type='primary' onClick={_ => {
+          //子项目id
+          //this.handleSubmit;
+          this.upLoad();
+        }}>上传</Button>
         <iframe
           name="form"
           style={{ display: 'none' }}
@@ -369,13 +381,248 @@ class AddImg extends Component {
       </Drawer>
     );
   }
+
+  handleFiles() {
+    document.getElementById('previewtitle').style.display = 'block';
+    let orifile = this.refs.file.files[0];
+    imageCompression(orifile,{
+      maxWidthOrHeight:400
+    }).then(tbFile=>{
+      // 创建img对象
+      let img = document.createElement("img");
+      preview.appendChild(img);
+      let reader = new FileReader();
+      reader.readAsDataURL(tbFile);
+      reader.onload = (function (aImg) {
+        return function (e) {
+          aImg.src = e.target.result;
+          aImg.id = 'thumbnailImg';
+        };
+      })(img);
+    }).catch(e=>{
+
+    })    
+  }
+  //上传图片
+  upLoad() {
+    const { form } = this.props;
+    form.validateFields((err, fieldsValue) => {
+      if(!err){
+        const sectorId = sectorModel.sectorId;
+        let file = this.refs.file;
+        let firstFile = file.files[0];
+        let imageType = firstFile.name.split('.')[1];
+        //现场图上传
+        if(fieldsValue.type===2){
+          console.log('现场图上传!')
+          let imageUrl = `/images/siteMap/${sectorId}/${Math.random()}.${imageType}`;
+          console.log('现场图原图地址:',imageUrl);
+          //缩略图
+          let imageUrl1 = `/images/siteMap/${sectorId}/${Math.random()}.${imageType}`;
+
+          let imageName = `${this.state.sectorName}现场图`;
+          let imageName1 = `${this.state.sectorName}现场缩略图`;
+          let imageDescription = `${this.state.sectorName}现场图原图`;
+          //读取图片并获取图片宽高
+          let reader = new FileReader();
+          reader.readAsDataURL(firstFile);
+          //上传原图至COS
+          upload(imageUrl, firstFile, (err, data) => {
+            if(err){
+                message.info('现场图原图上传至COS失败!');
+                console.log("现场图原图上传至COS失败!!!");
+            }
+            if(!err){
+                message.success('现场图原图上传至COS成功');
+                console.log('现场图原图上传的图片数据:',data);
+            }
+            
+          })
+          //上传现场缩略图
+          imageCompression(firstFile,{
+            maxWidthOrHeight:400
+          }).then(tbFile=>{
+            //reader.readAsDataURL(tbfile);
+            upload(imageUrl1, tbFile, (err, data) => {
+              if(err){
+                  message.info('现场缩略图上传至COS失败!');
+              }
+              if(!err){
+                  message.success('现场缩略图上传至COS成功');
+                  console.log('this:',this);
+                  this.props.handleDrawerVisible(false); this.props.getImageList();
+              }     
+            })
+          }).catch(e=>{
+          })
+          //读取完成获取宽高
+          reader.onload = function() {
+            var imgURL = this.result;
+            var imgURL1 = document.getElementById('thumbnailImg').src;
+            var image = new Image();
+            var image1 = new Image();
+            image.src = imgURL;
+            image1.src = imgURL1;
+            image.onload = function(){
+              //获取Image对象的宽高
+              var fileWidth = this.width;
+              var fileHeight = this.height;
+              
+              let result = [];
+              result.push({
+                imageType:fieldsValue.type,
+                originalImage:{
+                  imageDescription: imageDescription,
+                  imageHeight: fileHeight,
+                  imageWidth: fileWidth,
+                  imageName: imageName,
+                  imageUrl: imageUrl,
+                  imageType: 3,
+                },
+                sectorId: sectorId,
+                thumbnail:{
+                  imageHeight: image1.height,
+                  imageWidth: image1.width,
+                  imageName: imageName1,
+                  imageUrl: imageUrl1,
+                  imageType: 1,
+                }
+              });
+              console.log(result);
+              //上传至数据库
+              axios.post('/image/addListImage',result)
+              .then(res => {
+                const { code, msg, data } = res.data;
+                console.log(code,msg,data);
+                if( code === 0) {
+                  message.success('添加现场图成功！');
+                }else{
+                  message.info(msg);
+                }
+              })
+            };
+          }         
+        }
+        //剖面图上传
+        if(fieldsValue.type===3){
+          console.log('剖面图上传!')
+          let imageUrl = `/images/sectionalView/${sectorId}/${Math.random()}.${imageType}`;
+          //缩略图
+          let imageUrl1 = `/images/sectionalView/${sectorId}/${Math.random()}.${imageType}`;
+
+          let imageName = `${this.state.sectorName}剖面图`;
+          let imageName1 = `${this.state.sectorName}剖面缩略图`;
+          let imageDescription = `${this.state.sectorName}剖面图原图`;
+          //读取图片并获取图片宽高
+          let reader = new FileReader();
+          reader.readAsDataURL(firstFile);
+          //上传至COS
+          upload(imageUrl, firstFile, (err, data) => {
+            if(err){
+                message.info('剖面图上传至COS失败!');
+                console.log("剖面图上传至COS失败!!!");
+            }
+            if(!err){
+                message.success('剖面图上传至COS成功');
+                console.log('剖面图上传的图片数据:',data);
+            }
+            
+          })
+          //上传剖面缩略图
+          imageCompression(firstFile,{
+            maxWidthOrHeight:400
+          }).then(tbFile=>{
+            //reader.readAsDataURL(tbfile);
+            console.log('剖面缩略图上传至cos!!!');
+            upload(imageUrl1, tbFile, (err, data) => {
+              if(err){
+                  message.info('剖面缩略图上传至COS失败!');
+              }
+              if(!err){
+                  message.success('剖面缩略图上传至COS成功');
+                  console.log('this:',this);
+                  this.props.handleDrawerVisible(false); this.props.getImageList();
+              }     
+            })
+          }).catch(e=>{
+          })
+
+          reader.onload = function() {
+            var imgURL = this.result;
+            console.log('imgURL:',imgURL)
+            var imgURL1 = document.getElementById('thumbnailImg').src;
+            var image = new Image();
+            var image1 = new Image();
+            image.src = imgURL;
+            image1.src = imgURL1;
+            image.onload = function(){
+              //获取Image对象的宽高
+              var fileWidth = this.width;
+              var fileHeight = this.height;
+              console.log('图片宽高:',fileWidth,fileHeight);
+              let result = [];
+              result.push({
+                imageType:fieldsValue.type,
+                originalImage:{
+                  imageDescription: imageDescription,
+                  imageHeight: fileHeight,
+                  imageWidth: fileWidth,
+                  imageName: imageName,
+                  imageUrl: imageUrl,
+                  imageType: 3,
+                },
+                sectorId: sectorId,
+                thumbnail:{
+                  imageHeight: image1.height,
+                  imageWidth: image1.width,
+                  imageName: imageName1,
+                  imageUrl: imageUrl1,
+                  imageType: 1,
+                }
+              });
+              console.log(result);
+              //上传至数据库
+              axios.post('/image/addListImage',result)
+              .then(res => {
+                const { code, msg, data } = res.data;
+                console.log(code,msg,data);
+                if( code === 0) {
+                  message.success('添加剖面图成功！');
+                }else{
+                  message.info(msg);
+                }
+              })
+            };
+          }
+        }        
+      }
+    })
+
+  }
+  //根据子项目id获取子项目名称
+  GetSectorName() {
+    const sectorId = sectorModel.sectorId;
+    getSectorName(sectorId).then(res => {
+      const { code, msg, data } = res.data;
+      if (code === 0) {
+        const sectorName = data;
+        this.setState({ sectorName });
+        //console.log('获取子项目名称',this.state.sectorName);
+      }
+    })
+  }
+  componentDidMount() {
+    this.GetSectorName();
+  }
 }
 
 @Form.create()
 class EditImage extends Component {
   constructor(props) {
     super(props);
-    this.state = {};
+    this.state = {
+      updateImageData:''
+    };
   }
   render() {
     const {
@@ -383,35 +630,245 @@ class EditImage extends Component {
     } = this.props;
     return (
       <Drawer
+        key={Math.random()}
         title="替换图片"
-        width={420}
-        onClose={_ => { this.props.handleEditImageVisible(false) }}
+        width={500}
+        onClose={_ => { this.props.handleEditImageVisible(false); this.props.getImageList(); }}
         visible={this.props.visible}
       >
-        <form
-          method="POST"
-          target="form"
-          enctype="multipart/form-data"
-          action={`${window.uploadImgAddress}/upload/updateImage`}
+        <Form
+          layout="vertical"
         >
+          <Form.Item>
           <input
             type="file"
-            name="img"
+            name="file"
             accept=".jpg,.png"
+            ref='file'
           />
-          <input style={{ display: 'none' }} type="input" name="imageListId" placeholder="图片ListID" value={sectorModel.selectImageListId}></input>
-          <div style={{ height: '30px' }}></div>
-          <Button type='primary' htmlType='submit'>上传</Button>
-        </form>
+          <Button onClick={_ => { this.handleFiles() }} style={{marginTop:'10px'}}>生成缩略图</Button>
+          <div id="previewtitle" style={{display:'none',marginTop:'20px'}}>缩略图</div>
+          <div id="preview"></div>
+          <img src="" alt="" id="show" />
+          </Form.Item>
+          
+        </Form>
+        <Button type='primary' onClick={_ => {
+          this.upLoad();
+          console.log(this.state.updateImageData);
+        }} style={{marginTop:'10px'}}>上传</Button>
         <iframe
           name="form"
           style={{ display: 'none' }}
           onLoad={_ => {
             this.props.handleEditImageVisible(false);
             this.props.getImageList();
-          }} />
+        }}/>
       </Drawer >
     );
+  }
+  handleFiles() {
+    document.getElementById('previewtitle').style.display = 'block';
+    let orifile = this.refs.file.files[0];
+    imageCompression(orifile,{
+      maxWidthOrHeight:400
+    }).then(tbFile=>{
+      // 创建img对象
+      let img = document.createElement("img");
+      preview.appendChild(img);
+      let reader = new FileReader();
+      reader.readAsDataURL(tbFile);
+      reader.onload = (function (aImg) {
+        return function (e) {
+          aImg.src = e.target.result;
+          aImg.id = 'thumbnailImg';
+        };
+      })(img);
+    }).catch(e=>{
+
+    })    
+  }
+
+  //替换图片
+  upLoad() {
+    //子项目id
+    const sectorId = sectorModel.sectorId;
+    let file = this.refs.file;
+    let firstFile = file.files[0];
+    //console.log('图片类型',this.props.imageType);
+
+    //替换的图片地址保持和原来图片地址一致
+    //根据图片listId获取图片地址
+    const imageListId = sectorModel.selectImageListId;
+
+    const { form } = this.props;
+    getListImageUrl(imageListId).then(res => {
+      const { code, msg, data } = res.data;
+      if(code===0){
+        this.setState({selectImageData:data});
+      
+        //替换
+        if(this.props.imageType===2){
+        const selectImageData = this.state.selectImageData;
+        let imageUrl = selectImageData[0].imageUrl;
+        console.log('替换现场图地址:',imageUrl);
+        let imageUrl1 = selectImageData[1].imageUrl;
+
+        let reader = new FileReader();
+        reader.readAsDataURL(firstFile);
+        //上传替换的图片原图至COS
+        upload(imageUrl, firstFile, (err, data)=> {
+          if(err){
+              message.info('替换原图上传至COS失败!');
+              console.log("替换原图上传至COS失败!!!");
+          }
+          if(!err){
+              message.success('替换原图上传至COS成功');
+              console.log('替换原图上传的图片数据:',data);
+          }
+          
+        })
+        //上传替换现场缩略图
+        imageCompression(firstFile,{
+          maxWidthOrHeight:400
+        }).then(tbFile=>{
+          upload(imageUrl1, tbFile, (err, data) => {
+            if(err){
+                message.info('替换缩略图上传至COS失败!');
+            }
+            if(!err){
+                message.success('替换缩略图上传至COS成功');
+                this.props.handleEditImageVisible(false); this.props.getImageList();
+            }     
+          })
+        }).catch(e=>{
+        })
+
+        reader.onload = function() {
+          var imgURL = this.result;
+          var imgURL1 = document.getElementById('thumbnailImg').src;
+          var image = new Image();
+          var image1 = new Image();
+          image.src = imgURL;
+          image1.src = imgURL1;
+          image.onload = function(){
+            //获取Image对象的宽高
+            var fileWidth = this.width;
+            var fileHeight = this.height;
+            let result = {
+              imageType: 2,
+              originalImage:{
+                imageHeight: fileHeight,
+                imageWidth: fileWidth,
+                imageListId: imageListId,
+                imageType: 3,
+              },
+              sectorId: sectorId,
+              thumbnail:{
+                imageHeight: image1.height,
+                imageWidth: image1.width,
+                imageListId: imageListId,
+                imageType: 1,
+              }
+            };
+            console.log(result);
+            //上传至数据库
+            axios.post('/image/updateImageInfo',result)
+            .then(res => {
+              const { code, msg, data } = res.data;
+
+              if( code === 0) {
+                message.success('替换图片成功！');
+                // this.setState({updateImageData:data});
+                // console.log(this.state.updateImageData);
+              }else{
+                message.info(msg);
+              }
+            });
+          }      
+        }
+      }
+      if(this.props.imageType===3){
+        const selectImageData = this.state.selectImageData;
+        let imageUrl = selectImageData[0].imageUrl;
+        let imageUrl1 = selectImageData[1].imageUrl;
+
+        let reader = new FileReader();
+        reader.readAsDataURL(firstFile);
+        //上传替换的图片原图至COS
+        upload(imageUrl, firstFile, (err, data) => {
+          if(err){
+              message.info('替换原图上传至COS失败!');
+              console.log("替换原图上传至COS失败!!!");
+          }
+          if(!err){
+              message.success('替换原图上传至COS成功');
+              console.log('替换原图上传的图片数据:',data);
+          }
+          
+        })
+        //上传替换现场缩略图
+        imageCompression(firstFile,{
+          maxWidthOrHeight:400
+        }).then(tbFile=>{
+          //reader.readAsDataURL(tbfile);
+          upload(imageUrl1, tbFile, (err, data) => {
+            if(err){
+                message.info('替换剖面图上传至COS失败!');
+            }
+            if(!err){
+                message.success('替换剖面图上传至COS成功');
+                this.props.handleEditImageVisible(false); this.props.getImageList();
+            }     
+          })
+        }).catch(e=>{
+        })
+
+        reader.onload = function() {
+          
+          var imgURL = this.result;
+          var imgURL1 = document.getElementById('thumbnailImg').src;
+          var image = new Image();
+          var image1 = new Image();
+          image.src = imgURL;
+          image1.src = imgURL1;
+          image.onload = function(){
+            //获取Image对象的宽高
+            var fileWidth = this.width;
+            var fileHeight = this.height;
+            let result = {
+              imageType: 3,
+              originalImage:{
+                imageHeight: fileHeight,
+                imageWidth: fileWidth,
+                imageListId: imageListId,
+                imageType: 3,
+              },
+              sectorId: sectorId,
+              thumbnail:{
+                imageHeight: image1.height,
+                imageWidth: image1.width,
+                imageListId: imageListId,
+                imageType: 1,
+              }
+            };
+            console.log(result);
+            //上传至数据库
+            axios.post('/image/updateImageInfo',result)
+            .then(res => {
+              const { code, msg, data } = res.data;
+              console.log(code,msg,data);
+              if( code === 0) {
+                message.success('替换剖面图成功！');
+              }else{
+                message.info(msg);
+              }
+            });
+          }      
+        }
+      }
+      }    
+    })
   }
 }
 

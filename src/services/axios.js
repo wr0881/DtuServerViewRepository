@@ -18,5 +18,7 @@ axios.defaults.headers.common['Authorization'] =
 
 axios.defaults.headers.post['Content-Type'] =
   'application/x-www-form-urlencoded';
+// axios.defaults.headers.post['Referer'] =
+//   'http://zjjlmp.vicp.cc:29823';
 
 export default axios;

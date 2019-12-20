@@ -32,6 +32,7 @@ import { autorun } from 'mobx';
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
 import styles from './style.less';
+import { clearPointInfo } from '@/services/project';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -124,55 +125,55 @@ class PointList extends Component {
             <div className="manageTd0">{value}</div>
           )
         },
-        width: '4%'
+        width: '9%'
       },
       {
         title: '基准点',
         dataIndex: 'benchmarkId',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: '监测类型',
         dataIndex: 'monitorTypeName',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: 'x轴坐标',
         dataIndex: 'picx',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: 'y轴坐标',
         dataIndex: 'picy',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: '传感器深度',
         dataIndex: 'sensorDeep',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: '传感器编号',
         dataIndex: 'sensorNumber',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: '终端通道',
         dataIndex: 'terminalChannel',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: '终端编号',
         dataIndex: 'terminalNumber',
         // render: renderContent,
-        width: '4%'
+        width: '9%'
       },
       {
         title: '操作',
@@ -193,9 +194,14 @@ class PointList extends Component {
             >
               <a>删除</a>
             </Popconfirm>
+            <Divider type="vertical" />
+            <a onClick={_ => {
+              console.log(record);
+              this.resetPointInfo(record);
+            }}>重置</a>
           </span>
         ),
-        width: '10%'
+        width: '19%'
       },
     ];
 
@@ -244,6 +250,7 @@ class PointList extends Component {
           visible={this.state.handleAddPointVisible}
           handleAddPointVisible={this.handleAddPointVisible}
           getPointInfoList={this.getPointInfoList}
+          key={Math.random()}
         />
       </Fragment>
     );
@@ -270,7 +277,7 @@ class PointList extends Component {
       if (code === 0) {
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
         this.setState({ PointInfoList: data.list }, _ => {
-          console.log(this.state.PointInfoList);
+          //console.log(this.state.PointInfoList);
         });
       } else {
         this.setState({ PointInfoList: [] });
@@ -282,6 +289,27 @@ class PointList extends Component {
       console.log(err);
     });
   }
+  //重置测点
+  resetPointInfo = (record) => {
+    let body = {
+      sensorNumber:record.sensorNumber,
+      terminalChannel:record.terminalChannel,
+      terminalNumber:record.terminalNumber
+    };
+    console.log(body);
+    clearPointInfo(body).then(res => {
+      const { code, msg, data } = res.data;
+      console.log(code);
+      if(code === 0) {
+        message.info("重置成功!");
+      }else{
+        message.info(msg);
+      }
+    }).catch(err => {
+      message.error(err);
+    })
+  }
+
   // formatData(ary) {
   //   let formatData = [];
   //   // ary.forEach(v => {
