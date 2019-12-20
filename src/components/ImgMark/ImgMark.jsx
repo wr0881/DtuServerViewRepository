@@ -11,6 +11,45 @@ class ImgMark extends Component {
       dot: [],
     };
   }
+  render() {
+    const { style, src } = this.props;
+    return (
+      <div ref={ref => { this.box = ref }} style={style} className={styles.imgMark}>
+        <div
+          ref={ref => { this.imgWrapper = ref }}
+          onClick={this.markClick}
+        >
+          <img
+            ref={ref => { this.img = ref }}
+            style={{ width: '100%', height: 'auto' }}
+            src={src}
+            draggable={false}
+            alt=""
+          />
+        </div>
+        <div className={styles.CurMark}>
+          {this.props.dot.map((v, i) => {
+            return (
+              <div
+                key={i}
+                style={{ top: v.y - 25, left: v.x - 12.5 }}
+                className={styles.CurMarkDot}
+              >
+                <img src={v.isMark ? isMark : mark} style={{ width: '100%', height: 'auto' }} draggable={false} alt="" />
+              </div>
+            )
+          })}
+        </div>
+      </div>
+    );
+  }
+  markClick = e => {
+    let markXY = this.clickXY(e);
+    markXY.number = this.props.dot.length;
+    markXY.visible = false;
+    let result = this.computeRealXY(markXY);
+    this.props.onChange([result]);
+  }
   clickXY = e => {
     const currentTarget = e.currentTarget;
     const eleToScreenX = currentTarget.getBoundingClientRect().x;
@@ -30,44 +69,6 @@ class ImgMark extends Component {
     const realX = (imgWidth * index.x / imgWrapperW).toFixed();
     const realY = (imgHeight * index.y / imgWrapperH).toFixed();
     return { ...index, realX, realY };
-  }
-  markClick = e => {
-    let markXY = this.clickXY(e);
-    markXY.number = this.props.dot.length;
-    markXY.visible = false;
-    let result = this.computeRealXY(markXY);
-    this.props.onChange([result]);
-  }
-  render() {
-    const { style, src } = this.props;
-    return (
-      <div ref={ref => { this.box = ref }} style={style} className={styles.imgMark}>
-        <div
-          ref={ref => { this.imgWrapper = ref }}
-          onClick={this.markClick}
-        >
-          <img
-            ref={ref => { this.img = ref }}
-            style={{ width: '100%', height: 'auto' }}
-            src={src}
-            alt=""
-          />
-        </div>
-        <div className={styles.CurMark}>
-          {this.props.dot.map((v, i) => {
-            return (
-              <div
-                key={i}
-                style={{ top: v.y - 25, left: v.x - 12.5 }}
-                className={styles.CurMarkDot}
-              >
-                <img src={v.isMark ? isMark : mark} style={{ width: '100%', height: 'auto' }} alt="" />
-              </div>
-            )
-          })}
-        </div>
-      </div>
-    );
   }
 }
 

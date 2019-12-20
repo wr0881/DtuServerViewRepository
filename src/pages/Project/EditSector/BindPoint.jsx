@@ -179,6 +179,8 @@ class BindPoint extends Component {
             <a onClick={_ => {
               this.handlePointListVisible(true);
               sectorModel.selectImageId = text.imageId;
+              sectorModel.selectImageUrl = text.imageUrl;
+              // sectorModel.selectImageUrl = 'https://www.canva.cn/learn/wp-content/uploads/sites/17/2019/09/Snipaste_2019-09-24_15-21-59.png';
             }}>详情</a>
             <Divider type="vertical" />
             <Popconfirm

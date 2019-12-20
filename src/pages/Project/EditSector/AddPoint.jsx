@@ -27,6 +27,7 @@ import {
   Upload,
   Spin
 } from 'antd';
+import ImgViewer from '@/components/ImgViewer/ImgViewer';
 import ImgMark from '@/components/ImgMark/ImgMark';
 import sectorModel from './sectorModel';
 import { getTerminlaNumber1, getSersorNumber1, addMonitorPoint, listMonitorType } from '@/services/project';
@@ -48,7 +49,9 @@ class AddPoint extends Component {
       getSersorNumberLoading: false,
       listMonitorTypeLoading: false,
 
-      dot: []
+      dot: [],
+
+      imgViewerShow: false,
     };
   }
 
@@ -216,7 +219,7 @@ class AddPoint extends Component {
                         },
                       ],
                       // initialValue: this.props.modifypass.manufacturer
-                    })(<Input style={{ width: '210px' }} placeholder='例如:1920' />)}
+                    })(<Input style={{ width: '210px' }} placeholder='例如:1920' onClick={_ => { this.setState({ imgViewerShow: true }) }} />)}
                   </Form.Item>
                 </Col>
                 <Col md={12} sm={24}>
@@ -229,7 +232,7 @@ class AddPoint extends Component {
                           message: '只允许数字',
                         },
                       ],
-                    })(<Input style={{ width: '210px' }} placeholder='例如:1080' />)}
+                    })(<Input style={{ width: '210px' }} placeholder='例如:1080' onClick={_ => { this.setState({ imgViewerShow: true }) }} />)}
                   </Form.Item>
                 </Col>
               </Row>
@@ -339,18 +342,38 @@ class AddPoint extends Component {
             </Form>
           </div>
 
-          <ImgMark
-            style={{ width: '100%' }}
-            src='http://123.207.88.210/monitor/images/three/pointMap/cfl.png'
-            dot={this.state.dot}
-            onChange={dot => {
-              this.setState({ dot });
+          <Modal
+            title="图片描点"
+            width='1200px'
+            visible={this.state.imgViewerShow}
+            destroyOnClose={true}
+            onOk={_ => {
               setFieldsValue({
-                picx: dot[0].realX,
-                picy: dot[0].realY
+                picx: this.state.dot[0].realX,
+                picy: this.state.dot[0].realY
               })
+              this.setState({ imgViewerShow: false });
             }}
-          />
+            onCancel={_ => { this.setState({ imgViewerShow: false }) }}
+          >
+            <div style={{ width: '100%', height: '500px' }}>
+              <ImgViewer
+                style={{ width: '100%', height: '100%' }}
+                url={window.imgAddress + sectorModel.selectImageUrl}
+                children={
+                  <ImgMark
+                    style={{ width: '100%' }}
+                    src={window.imgAddress + sectorModel.selectImageUrl}
+                    dot={this.state.dot ? this.state.dot : []}
+                    onChange={dot => {
+                      this.setState({ dot });
+                    }}
+                  />
+                }
+                onScale={() => { this.setState({ dot: [] }) }}
+              />
+            </div>
+          </Modal>
 
           <div
             style={{
