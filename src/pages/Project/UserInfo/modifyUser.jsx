@@ -99,7 +99,7 @@ class modifyUser extends Component {
                                         rules: [
                                             { required: true, message: '不允许为空' },
                                             {
-                                                pattern: /^((13[0-9])|(14[0-9])|(15[0-9])|(17[0-9])|(18[0-9]))\d{8}$/,
+                                                pattern: /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/,
                                                 message: '请输入正确的电话',
                                             },
                                         ],
