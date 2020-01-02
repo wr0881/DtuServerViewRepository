@@ -25,7 +25,8 @@ import {
   Tag,
   Avatar,
   Upload,
-  Spin
+  Spin,
+  Checkbox
 } from 'antd';
 import { observer } from 'mobx-react';
 import sectorModel from './sectorModel';
@@ -54,6 +55,11 @@ class ThresholdList extends Component {
         showSizeChanger: true,
         showQuickJumper: true
       },
+      thresholdType: 1,
+      selectValue: [],
+      selectValue1: '',
+
+      addThresholdNum: [0]
     };
   }
 
@@ -120,8 +126,9 @@ class ThresholdList extends Component {
         key: 'threshold3',
       },
       {
-        title: '',
+        title: '是否生效',
         dataIndex: 'thresholdStatus',
+        key: 'threshold4',
         align: 'center',
         render: (text, record, index) => {
           const checked = text === 1 ? true : false;
@@ -174,6 +181,7 @@ class ThresholdList extends Component {
           <Divider />
           <Table
             loading={this.state.getThresholdListLoading}
+            //rowKey={record => record.id}
             columns={columns}
             dataSource={this.state.thresholdList}
             pagination={this.state.pagination}
@@ -242,6 +250,23 @@ class AddThreshold extends Component {
         title: '阈值等级',
         dataIndex: 'index',
         key: 'index',
+      //   render: (value) => {
+      //     let value1 = Array.from(value);
+      //     return (
+      //       <div>
+      //       {value1.map(v => {
+      //         if(v==='一级阈值'){
+      //           return <div key={Math.random()} style={{color:'#FFC400'}}>{v}</div>
+      //         }else if(v==='二级阈值'){
+      //           return <div key={Math.random()} style={{color:'#FA6814'}}>{v}</div>
+      //         }else if(v==='三级阈值'){
+      //           return <div key={Math.random()} style={{color:'#F5222D'}}>{v}</div>
+      //         }
+      //         return true;
+      //       })}
+      //       </div>
+      //     )
+      //   }
       },
       {
         title: '测量值(v)',
@@ -295,121 +320,36 @@ class AddThreshold extends Component {
     const { form } = this.props;
     const { validateFields } = form;
     
-    let numArr = [];
-    const measuredValue1 = document.getElementById('measuredValue1').value;
-    const singleChangedValue1 = document.getElementById('singleChangedValue1').value;
-    const totalChangedValue1 = document.getElementById('totalChangedValue1').value;
-    const speedChangedValue1 = document.getElementById('speedChangedValue1').value;
-    const measuredValue2 = document.getElementById('measuredValue2').value;
-    const singleChangedValue2 = document.getElementById('singleChangedValue2').value;
-    const totalChangedValue2 = document.getElementById('totalChangedValue2').value;
-    const speedChangedValue2 = document.getElementById('speedChangedValue2').value;
-    const measuredValue3 = document.getElementById('measuredValue3').value;
-    const singleChangedValue3 = document.getElementById('singleChangedValue3').value;
-    const totalChangedValue3 = document.getElementById('totalChangedValue3').value;
-    const speedChangedValue3 = document.getElementById('speedChangedValue3').value;
-    
-    console.log(this.state.inputValue)
+    //this.setState({newThresholdTrue:false});
     validateFields((err, values) => {
       const thresholdData = this.props.getThresholdData;
       //判断指标和阈值类型是否存在
       let newThresholdTrue = true;
       for(let i=0;i<thresholdData.length;i++){
-        if(values.itemName === thresholdData[i].itemName && values.type.indexOf(thresholdData[i].thresholdType+'') > -1){
+        if(values.itemName === thresholdData[i].itemName && values.type === thresholdData[i].thresholdType+''){
           newThresholdTrue=false;         
         }
       }
       console.log(newThresholdTrue);
       if(!err && newThresholdTrue === true){
-        let measuredData = {
+        let params = {
           sectorId: sectorModel.sectorId,
           itemName: values.itemName,
-          thresholdType: 1,
           thresholdStatus: 0,
-          oneThresholdValue: measuredValue1,
-          twoThresholdValue: measuredValue2,
-          threeThresholdValue: measuredValue3
-        }
-        let singleChangedData = {
-          sectorId: sectorModel.sectorId,
-          itemName: values.itemName,
-          thresholdType: 2,
-          thresholdStatus: 0,
-          oneThresholdValue: singleChangedValue1,
-          twoThresholdValue: singleChangedValue2,
-          threeThresholdValue: singleChangedValue3
-        }
-        let totalChangedData = {
-          sectorId: sectorModel.sectorId,
-          itemName: values.itemName,
-          thresholdType: 3,
-          thresholdStatus: 0,
-          oneThresholdValue: totalChangedValue1,
-          twoThresholdValue: totalChangedValue2,
-          threeThresholdValue: totalChangedValue3
-        }
-        let speedChangedData = {
-          sectorId: sectorModel.sectorId,
-          itemName: values.itemName,
-          thresholdType: 4,
-          thresholdStatus: 0,
-          oneThresholdValue: speedChangedValue1,
-          twoThresholdValue: speedChangedValue2,
-          threeThresholdValue: speedChangedValue3
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("2") <= -1 && this.state.inputValue.indexOf("3") <= -1 && this.state.inputValue.indexOf("4") <= -1){
-          numArr.push(measuredData);
-        }
-        if(this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("1") <= -1 && this.state.inputValue.indexOf("3") <= -1 && this.state.inputValue.indexOf("4") <= -1){
-          numArr.push(singleChangedData);
-        }
-        if(this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("1") <= -1 && this.state.inputValue.indexOf("2") <= -1 && this.state.inputValue.indexOf("4") <= -1){
-          numArr.push(totalChangedData);
-        }
-        if(this.state.inputValue.indexOf("4") > -1 && this.state.inputValue.indexOf("1") <= -1 && this.state.inputValue.indexOf("2") <= -1 &&  this.state.inputValue.indexOf("3") <= -1){
-          numArr.push(speedChangedData);
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("3") <= -1 && this.state.inputValue.indexOf("4") <= -1){
-          numArr.push(measuredData,singleChangedData);
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("2") <= -1 && this.state.inputValue.indexOf("4") <= -1){
-          numArr.push(measuredData,totalChangedData);
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("4") > -1 && this.state.inputValue.indexOf("2") <= -1 && this.state.inputValue.indexOf("3") <= -1){
-          numArr.push(measuredData,speedChangedData);
-        }
-        if(this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("1") <= -1 && this.state.inputValue.indexOf("4") <= -1){
-          numArr.push(singleChangedData,totalChangedData);
-        }
-        if(this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("4") > -1 && this.state.inputValue.indexOf("1") <= -1 && this.state.inputValue.indexOf("3") <= -1){
-          numArr.push(singleChangedData,speedChangedData);
-        }
-        if(this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("4") > -1 && this.state.inputValue.indexOf("1") <= -1 && this.state.inputValue.indexOf("2") <= -1){
-          numArr.push(totalChangedData,speedChangedData);
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("4") <= -1){
-          numArr.push(measuredData,singleChangedData,totalChangedData);
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("4") > -1 && this.state.inputValue.indexOf("3") <= -1){
-          numArr.push(measuredData,singleChangedData,speedChangedData);
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("4") > -1 && this.state.inputValue.indexOf("2") <= -1){
-          numArr.push(measuredData,totalChangedData,speedChangedData);
-        }
-        if(this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("4") > -1 && this.state.inputValue.indexOf("1") <= -1){
-          numArr.push(singleChangedData,totalChangedData,speedChangedData);
-        }
-        if(this.state.inputValue.indexOf("1") > -1 && this.state.inputValue.indexOf("2") > -1 && this.state.inputValue.indexOf("3") > -1 && this.state.inputValue.indexOf("4") > -1){
-          numArr.push(measuredData,singleChangedData,totalChangedData,speedChangedData);
-        }
-        console.log(numArr);
-        axios.post('/threshold/addThresholds',numArr,{ headers: { 'Content-Type': 'application/json' } }).then(res=>{
-          const { code,msg,data } = res.data;
-          if(code === 0) {
+          thresholdType: values.type,
+          oneThresholdValue: values.threshold1,
+          twoThresholdValue: values.threshold2,
+          threeThresholdValue: values.threshold3,
+        };
+        console.log('一级阈值数值:',values.threshold1);
+        axios.post('/threshold/addThreshold', params, { headers: { 'Content-Type': 'application/json' } }).then(res => {
+          const { code, msg, data } = res.data;
+          if (code === 0) {
             this.props.getThresholdList();
             this.props.handleAddThresholdVisible(false);
-          }else{
-            message.info('添加指标阈值失败');
+            
+          } else {
+            message.info('增添失败');
           }
         })
       }else if(newThresholdTrue === false){
@@ -421,8 +361,8 @@ class AddThreshold extends Component {
 
   render() {
     const formItemLayout = {
-      labelCol: { sm: { span: 8 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'center' } },
-      wrapperCol: { sm: { span: 16 }, xs: { span: 24 } }
+      labelCol: { sm: { span: 6 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'right', paddingRight: '10px' } },
+      wrapperCol: { sm: { span: 18 }, xs: { span: 24 } }
     }
     const { form: { getFieldDecorator, getFieldValue, setFieldsValue } } = this.props;
     return (
@@ -456,7 +396,7 @@ class AddThreshold extends Component {
                   //loading={this.state.getMonitorPointLoading}
                   //notFoundContent={this.state.getMonitorPointLoading ? <Spin size="small" /> : null}
                   dropdownMatchSelectWidth={false}
-                  style={{ width: '230px' }}
+                  style={{ width: '280px' }}
                 >
                   {this.state.monitorTypeName.map(item => <Select.Option key={item} value={item}>{item}</Select.Option>)}
                 </Select>)}
@@ -465,23 +405,20 @@ class AddThreshold extends Component {
             <Col md={12} sm={24}>
               <Form.Item label="数据类型" {...formItemLayout}>
                 {getFieldDecorator('type', {
-                  initialValue: '1',
+                  initialValue: '3',
                   rules: [
                     { required: true, message: '不允许为空' }
                   ],
                 })(
                   <Select 
-                    style={{ width: '230px' }}
+                    style={{ width: '280px' }}
                     mode="multiple"
                     placeholder="选择阈值类型..."
                     showArrow
                     
-                    maxTagCount={2}
+                    maxTagCount={3}
                     optionLabelProp="label"
-                    
                     onChange={v => {
-                      console.log(v);
-                      this.setState({inputValue:v});
                       var value1 = document.getElementsByClassName('measuredValue');
                       var value2 = document.getElementsByClassName('singleChangedValue');
                       var value3 = document.getElementsByClassName('totalChangedValue');
@@ -511,7 +448,6 @@ class AddThreshold extends Component {
                       }else{
                         for(var i=0;i<value3.length;i++){
                           value3[i].style.display="none";
-                          
                         }
                       }
                       if(v.indexOf("4") > -1){
@@ -523,11 +459,10 @@ class AddThreshold extends Component {
                           value4[i].style.display="none";
                         }
                       }
-                      
                     }}
                   >
-                    <Select.Option value='1' label="当前值">当前值</Select.Option>
-                    <Select.Option value='2' label="单次变化量">单次变化量</Select.Option>
+                    {/* <Select.Option value='1' label="当前值">当前值</Select.Option>
+                    <Select.Option value='2' label="单次变化量">单次变化量</Select.Option> */}
                     <Select.Option value='3' label="累计变化量">累计变化量</Select.Option>
                     <Select.Option value='4' label="变化速率">变化速率</Select.Option>
                   </Select>
@@ -535,6 +470,7 @@ class AddThreshold extends Component {
               </Form.Item>
             </Col>
           </Row>
+        
           <Row gutter={8}>
             <Col md={12} sm={24}>
               <Form.Item label="一级阈值" {...formItemLayout}>
@@ -548,12 +484,12 @@ class AddThreshold extends Component {
                   ],
                 })(
                   <div>
-                    <Input className="measuredValue" id="measuredValue1" addonBefore="当前值" style={{ width: '230px',marginBottom: '10px' }} placeholder='例如:(-,-100);(100,+)' />
-                    <Input className="singleChangedValue" id="singleChangedValue1" addonBefore="单次变化量" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
-                    <Input className="totalChangedValue" id="totalChangedValue1" addonBefore="累计变化量" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />  
-                    <Input className="speedChangedValue" id="speedChangedValue1" addonBefore="变化速率" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
-                  </div> 
-                )}
+                    <Input className="measuredValue" addonBefore="当前值" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="singleChangedValue" addonBefore="单次变化量" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="totalChangedValue" addonBefore="累计变化量" style={{ width: '280px',marginBottom: '10px' }} placeholder='例如:(-,-100);(100,+)' />  
+                    <Input className="speedChangedValue" addonBefore="变化速率" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                  </div>                  
+                )}   
               </Form.Item>
             </Col>
             <Col md={12} sm={24}>
@@ -561,23 +497,23 @@ class AddThreshold extends Component {
                 {getFieldDecorator('threshold2', {
                   rules: [
                     { required: true, message: '不允许为空' },
-                    {
+                    { 
                       pattern: /^\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\)(\;\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\))?$/,
-                      message: '阈值格式错误',
+                      message: '阈值格式错误',  
                     },
                   ],
                 })(
                   <div>
-                    <Input className="measuredValue" id="measuredValue2" addonBefore="当前值" style={{ width: '230px',marginBottom: '10px' }} placeholder='例如:(-,-100);(100,+)' />
-                    <Input className="singleChangedValue" id="singleChangedValue2" addonBefore="单次变化量" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
-                    <Input className="totalChangedValue" id="totalChangedValue2" addonBefore="累计变化量" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />  
-                    <Input className="speedChangedValue" id="speedChangedValue2" addonBefore="变化速率" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="measuredValue" addonBefore="当前值" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="singleChangedValue" addonBefore="单次变化量" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="totalChangedValue" addonBefore="累计变化量" style={{ width: '280px',marginBottom: '10px' }} placeholder='例如:(-,-100);(100,+)' />  
+                    <Input className="speedChangedValue" addonBefore="变化速率" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
                   </div>
                 )}
               </Form.Item>
             </Col>
           </Row>
-          <Row>
+          <Row>  
             <Col md={12} sm={24}>
               <Form.Item label="三级阈值" {...formItemLayout}>
                 {getFieldDecorator('threshold3', {
@@ -590,10 +526,10 @@ class AddThreshold extends Component {
                   ],
                 })(
                   <div>
-                    <Input className="measuredValue" id="measuredValue3" addonBefore="当前值" style={{ width: '230px',marginBottom: '10px' }} placeholder='例如:(-,-100);(100,+)' />
-                    <Input className="singleChangedValue" id="singleChangedValue3" addonBefore="单次变化量" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
-                    <Input className="totalChangedValue" id="totalChangedValue3" addonBefore="累计变化量" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />  
-                    <Input className="speedChangedValue" id="speedChangedValue3" addonBefore="变化速率" style={{ width: '230px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="measuredValue" addonBefore="当前值" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="singleChangedValue" addonBefore="单次变化量" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
+                    <Input className="totalChangedValue" addonBefore="累计变化量" style={{ width: '280px',marginBottom: '10px' }} placeholder='例如:(-,-100);(100,+)' />  
+                    <Input className="speedChangedValue" addonBefore="变化速率" style={{ width: '280px',marginBottom: '10px',display:'none' }} placeholder='例如:(-,-100);(100,+)' />
                   </div>
                 )}
               </Form.Item>

@@ -27,14 +27,11 @@ import {
   Upload
 } from 'antd';
 import PointList from './PointList';
-import { autorun } from 'mobx';
 import { observer } from 'mobx-react';
-import { uploadImage, getSectorName } from '@/services/project';
+import { uploadImage } from '@/services/project';
 import sectorModel from './sectorModel';
 import styles from './style.less';
 import $ from 'jquery';
-import { upload } from './upload';
-import imageCompression from 'browser-image-compression';
 
 const FormItem = Form.Item;
 const { TextArea } = Input;
@@ -141,24 +138,23 @@ class BindPoint extends Component {
   render() {
     const { form } = this.props;
     const { getFieldDecorator, getFieldValue } = form;
+
     const columns = [
       {
         title: '图片',
         dataIndex: 'imageUrl',
         key: 'url',
         render: text => (
-          
           <Upload
-            //action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
+            action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
             listType="picture-card"
             fileList={[{
               uid: '-1',
               name: 'image.png',
               status: 'done',
               url: window.imgAddress + text,
-              // url: `https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com${text}`
             },]}
-            onPreview={_ => { this.setState({ previewVisible: 'true', previewUrl: text });console.log('文件地址:',text); }}
+            onPreview={_ => { this.setState({ previewVisible: 'true', previewUrl: text }) }}
           // onChange={this.handleChange}
           >
             {/* {fileList.length >= 8 ? null : uploadButton} */}
@@ -183,8 +179,6 @@ class BindPoint extends Component {
             <a onClick={_ => {
               this.handlePointListVisible(true);
               sectorModel.selectImageId = text.imageId;
-              sectorModel.selectImageUrl = text.imageUrl;
-              // sectorModel.selectImageUrl = 'https://www.canva.cn/learn/wp-content/uploads/sites/17/2019/09/Snipaste_2019-09-24_15-21-59.png';
             }}>详情</a>
             <Divider type="vertical" />
             <Popconfirm
@@ -206,7 +200,6 @@ class BindPoint extends Component {
           {/* {this.renderSimpleForm()}*/}
           <Button type='primary' onClick={_ => { this.handleAddImgVisible(true) }}>添加布点图</Button>
           <Divider />
-          
           <Table loading={this.state.getPointImageListLoading} columns={columns} dataSource={this.state.PointImageList} />
         </Card>
 
@@ -224,7 +217,7 @@ class BindPoint extends Component {
         />
 
         <Modal visible={this.state.previewVisible} footer={null} onCancel={_ => { this.setState({ previewVisible: false }) }}>
-          <img alt="example" style={{ width: '100%' }} src={'https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com' + this.state.previewUrl} />
+          <img alt="example" style={{ width: '100%' }} src={window.imgAddress + this.state.previewUrl} />
         </Modal>
       </Fragment>
     );
@@ -260,13 +253,7 @@ class AddImg extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      sectorName:'',
-      fileWidth:'',
-      fileHeight:'',
-      fileWidth1:'',
-      fileHeight1:'',
-      
-      uploadCOSVisible:false,
+
     };
   }
 
@@ -287,165 +274,63 @@ class AddImg extends Component {
     return (
       <Drawer
         title="布点图"
-        width={500}
-        //key={Math.random()}
-        onClose={_ => { this.props.handleAddImgVisible(false);this.props.getPointImageList() }}
+        width={420}
+        onClose={_ => { this.props.handleAddImgVisible(false) }}
         visible={this.props.visible}
       >
-        {/* <Upload
-          multiple
-          listType="picture"
+        {/* <form
+          method="POST"
+          target="form"
+          enctype="multipart/form-data"
+          action={`${window.uploadImgAddress}/upload/uploadImageList`}
         >
+          <input
+            type="file"
+            name="image"
+            multiple="multiple"
+            accept=".jpg,.png"
+          />
+          <input style={{ display: 'none' }} type="input" name="sectorId" placeholder="子项目ID" value={sectorModel.sectorId}></input>
+          <select style={{ display: 'none' }} name="type" value='1'>
+            <option key={Math.random()} value="1">布点图</option>
+            <option key={Math.random()} value="2">现场图</option>
+            <option key={Math.random()} value="3">剖面图</option>
+          </select>
+          <div style={{ height: '30px' }}></div>
+          <Button type='primary' htmlType='submit'>上传</Button>
+        </form>
+        <iframe name="form" id="form" style={{ display: 'none' }} onLoad={_ => {
+          this.props.handleAddImgVisible(false);
+          this.props.getPointImageList();
+        }} ></iframe> */}
+        <Upload
+          multiple
+          customRequest={files => {
+            const { file, onProgress, onSuccess, onError } = files;
+            let formData = new FormData();
+            formData.append('image', file);
+            formData.append('sectorId', sectorModel.sectorId);
+            formData.append('type', 1);
+            axios.post(`${window.uploadImgAddress}/upload/uploadImageList`, formData, {
+              onUploadProgress: ({ total, loaded }) => {
+                onProgress({ percent: Math.round(loaded / total * 100).toFixed(2) }, file);
+              },
+            }).then(({ data: response }) => {
+              if (response.code === 0) {
+                onSuccess(response, file);
+                this.props.handleAddImgVisible(false);
+                this.props.getPointImageList();
+              } else {
+                onError(response.msg);
+              }
+            }).catch(onError);
+          }}>
           <Button>
-            <Icon type="upload" /> 选择图片
+            <Icon type="upload" /> 选择图片上传
           </Button>
-        </Upload> */}
-        <div id="dropbox">
-          <input multiple type='file' ref='file' name="file" />
-          <Button onClick={_ => { this.handleFiles() }} style={{marginTop:'10px'}}>生成缩略图</Button>
-        </div>
-        <div id="previewtitle" style={{display:'none',marginTop:'20px'}}>缩略图</div>
-        <div id="preview"></div>
-        <img src="" alt="" id="show" />
-        <Button onClick={_ => {
-          this.upLoad();
-          
-        }} style={{marginTop:'10px'}}>
-          <Icon type='upload' />上传布点图
-        </Button>
+        </Upload>
       </Drawer >
     );
-  }
-  
-  handleFiles() {
-    document.getElementById('previewtitle').style.display = 'block';
-    let orifile = this.refs.file.files[0];
-    imageCompression(orifile,{
-      maxWidthOrHeight:400
-    }).then(tbFile=>{
-      // 创建img对象
-      let img = document.createElement("img");
-      preview.appendChild(img);
-      let reader = new FileReader();
-      reader.readAsDataURL(tbFile);
-      reader.onload = (function (aImg) {
-        return function (e) {
-          aImg.src = e.target.result;
-          aImg.id = 'thumbnailImg';
-        };
-      })(img);
-    }).catch(e=>{
-
-    })    
-  }
-  //上传图片
-  upLoad() {
-    //子项目id
-    const sectorId = sectorModel.sectorId;
-    let file = this.refs.file;
-    let firstFile = file.files[0];
-    console.log(firstFile);
-    let imageType = firstFile.name.split('.')[1];
-    console.log(imageType);
-    //let fileType = firstFile.
-    //布点图路径
-    let url = `/images/pointMap/${sectorId}/${Math.random()+firstFile.name}`;
-    let url1 = `/images/pointMap/${sectorId}/tb${Math.random()+firstFile.name}`;
-    console.log('布点图地址:',url);
-    let imageName = `${this.state.sectorName}布点图`;
-    let imageName1 = `${this.state.sectorName}缩略图`;
-    let imageDescription = `${this.state.sectorName}布点图原图`;
-    //读取图片并获取图片宽高
-    let reader = new FileReader();
-    reader.readAsDataURL(firstFile);
-    
-    //上传至COS
-    //上传布点图
-    upload(url, firstFile, (err, data) => {
-      if(err){
-          message.info('布点图上传至COS失败!');
-      }
-      if(!err){
-          console.log('this:',this);
-          message.success('布点图上传至COS成功');
-          //this.props.handleAddImgVisible(false);this.props.getPointImageList();
-      }     
-    })
-    //上传缩略图
-    imageCompression(firstFile,{
-      maxWidthOrHeight:400
-    }).then(tbFile=>{
-      //reader.readAsDataURL(tbfile);
-      upload(url1, tbFile, (err, data) => {
-        if(err){
-            message.info('布点图缩略图上传至COS失败!');
-        }
-        if(!err){
-            message.success('布点图缩略图上传至COS成功');
-            reader.onload = function() {
-              var imgURL = this.result;
-              var imgURL1 = document.getElementById('thumbnailImg').src;
-              var image = new Image();
-              var image1 = new Image();
-              image.src = imgURL;
-              image1.src = imgURL1;
-              image.onload = function(){
-                //获取Image对象的宽高
-                var fileWidth = this.width;
-                var fileHeight = this.height;
-                let result = [];
-                result.push({
-                  imageType:1,
-                  originalImage:{
-                    imageDescription: imageDescription,
-                    imageHeight: fileHeight,
-                    imageWidth: fileWidth,
-                    imageName: imageName,
-                    imageUrl: url,
-                    imageType: 3,
-                  },
-                  sectorId: sectorId,
-                  thumbnail:{
-                    imageHeight: image1.height,
-                    imageWidth: image1.width,
-                    imageName: imageName1,
-                    imageUrl: url1,
-                    imageType: 1,
-                  }
-                });
-                console.log(result);
-                
-                //上传至数据库
-                axios.post('/image/addListImage',result)
-                .then(res => {
-                  const { code, msg, data } = res.data;
-                  if( code === 0) {
-                    message.success('添加布点图成功！');
-                  }else{
-                    message.info(msg);
-                  }
-                });      
-              };
-            }
-            this.props.handleAddImgVisible(false);this.props.getPointImageList();
-        }     
-      })
-    }).catch(e=>{
-    })   
-  }
-  //根据子项目id获取子项目名称
-  GetSectorName() {
-    const sectorId = sectorModel.sectorId;
-    getSectorName(sectorId).then(res => {
-      const { code, msg, data } = res.data;
-      if (code === 0) {
-        const sectorName = data;
-        this.setState({ sectorName });
-      }
-    })
-  }
-  componentDidMount() {
-    this.GetSectorName();
   }
 }
 

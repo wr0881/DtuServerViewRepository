@@ -59,10 +59,140 @@ export default [
           },
         ],
       },
-      // 项目管理
+      
+      // 项目管理(人工)
+      {
+        path: '/project1',
+        name: '项目管理(人工)',
+        icon: 'project',
+        routes: [
+          {
+            path: '/project1/add-project',
+            name: '新建项目',
+            component: './Project1/AddProject/AddProject',
+            hideChildrenInMenu: true,
+            routes: [
+              {
+                path: '/project1/add-project',
+                redirect: '/project1/add-project/add-project-name',
+              },
+              {
+                path: '/project1/add-project/add-project-name',
+                name: '新建项目名',
+                component: './Project1/AddProject/AddProjectName',
+              },
+              {
+                path: '/project1/add-project/add-sector-name',
+                name: '新建子项目名',
+                component: './Project1/AddProject/AddSectorName',
+              },
+              {
+                path: '/project1/add-project/add-member-info',
+                name: '添加人员信息',
+                component: './Project1/AddProject/AddMemberInfo',
+              },
+              {
+                path: '/project1/add-project/add-sector-info',
+                name: '新建子项目信息',
+                component: './Project1/AddProject/AddSectorInfo',
+              },
+              {
+                path: '/project1/add-project/result',
+                name: '新建成功',
+                component: './Project1/AddProject/Result',
+              },
+            ],
+          },
+          {
+            path: '/project1/memberinfo',
+            name: '人员管理',
+            component: './Project1/MemberInfo/MemberInfo',
+          },
+          {
+            path: '/project1/userinfo',
+            name: '用户管理',
+            component: './Project1/UserInfo/UserInfo',
+          },
+          {
+            path: '/project1/monitorbasis',
+            name: '监测依据',
+            component: './Project1/MonitorBasis/MonitorBasis',
+          },
+          {
+            path: '/project1/selectSector',
+            name: '子项目管理',
+            component: './Project1/EditSector/SelectSector',
+            hideChildrenInMenu: true,
+          },
+          {
+            path: '/project1/editSector',
+            name: '子项目管理',
+            component: './Project1/EditSector/EditSelectorWrapper',
+            hideChildrenInMenu: true,
+            hideInMenu: true,
+            routes: [
+              {
+                path: '/project1/editSector',
+                redirect: '/project1/editSector/uploadTestValue',
+              },
+              {
+                path: '/project1/editSector/uploadTestValue',
+                name: '测试值上传',
+                component: './Project1/EditSector/UploadTestValue',
+              },
+              {
+                path: '/project1/editSector/addBenchmark',
+                name: '基准点添加',
+                component: './Project1/EditSector/AddBenchmark',
+              },
+              {
+                path: '/project1/editSector/thresholdList',
+                name: '绑定阈值',
+                component: './Project1/EditSector/ThresholdList',
+              },
+              {
+                path: '/project1/editSector/bindMember',
+                name: '绑定人员信息',
+                component: './Project1/EditSector/BindMember',
+              },
+              {
+                path: '/project1/editSector/bindImg',
+                name: '绑定图片信息',
+                component: './Project1/EditSector/BindImg',
+              },
+              {
+                path: '/project1/editSector/bindMonitorBasis',
+                name: '绑定监测依据',
+                component: './Project1/EditSector/BindMonitorBasis',
+              },
+              // {
+              //   path: '/project1/editSector/bindPoint',
+              //   name: '绑定测点',
+              //   component: './Project1/EditSector/BindPoint',
+              // },
+              // {
+              //   path: '/project1/editSector/bindBenchmark',
+              //   name: '绑定基准点',
+              //   component: './Project1/EditSector/bindBenchmark',
+              // },
+              {
+                path: '/project1/editSector/generateReport',
+                name: '报告生成',
+                component: './Project1/EditSector/GenerateReport',
+              },
+              {
+                path: '/project1/editSector/modifySectorBasicInfo',
+                name: '修改子项目基本信息',
+                component: './Project1/EditSector/ModifySectorBasicInfo',
+              },             
+            ],
+          },
+        ],
+      },
+      // 项目管理(自动)
       {
         path: '/project',
-        name: '项目管理',
+        name: '项目管理(自动)',
         icon: 'project',
         routes: [
           {
@@ -168,11 +298,6 @@ export default [
                 path: '/project/editSector/modifySectorBasicInfo',
                 name: '修改子项目基本信息',
                 component: './Project/EditSector/ModifySectorBasicInfo',
-              },
-              {
-                path: '/project/editSector/imgUpload',
-                name: '图片上传',
-                component: './Project/EditSector/ImgUpload',
               },
             ],
           },

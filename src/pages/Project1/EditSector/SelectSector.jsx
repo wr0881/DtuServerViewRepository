@@ -24,16 +24,14 @@ class SelectSector extends Component {
   }
   //获取所有项目
   getAllProject = () => {
-    const params = {
-      isManual: false,
+    let params = {
+      isManual: true,
       projectKeyword: this.searchProject
     }
     getAllProject(params).then(res => {
       const { code,msg,data } = res.data;
-      //console.log(res.data);
       if(code === 0){
         this.setState({ ProjectData:data });
-        
       }else{
         this.setState({ ProjectData:[] });
         router.push('/user/login');
@@ -43,16 +41,17 @@ class SelectSector extends Component {
       
     })
   }
+
+
   //删除项目
   handleDelProject = (record) => {
-    //项目id(projectId)
+    //项目id(sectorId)
     const { form } = this.props;
     let param = record;
     removeProject(param).then(res => {
       let result = res.data;
       if (result.code === 0) {
         message.success('删除项目成功!');
-        //this.getAllProject();
         form.resetFields();
       } else {
         message.info('删除项目失败!');
@@ -64,16 +63,15 @@ class SelectSector extends Component {
 
   //删除子项目
   handleDelSector = (record) => {
-    //项目id(sectorId)
+    //项目id(projectId)
     const { form } = this.props;
     let param = record;
     removeSector(param).then(res => {
       let result = res.data;
       if (result.code === 0) {
         message.success('删除子项目成功!');
-        //this.getProjectSector();
         this.setState({ ProjectSectorData:[] });
-        form.resetFields();
+        form.resetFields()
       } else {
         message.info('删除子项目失败!');
       }
@@ -81,27 +79,23 @@ class SelectSector extends Component {
       message.error(err);
     })
   }
-
+  
   //获取项目下子项目
   getProjectSector = () => {
     let projectId = this.projectId;
-    console.log(projectId);
-    if(projectId !== ''){
-      getProjectSector(projectId).then(res => {
-        const {code,msg,data} = res.data;
-        //console.log(res.data);
-        if(code === 0){
-          this.setState({ ProjectSectorData:data });
-          //console.log(this.state.ProjectSectorData);
-        }else{
-          this.setState({ ProjectSectorData:[] });
-        }
-      }).catch(err => {
-        console.log(err);
-      })
-    }    
+    getProjectSector(projectId).then(res => {
+      const {code,msg,data} = res.data;
+      //console.log(res.data);
+      if(code === 0){
+        this.setState({ ProjectSectorData:data });
+        //console.log(this.state.ProjectSectorData);
+      }else{
+        this.setState({ ProjectSectorData:[] });
+      }
+    }).catch(err => {
+      console.log(err);
+    })
   }
-  
   render() {
     const options = [];
     const {
@@ -203,7 +197,7 @@ class SelectSector extends Component {
     sectorModel.sectorId = sectorId;
     sectorModel.projectId = projectId;
     if(sectorId !== undefined){
-      router.push('/project/editSector');
+      router.push('/project1/editSector');
     }else{
       message.info('请选择子项目！');
     }

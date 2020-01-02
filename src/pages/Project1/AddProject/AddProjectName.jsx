@@ -57,7 +57,7 @@ class AddProjectName extends Component {
     if (allProject.length === 0) {
       this.setState({ getAllProjectLoading: true });
       const params = {
-        isManual: false,
+        isManual: true,
       }
       getAllProject(params).then(res => {
         const { code, data } = res.data;
@@ -116,14 +116,14 @@ class AddProjectName extends Component {
           projectAddress: values.adress.join('') + values.adress_detail,
           projectDescription: values.dec,
           projectType: values.type,
-          isManual: false,
+          isManual: true
         };
         addProject(result).then(res => {
           const { code, data, msg } = res.data;
           if (code === 0) {
             projectState.projectId = data;
-            router.push({pathname:'/project/add-project/add-sector-name'});
-            // router.push({pathname:'/project/add-project/add-sector-name',state:{adress:values.adress,adress_detail:values.adress_detail,projectDescription:values.dec}});
+            router.push({pathname:'/project1/add-project/add-sector-name'});
+            //router.push({pathname:'/project1/add-project/add-sector-name',state:{adress:values.adress,adress_detail:values.adress_detail,projectDescription:values.dec}});
           } else {
             message.info(msg);
           }
@@ -137,7 +137,7 @@ class AddProjectName extends Component {
     validateFields((err, values) => {
       if (!err) {
         projectState.projectId = values.projectId;
-        router.push('/project/add-project/add-sector-name');
+        router.push('/project1/add-project/add-sector-name');
       }
     });
   }
@@ -182,7 +182,7 @@ class AddProjectName extends Component {
           })(
             <TextArea
               placeholder="示例: 这是一个什么什么项目"
-              autoSize={{ minRows: 3 }}
+              autosize={{ minRows: 3 }}
             />
           )}
         </Form.Item>

@@ -12,8 +12,13 @@ export async function getAllProjectType() {
     return axios.get('/project/getAllProjectType');
 }
 
-export async function getAllProject() {
-    return axios.get('/project/getAllProject');
+export async function getAllProject(params) {
+    return axios.get('/project/getAllProject',{params});
+}
+
+/* 删除项目 */
+export async function removeProject(param) {
+    return axios.delete('/project/removeProject?projectId=' + param);
 }
 
 //模糊查询项目
@@ -34,6 +39,11 @@ export async function listMonitorType() {
 /* 添加子项目 */
 export async function addSector(body) {
     return axios.post('/monitorPoint/addSector', body);
+}
+
+/* 删除子项目 */
+export async function removeSector(param) {
+    return axios.delete('/sector/removeSector?sectorId=' + param);
 }
 
 /* 添加联系人 */
@@ -183,7 +193,10 @@ export async function removeBasis(body) {
 
 /* 子项目管理 */
 // 选择子项目
-// 获取所有项目(已有)
+// 获取所在项目信息
+export async function getProjectInfo(projectId) {
+    return axios.get('/project/getProjectById?projectId=' + projectId);
+}
 // 获取项目下子项目
 export async function getProjectSector(projectId) {
     return axios.get('/sector/getSectorByProId?projectId=' + projectId);
@@ -254,4 +267,24 @@ export async function getListImageUrl(imageListId) {
 //修改指标阈值状态
 export async function updateThresholdStatus(thresholdInfoId,thresholdStatus) {
     return axios.put('/threshold/updateThresholdStatus?thresholdInfoId='+thresholdInfoId+'&thresholdStatus='+thresholdStatus);
+}
+
+//添加基准点(批量)
+export async function addBenchmark(sectorId,params){
+    return axios.post('/manual-benchmark-points/sector/'+sectorId,params);
+}
+
+//查询区间下基准点列表
+export async function getBenchmark(sectorId){
+    return axios.get('/manual-benchmark-points/sector/'+sectorId);
+}
+
+//删除基准点
+export async function deleteBenchmark(param){
+    return axios.delete('/manual-benchmark-points/'+param);
+}
+
+//编辑基准点
+export async function editBenchmark(id,param){
+    return axios.put('/manual-benchmark-points/'+id,param)
 }

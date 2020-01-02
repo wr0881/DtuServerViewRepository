@@ -27,7 +27,6 @@ import {
   Upload,
   Spin
 } from 'antd';
-import ImgViewer from '@/components/ImgViewer/ImgViewer';
 import ImgMark from '@/components/ImgMark/ImgMark';
 import sectorModel from './sectorModel';
 import { getTerminlaNumber1, getSersorNumber1, addMonitorPoint, listMonitorType } from '@/services/project';
@@ -49,16 +48,13 @@ class AddPoint extends Component {
       getSersorNumberLoading: false,
       listMonitorTypeLoading: false,
 
-      dot: [],
-
-      imgViewerShow: false,
+      dot: []
     };
   }
 
   getTerminlaNumber = value => {
     if (value) {
       this.setState({ getTerminlaNumberLoading: true });
-      console.log('所在区间id',sectorModel.sectorId);
       getTerminlaNumber1({ terminalNumber: value,sectorId: sectorModel.sectorId }).then(res => {
         const { code, data, msg } = res.data;
         if (code === 0) {
@@ -145,10 +141,6 @@ class AddPoint extends Component {
     });
   }
 
-  Reset(){
-    const {form} = this.props;
-    form.resetFields();
-  }
   render() {
     const formItemLayout = {
       labelCol: { sm: { span: 8 }, xs: { span: 24 }, style: { lineHeight: 2, textAlign: 'center' } },
@@ -224,7 +216,7 @@ class AddPoint extends Component {
                         },
                       ],
                       // initialValue: this.props.modifypass.manufacturer
-                    })(<Input style={{ width: '210px' }} placeholder='例如:1920' onClick={_ => { this.setState({ imgViewerShow: true }) }} />)}
+                    })(<Input style={{ width: '210px' }} placeholder='例如:1920' />)}
                   </Form.Item>
                 </Col>
                 <Col md={12} sm={24}>
@@ -237,7 +229,7 @@ class AddPoint extends Component {
                           message: '只允许数字',
                         },
                       ],
-                    })(<Input style={{ width: '210px' }} placeholder='例如:1080' onClick={_ => { this.setState({ imgViewerShow: true }) }} />)}
+                    })(<Input style={{ width: '210px' }} placeholder='例如:1080' />)}
                   </Form.Item>
                 </Col>
               </Row>
@@ -285,7 +277,7 @@ class AddPoint extends Component {
                               style={{ width: '100%' }}
                             >
                               {this.state.sersorNumberAry.map(v => (
-                                <Select.Option key={v} value={v}>{v}</Select.Option>
+                                <Select.Option key={v}>{v}</Select.Option>
                               ))}
                             </Select>
                           )}
@@ -347,38 +339,19 @@ class AddPoint extends Component {
             </Form>
           </div>
 
-          <Modal
-            title="图片描点"
-            width='1200px'
-            visible={this.state.imgViewerShow}
-            destroyOnClose={true}
-            onOk={_ => {
+          <ImgMark
+            style={{ width: '100%' }}
+            src='http://123.207.88.210/monitor/images/three/pointMap/cfl.png'
+            //src={'https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com'+sectorModel.selectImageUrl}
+            dot={this.state.dot}
+            onChange={dot => {
+              this.setState({ dot });
               setFieldsValue({
-                picx: this.state.dot[0].realX,
-                picy: this.state.dot[0].realY
+                picx: dot[0].realX,
+                picy: dot[0].realY
               })
-              this.setState({ imgViewerShow: false });
             }}
-            onCancel={_ => { this.setState({ imgViewerShow: false }) }}
-          >
-            <div style={{ width: '100%', height: '500px' }}>
-              <ImgViewer
-                style={{ width: '100%', height: '100%' }}
-                url={window.imgAddress + sectorModel.selectImageUrl}
-                children={
-                  <ImgMark
-                    style={{ width: '100%' }}
-                    src={window.imgAddress + sectorModel.selectImageUrl}
-                    dot={this.state.dot ? this.state.dot : []}
-                    onChange={dot => {
-                      this.setState({ dot });
-                    }}
-                  />
-                }
-                onScale={() => { this.setState({ dot: [] }) }}
-              />
-            </div>
-          </Modal>
+          />
 
           <div
             style={{

@@ -114,7 +114,7 @@ class ModifySectorBasicInfo extends Component {
         validateFields((err, values) => {
             if (!err) {
                 let result = {
-                    isManual: false,
+                    isManual: true,
                     projectId: sectorModel.projectId,
                     projectType: this.state.sectorBasicInfo.projectType,
                     sectorId: sectorModel.sectorId,
@@ -131,7 +131,7 @@ class ModifySectorBasicInfo extends Component {
                     sectorStatus: parseInt(values.sectorStatus),
                     sectorType: 48
                 };
-                console.log('自动子项目修改的基本信息:',result);
+                console.log('人工子项目修改的基本信息:',result);
                 updateSectorBaseInfo(result).then(res => {
                     const { code, data, msg } = res.data;
                     if (code === 0) {

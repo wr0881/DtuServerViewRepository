@@ -1,0 +1,42 @@
+.addFile{
+  display: flex;
+  align-items: center;
+  width: 110px;
+  height: 110px;
+  background-color: #fafafa;
+  border: 1px dashed #d9d9d9;
+  border-radius: 4px;
+  cursor: pointer;
+  &:hover{
+    border: 1px dashed #1890ff;
+  }
+  .plus{
+    width: 100%;
+    height: 62px;
+    text-align: center;
+    color: #999;
+  }
+}
+
+#preview {
+  width: 200px;
+  margin: 7px;
+  //border: 1px solid #666;
+  border-radius: 4px;
+  //box-shadow: 3px 3px 3px #bbb;
+  img{
+    width: 200px;
+  }  
+}
+
+.upload-list-inline .ant-upload-list-item {
+  float: left;
+  width: 400px!important;
+  margin-right: 8px;
+}
+.upload-list-inline .ant-upload-animate-enter {
+  animation-name: uploadAnimateInlineIn;
+}
+.upload-list-inline .ant-upload-animate-leave {
+  animation-name: uploadAnimateInlineOut;
+}

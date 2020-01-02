@@ -156,7 +156,7 @@ class BindPoint extends Component {
               name: 'image.png',
               status: 'done',
               url: window.imgAddress + text,
-              // url: `https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com${text}`
+              //url: `https://monitor-1254331889.cos.ap-guangzhou.myqcloud.com${text}`
             },]}
             onPreview={_ => { this.setState({ previewVisible: 'true', previewUrl: text });console.log('文件地址:',text); }}
           // onChange={this.handleChange}
@@ -183,8 +183,6 @@ class BindPoint extends Component {
             <a onClick={_ => {
               this.handlePointListVisible(true);
               sectorModel.selectImageId = text.imageId;
-              sectorModel.selectImageUrl = text.imageUrl;
-              // sectorModel.selectImageUrl = 'https://www.canva.cn/learn/wp-content/uploads/sites/17/2019/09/Snipaste_2019-09-24_15-21-59.png';
             }}>详情</a>
             <Divider type="vertical" />
             <Popconfirm
@@ -243,6 +241,7 @@ class BindPoint extends Component {
       if (code === 0) {
         // console.log(data);
         this.setState({ PointImageList: data });
+        console.log('布点图列表:',this.state.PointImageList);
       } else {
         this.setState({ PointImageList: [] });
       }
@@ -288,7 +287,7 @@ class AddImg extends Component {
       <Drawer
         title="布点图"
         width={500}
-        //key={Math.random()}
+        key={Math.random()}
         onClose={_ => { this.props.handleAddImgVisible(false);this.props.getPointImageList() }}
         visible={this.props.visible}
       >
@@ -347,7 +346,6 @@ class AddImg extends Component {
     console.log(firstFile);
     let imageType = firstFile.name.split('.')[1];
     console.log(imageType);
-    //let fileType = firstFile.
     //布点图路径
     let url = `/images/pointMap/${sectorId}/${Math.random()+firstFile.name}`;
     let url1 = `/images/pointMap/${sectorId}/tb${Math.random()+firstFile.name}`;
@@ -363,12 +361,11 @@ class AddImg extends Component {
     //上传布点图
     upload(url, firstFile, (err, data) => {
       if(err){
-          message.info('布点图上传至COS失败!');
+          //message.info('布点图上传至COS失败!');
       }
       if(!err){
           console.log('this:',this);
           message.success('布点图上传至COS成功');
-          //this.props.handleAddImgVisible(false);this.props.getPointImageList();
       }     
     })
     //上传缩略图
@@ -378,10 +375,11 @@ class AddImg extends Component {
       //reader.readAsDataURL(tbfile);
       upload(url1, tbFile, (err, data) => {
         if(err){
-            message.info('布点图缩略图上传至COS失败!');
+            //message.info('布点图缩略图上传至COS失败!');
         }
         if(!err){
             message.success('布点图缩略图上传至COS成功');
+            //读取完成获取宽高
             reader.onload = function() {
               var imgURL = this.result;
               var imgURL1 = document.getElementById('thumbnailImg').src;
@@ -414,7 +412,6 @@ class AddImg extends Component {
                   }
                 });
                 console.log(result);
-                
                 //上传至数据库
                 axios.post('/image/addListImage',result)
                 .then(res => {
@@ -424,8 +421,8 @@ class AddImg extends Component {
                   }else{
                     message.info(msg);
                   }
-                });      
-              };
+                });       
+              };     
             }
             this.props.handleAddImgVisible(false);this.props.getPointImageList();
         }     

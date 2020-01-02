@@ -4,7 +4,7 @@ import { observer } from 'mobx-react';
 import { Form, Input, Button, Select, Divider, Cascader, DatePicker, Slider } from 'antd';
 import moment from 'moment';
 import Map from '@/components/Map/Map';
-import { getsectorType, addSector, getAddress,getProjectSector,getProjectInfo } from '@/services/project';
+import { getsectorType, addSector, getAddress,getProjectSector, getProjectInfo } from '@/services/project';
 import { getLocation } from '@/utils/getLocation';
 import projectState from './project';
 import styles from './style.less';
@@ -37,7 +37,6 @@ class AddSectorName extends Component {
     this.state = {
       sectorType: [],
       projectSectorName: [],
-      projectInfo: {},
 
       JW: { lng: '', lat: '' },
     };
@@ -77,28 +76,30 @@ class AddSectorName extends Component {
           sectorName: values.sectorName,
           sectorStatus: values.sectorStatus,
           sectorType: 48,
-          isManual: false,
+          isManual: true,
         };
         //console.log(result);
         addSector(result).then(res => {
           const { code, data, msg } = res.data;
           if (code === 0) {
             projectState.sectorId = data;
-            router.push('/project/add-project/result');
+            router.push('/project1/add-project/result');
           }
         })
       }
     });
   }
-
+  
   //获取项目下的子项目
   getAllSector = () => {
     //当前项目Id
     const projectId = projectState.projectId;
+    console.log('projectId:',projectId);
     getProjectSector(projectId).then(res => {
       const {code,msg,data} = res.data;
       if(code===0){
         const newArr = data.map(obj => {return obj.sectorName});
+        console.log('子项目名称',newArr);
         this.setState({projectSectorName: newArr});
       }else{
         this.setState({projectSectorName: []});
@@ -138,7 +139,7 @@ class AddSectorName extends Component {
     const { form } = this.props;
     const { getFieldDecorator } = form;
     // const state = this.props.location.state;
-    const projectDescription = this.state.projectInfo.projectDescription;
+    // const projectDescription = this.state.projectInfo.projectDescription;
     // const adress = state.adress;
     // const detail = state.adress_detail;
     return (
@@ -146,7 +147,7 @@ class AddSectorName extends Component {
         <Form.Item {...formItemLayout} label="子项目名称">
           {getFieldDecorator('sectorName', {
             rules: [
-              // { required: true, message: '请输入子项目名称' }
+              //{ required: true, message: '请输入子项目名称' }
               { validator: this.sectorNameRules }
             ],
           })(<Input placeholder="示例: xxx子项目" />)}
@@ -187,12 +188,12 @@ class AddSectorName extends Component {
         </Form.Item>
         <Form.Item {...formItemLayout} label="子项目描述">
           {getFieldDecorator('sectorDescription', {
-            initialValue:projectDescription,
+            //initialValue:projectDescription,
             rules: [{ required: true, message: '请输入子项目描述' }],
           })(
             <TextArea
               placeholder="示例: 这是一个什么什么子项目"
-              autoSize={{ minRows: 3 }}
+              autosize={{ minRows: 3 }}
             />
           )}
         </Form.Item>
@@ -214,14 +215,14 @@ class AddSectorName extends Component {
         <Form.Item {...formItemLayout} label="所在省市">
           {getFieldDecorator('adress', {
             rules: [{ required: true, message: '请选择子项目所在省市' }],
-            // initialValue:adress
+            //initialValue:adress
           })(
             <Cascader options={getLocation()} placeholder="示例: 湖南省/长沙市/岳麓区" />
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="街道地址">
           {getFieldDecorator('adress_detail', {
-            // initialValue:detail,
+            //initialValue:detail,
             rules: [{ required: true, message: '请输入子项目街道地址' }],
           })(
             <Input placeholder="示例: 学士路学士街道755号" />
