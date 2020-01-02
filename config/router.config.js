@@ -170,6 +170,11 @@ export default [
                 component: './Project/EditSector/ModifySectorBasicInfo',
               },
               {
+                path: '/project/editSector/editReport',
+                name: '修改报告信息',
+                component: './Project/EditSector/editReport',
+              },
+              {
                 path: '/project/editSector/imgUpload',
                 name: '图片上传',
                 component: './Project/EditSector/ImgUpload',

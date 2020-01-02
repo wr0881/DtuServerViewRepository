@@ -61,7 +61,7 @@ class EditPoint extends Component {
   getTerminlaNumber = value => {
     if (value) {
       this.setState({ getTerminlaNumberLoading: true });
-      getTerminlaNumber1({ terminalNumber: value }).then(res => {
+      getTerminlaNumber1({ terminalNumber: value, sectorId: sectorModel.sectorId }).then(res => {
         const { code, data, msg } = res.data;
         if (code === 0) {
           this.setState({ terminlaNumberAry: data });
