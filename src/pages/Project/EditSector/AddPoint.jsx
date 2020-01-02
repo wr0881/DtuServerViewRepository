@@ -58,7 +58,6 @@ class AddPoint extends Component {
   getTerminlaNumber = value => {
     if (value) {
       this.setState({ getTerminlaNumberLoading: true });
-      console.log('所在区间id',sectorModel.sectorId);
       getTerminlaNumber1({ terminalNumber: value,sectorId: sectorModel.sectorId }).then(res => {
         const { code, data, msg } = res.data;
         if (code === 0) {
