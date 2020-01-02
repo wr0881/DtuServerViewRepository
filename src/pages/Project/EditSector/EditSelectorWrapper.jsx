@@ -40,6 +40,9 @@ class EditSelectorWrapper extends Component {
       case 'modifySectorBasicInfo':
         router.push(`${match.url}/modifySectorBasicInfo`);
         break;
+      case 'editReport':
+        router.push(`${match.url}/editReport`);
+        break;
       // case 'imgUpload':
       //   router.push(`${match.url}/imgUpload`);
       //   break;
@@ -90,6 +93,10 @@ class EditSelectorWrapper extends Component {
       {
         key: 'modifySectorBasicInfo',
         tab: '修改子项目基本信息',
+      },
+      {
+        key: 'editReport',
+        tab: '修改报告信息',
       },
       // {
       //   key: 'imgUpload',
