@@ -175,11 +175,11 @@ export default [
               //   name: '绑定基准点',
               //   component: './Project1/EditSector/bindBenchmark',
               // },
-              {
-                path: '/project1/editSector/generateReport',
-                name: '报告生成',
-                component: './Project1/EditSector/GenerateReport',
-              },
+              // {
+              //   path: '/project1/editSector/generateReport',
+              //   name: '报告生成',
+              //   component: './Project1/EditSector/GenerateReport',
+              // },
               {
                 path: '/project1/editSector/modifySectorBasicInfo',
                 name: '修改子项目基本信息',
