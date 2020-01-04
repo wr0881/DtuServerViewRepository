@@ -126,10 +126,10 @@ class BindImg extends Component {
           {getFieldDecorator('type')(
             <Select placeholder="请选择图片类型" style={{ width: '200px' }}>
               <Select.Option value="">全部</Select.Option>
-              <Select.Option value="1">布点图</Select.Option>
-              <Select.Option value="2">现场图</Select.Option>
-              <Select.Option value="3">剖面图</Select.Option>
-              <Select.Option value="4">地质剖面图</Select.Option>
+              <Select.Option value="布点图">布点图</Select.Option>
+              <Select.Option value="现场图">现场图</Select.Option>
+              <Select.Option value="剖面图">剖面图</Select.Option>
+              <Select.Option value="地质剖面图">地质剖面图</Select.Option>
             </Select>
           )}
         </FormItem>
@@ -202,27 +202,22 @@ class BindImg extends Component {
           <span>
             <a onClick={_ => {
               sectorModel.selectImageListId = text.imageListId;
-              console.log('图片ListId:',sectorModel.selectImageListId);
               this.setState({ handleEditImageVisible: true });
               if(text.imageType==='布点图'){
                 const imageType = 1;
                 this.setState({imageType: imageType});
-                console.log('图片类型:',imageType);
               }
               if(text.imageType==='现场图'){
                 const imageType = 2;
                 this.setState({imageType: imageType});
-                console.log('图片类型:',imageType);
               }
               if(text.imageType==='剖面图'){
                 const imageType = 3;
                 this.setState({imageType: imageType});
-                console.log('图片类型:',imageType);
               }
               if(text.imageType==='地质剖面图'){
                 const imageType = 4;
                 this.setState({imageType: imageType});
-                console.log('图片类型:',imageType);
               }
               
             }}>替换</a>
@@ -293,14 +288,14 @@ class BindImg extends Component {
         sectorId: sectorModel.sectorId,
         imageType: type,
         pageNum: pagination.current,
-        pageSize: pagination.pageSize
+        pageSize: pagination.pageSize,
+        includePointImg: true
       }
     }).then(res => {
       const { code, msg, data } = res.data;
       if (code === 0) {
         this.setState({ pagination: { ...this.state.pagination, total: data.total } });
         this.setState({ ImageList: data.list });
-        console.log('图片信息:',this.state.ImageList);
       } else {
         this.setState({ ImageList: [] });
       }
@@ -354,6 +349,7 @@ class AddImg extends Component {
       >
         <Form
           layout="vertical"
+          key={Math.random()}
         >
           <Form.Item>
             <div>
@@ -422,9 +418,7 @@ class AddImg extends Component {
         let imageType = firstFile.name.split('.')[1];
         //布点图上传
         if(fieldsValue.type===1){
-          console.log('布点图上传!')
           let imageUrl = `/images/pointMap/${sectorId}/${Math.random()}.${imageType}`;
-          console.log('布点图原图地址:',imageUrl);
           //缩略图
           let imageUrl1 = `/images/pointMap/${sectorId}/tb${Math.random()}.${imageType}`;
 
@@ -438,11 +432,9 @@ class AddImg extends Component {
           upload(imageUrl, firstFile, (err, data) => {
             if(err){
                 message.info('布点图原图上传至COS失败!');
-                console.log("布点图原图上传至COS失败!!!");
             }
             if(!err){
                 message.success('布点图原图上传至COS成功');
-                console.log('布点图原图上传的图片数据:',data);
                 this.setState({uploadCOSVisible:true});
             }
             
@@ -497,12 +489,10 @@ class AddImg extends Component {
                   imageType: 1,
                 }
               });
-              console.log(result);
               //上传至数据库
               axios.post('/image/addListImage',result)
               .then(res => {
                 const { code, msg, data } = res.data;
-                console.log(code,msg,data);
                 if( code === 0) {
                   message.success('添加布点图成功！');
                 }else{
@@ -514,12 +504,9 @@ class AddImg extends Component {
         }
         //现场图上传
         if(fieldsValue.type===2){
-          console.log('现场图上传!')
           let imageUrl = `/images/siteMap/${sectorId}/${Math.random()}.${imageType}`;
-          console.log('现场图原图地址:',imageUrl);
           //缩略图
           let imageUrl1 = `/images/siteMap/${sectorId}/tb${Math.random()}.${imageType}`;
-          console.log('现场图缩略图地址:',imageUrl1);
           let imageName = `${this.state.sectorName}现场图`;
           let imageName1 = `${this.state.sectorName}现场缩略图`;
           let imageDescription = `${this.state.sectorName}现场图原图`;
@@ -530,11 +517,9 @@ class AddImg extends Component {
           upload(imageUrl, firstFile, (err, data) => {
             if(err){
                 message.info('现场图原图上传至COS失败!');
-                console.log("现场图原图上传至COS失败!!!");
             }
             if(!err){
                 message.success('现场图原图上传至COS成功');
-                console.log('现场图原图上传的图片数据:',data);
             }
             
           })
@@ -546,11 +531,9 @@ class AddImg extends Component {
             upload(imageUrl1, tbFile, (err, data) => {
               if(err){
                   message.info('现场缩略图上传至COS失败!');
-                  console.log("现场缩略图上传至COS失败!!!");
               }
               if(!err){
-                  message.success('现场缩略图上传至COS成功');
-                   
+                  message.success('现场缩略图上传至COS成功');                   
                   this.props.handleDrawerVisible(false); this.props.getImageList();
               }     
             })
@@ -560,7 +543,6 @@ class AddImg extends Component {
           reader.onload = function() {
             var imgURL = this.result;
             var imgURL1 = document.getElementById('thumbnailImg').src;
-            console.log('现场缩略图URL:',imgURL1);
             var image = new Image();
             var image1 = new Image();
             image.src = imgURL;
@@ -590,12 +572,10 @@ class AddImg extends Component {
                   imageType: 1,
                 }
               });
-              console.log(result);
               //上传至数据库
               axios.post('/image/addListImage',result)
               .then(res => {
                 const { code, msg, data } = res.data;
-                console.log(code,msg,data);
                 if( code === 0) {
                   message.success('添加现场图成功！');
                 }else{
@@ -607,7 +587,6 @@ class AddImg extends Component {
         }
         //剖面图上传
         if(fieldsValue.type===3){
-          console.log('剖面图上传!')
           let imageUrl = `/images/sectionalView/${sectorId}/${Math.random()}.${imageType}`;
           //缩略图
           let imageUrl1 = `/images/sectionalView/${sectorId}/tb${Math.random()}.${imageType}`;
@@ -622,11 +601,9 @@ class AddImg extends Component {
           upload(imageUrl, firstFile, (err, data) => {
             if(err){
                 message.info('剖面图上传至COS失败!');
-                console.log("剖面图上传至COS失败!!!");
             }
             if(!err){
                 message.success('剖面图上传至COS成功');
-                console.log('剖面图上传的图片数据:',data);
             }
             
           })
@@ -634,15 +611,12 @@ class AddImg extends Component {
           imageCompression(firstFile,{
             maxWidthOrHeight:400
           }).then(tbFile=>{
-            //reader.readAsDataURL(tbfile);
-            console.log('剖面缩略图上传至cos!!!');
             upload(imageUrl1, tbFile, (err, data) => {
               if(err){
                   message.info('剖面缩略图上传至COS失败!');
               }
               if(!err){
-                  message.success('剖面缩略图上传至COS成功');
-                  
+                  message.success('剖面缩略图上传至COS成功');                 
                   this.props.handleDrawerVisible(false); this.props.getImageList();
               }     
             })
@@ -650,7 +624,6 @@ class AddImg extends Component {
           })
           reader.onload = function() {
             var imgURL = this.result;
-            console.log('imgURL:',imgURL)
             var imgURL1 = document.getElementById('thumbnailImg').src;
             var image = new Image();
             var image1 = new Image();
@@ -660,7 +633,6 @@ class AddImg extends Component {
               //获取Image对象的宽高
               var fileWidth = this.width;
               var fileHeight = this.height;
-              console.log('图片宽高:',fileWidth,fileHeight);
               let result = [];
               result.push({
                 imageType:fieldsValue.type,
@@ -681,12 +653,10 @@ class AddImg extends Component {
                   imageType: 1,
                 }
               });
-              console.log(result);
               //上传至数据库
               axios.post('/image/addListImage',result)
               .then(res => {
                 const { code, msg, data } = res.data;
-                console.log(code,msg,data);
                 if( code === 0) {
                   message.success('添加剖面图成功！');
                 }else{
@@ -698,7 +668,6 @@ class AddImg extends Component {
         } 
         //地质剖面图上传
         if(fieldsValue.type===4){
-          console.log('地质剖面图上传!')
           let imageUrl = `/images/geologicalSection/${sectorId}/${Math.random()}.${imageType}`;
           //缩略图
           let imageUrl1 = `/images/geologicalSection/${sectorId}/tb${Math.random()}.${imageType}`;
@@ -713,11 +682,9 @@ class AddImg extends Component {
           upload(imageUrl, firstFile, (err, data) => {
             if(err){
                 message.info('地质剖面图上传至COS失败!');
-                console.log("地质剖面图上传至COS失败!!!");
             }
             if(!err){
                 message.success('地质剖面图上传至COS成功');
-                console.log('地质剖面图上传的图片数据:',data);
             }
             
           })
@@ -726,14 +693,12 @@ class AddImg extends Component {
             maxWidthOrHeight:400
           }).then(tbFile=>{
             //reader.readAsDataURL(tbfile);
-            console.log('地质剖面缩略图上传至cos!!!');
             upload(imageUrl1, tbFile, (err, data) => {
               if(err){
                   message.info('地质剖面缩略图上传至COS失败!');
               }
               if(!err){
-                  message.success('地质剖面缩略图上传至COS成功');
-                   
+                  message.success('地质剖面缩略图上传至COS成功');                  
                   this.props.handleDrawerVisible(false); this.props.getImageList();
               }     
             })
@@ -741,7 +706,6 @@ class AddImg extends Component {
           })
           reader.onload = function() {
             var imgURL = this.result;
-            console.log('imgURL:',imgURL)
             var imgURL1 = document.getElementById('thumbnailImg').src;
             var image = new Image();
             var image1 = new Image();
@@ -751,7 +715,6 @@ class AddImg extends Component {
               //获取Image对象的宽高
               var fileWidth = this.width;
               var fileHeight = this.height;
-              console.log('图片宽高:',fileWidth,fileHeight);
               let result = [];
               result.push({
                 imageType:fieldsValue.type,
@@ -772,12 +735,10 @@ class AddImg extends Component {
                   imageType: 1,
                 }
               });
-              console.log(result);
               //上传至数据库
               axios.post('/image/addListImage',result)
               .then(res => {
                 const { code, msg, data } = res.data;
-                console.log(code,msg,data);
                 if( code === 0) {
                   message.success('添加地质剖面图成功！');
                 }else{
@@ -799,7 +760,6 @@ class AddImg extends Component {
       if (code === 0) {
         const sectorName = data;
         this.setState({ sectorName });
-        //console.log('获取子项目名称',this.state.sectorName);
       }
     })
   }
@@ -821,8 +781,7 @@ class EditImage extends Component {
       form: { getFieldDecorator },
     } = this.props;
     return (
-      <Drawer
-        key={Math.random()}
+      <Drawer        
         title="替换图片"
         width={500}
         onClose={_ => { this.props.handleEditImageVisible(false); this.props.getImageList(); }}
@@ -830,6 +789,7 @@ class EditImage extends Component {
       >
         <Form
           layout="vertical"
+          key={Math.random()}
         >
           <Form.Item>
           <input
@@ -847,7 +807,6 @@ class EditImage extends Component {
         </Form>
         <Button type='primary' onClick={_ => {
           this.upLoad();
-          console.log(this.state.updateImageData);
         }} style={{marginTop:'10px'}}>上传</Button>
         <iframe
           name="form"
@@ -887,7 +846,6 @@ class EditImage extends Component {
     const sectorId = sectorModel.sectorId;
     let file = this.refs.file;
     let firstFile = file.files[0];
-    //console.log('图片类型',this.props.imageType);
 
     //替换的图片地址保持和原来图片地址一致
     //根据图片listId获取图片地址
@@ -897,28 +855,22 @@ class EditImage extends Component {
     getListImageUrl(imageListId).then(res => {
       const { code, msg, data } = res.data;
       if(code===0){
-        this.setState({selectImageData:data});
-      
+        this.setState({selectImageData:data});      
         //替换
         if(this.props.imageType===1){
           const selectImageData = this.state.selectImageData;
           let imageUrl = selectImageData[0].imageUrl;
-          console.log('替换布点图地址:',imageUrl);
-          let imageUrl1 = selectImageData[1].imageUrl;
-  
+          let imageUrl1 = selectImageData[1].imageUrl;  
           let reader = new FileReader();
           reader.readAsDataURL(firstFile);
           //上传替换的图片原图至COS
           upload(imageUrl, firstFile, (err, data)=> {
             if(err){
                 message.info('替换原图上传至COS失败!');
-                console.log("替换原图上传至COS失败!!!");
             }
             if(!err){
                 message.success('替换原图上传至COS成功');
-                console.log('替换原图上传的图片数据:',data);
-            }
-            
+            }           
           })
           //上传替换布点缩略图
           imageCompression(firstFile,{
@@ -929,8 +881,7 @@ class EditImage extends Component {
                   message.info('替换缩略图上传至COS失败!');
               }
               if(!err){
-                  message.success('替换缩略图上传至COS成功');
-                  
+                  message.success('替换缩略图上传至COS成功');                  
                   this.props.handleEditImageVisible(false); this.props.getImageList();
               }     
             })
@@ -963,7 +914,6 @@ class EditImage extends Component {
                   imageType: 1,
                 }
               };
-              console.log(result);
               //上传至数据库
               axios.post('/image/updateImageInfo',result)
               .then(res => {
@@ -971,8 +921,6 @@ class EditImage extends Component {
   
                 if( code === 0) {
                   message.success('替换图片成功！');
-                  // this.setState({updateImageData:data});
-                  // console.log(this.state.updateImageData);
                 }else{
                   message.info(msg);
                 }
@@ -984,7 +932,6 @@ class EditImage extends Component {
         if(this.props.imageType===2){
         const selectImageData = this.state.selectImageData;
         let imageUrl = selectImageData[0].imageUrl;
-        console.log('替换现场图地址:',imageUrl);
         let imageUrl1 = selectImageData[1].imageUrl;
 
         let reader = new FileReader();
@@ -993,11 +940,9 @@ class EditImage extends Component {
         upload(imageUrl, firstFile, (err, data)=> {
           if(err){
               message.info('替换原图上传至COS失败!');
-              console.log("替换原图上传至COS失败!!!");
           }
           if(!err){
               message.success('替换原图上传至COS成功');
-              console.log('替换原图上传的图片数据:',data);
           }
           
         })
@@ -1010,8 +955,7 @@ class EditImage extends Component {
                 message.info('替换缩略图上传至COS失败!');
             }
             if(!err){
-                message.success('替换缩略图上传至COS成功');
-                
+                message.success('替换缩略图上传至COS成功');                
                 this.props.handleEditImageVisible(false); this.props.getImageList();
             }     
           })
@@ -1044,16 +988,12 @@ class EditImage extends Component {
                 imageType: 1,
               }
             };
-            console.log(result);
             //上传至数据库
             axios.post('/image/updateImageInfo',result)
             .then(res => {
               const { code, msg, data } = res.data;
-
               if( code === 0) {
                 message.success('替换图片成功！');
-                // this.setState({updateImageData:data});
-                // console.log(this.state.updateImageData);
               }else{
                 message.info(msg);
               }
@@ -1072,11 +1012,9 @@ class EditImage extends Component {
         upload(imageUrl, firstFile, (err, data) => {
           if(err){
               message.info('替换原图上传至COS失败!');
-              console.log("替换原图上传至COS失败!!!");
           }
           if(!err){
               message.success('替换原图上传至COS成功');
-              console.log('替换原图上传的图片数据:',data);
           }
           
         })
@@ -1090,8 +1028,7 @@ class EditImage extends Component {
                 message.info('替换剖面图上传至COS失败!');
             }
             if(!err){
-                message.success('替换剖面图上传至COS成功');
-                
+                message.success('替换剖面图上传至COS成功');                
                 this.props.handleEditImageVisible(false); this.props.getImageList();
             }     
           })
@@ -1125,12 +1062,10 @@ class EditImage extends Component {
                 imageType: 1,
               }
             };
-            console.log(result);
             //上传至数据库
             axios.post('/image/updateImageInfo',result)
             .then(res => {
               const { code, msg, data } = res.data;
-              console.log(code,msg,data);
               if( code === 0) {
                 message.success('替换剖面图成功！');
               }else{
@@ -1143,7 +1078,6 @@ class EditImage extends Component {
       if(this.props.imageType===4){
         const selectImageData = this.state.selectImageData;
         let imageUrl = selectImageData[0].imageUrl;
-        console.log('替换地质剖面图地址:',imageUrl);
         let imageUrl1 = selectImageData[1].imageUrl;
 
         let reader = new FileReader();
@@ -1152,11 +1086,9 @@ class EditImage extends Component {
         upload(imageUrl, firstFile, (err, data)=> {
           if(err){
               message.info('替换原图上传至COS失败!');
-              console.log("替换原图上传至COS失败!!!");
           }
           if(!err){
               message.success('替换原图上传至COS成功');
-              console.log('替换原图上传的图片数据:',data);
           }
           
         })
@@ -1169,8 +1101,7 @@ class EditImage extends Component {
                 message.info('替换缩略图上传至COS失败!');
             }
             if(!err){
-                message.success('替换缩略图上传至COS成功');
-                
+                message.success('替换缩略图上传至COS成功');                
                 this.props.handleEditImageVisible(false); this.props.getImageList();
             }     
           })
@@ -1203,16 +1134,12 @@ class EditImage extends Component {
                 imageType: 1,
               }
             };
-            console.log(result);
             //上传至数据库
             axios.post('/image/updateImageInfo',result)
             .then(res => {
               const { code, msg, data } = res.data;
-
               if( code === 0) {
                 message.success('替换图片成功！');
-                // this.setState({updateImageData:data});
-                // console.log(this.state.updateImageData);
               }else{
                 message.info(msg);
               }
