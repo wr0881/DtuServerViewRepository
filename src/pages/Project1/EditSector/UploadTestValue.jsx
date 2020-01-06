@@ -78,7 +78,6 @@ class UploadTestValue extends Component {
         const sectorId = sectorModel.sectorId;
         const formData = new FormData();
         const monitorType = this.monitorType;
-        console.log(monitorType);
         fileList.forEach(file => {
             formData.append('dataFile', file);
             
@@ -98,14 +97,12 @@ class UploadTestValue extends Component {
         // You can use any AJAX library you like
         axios.post('/manual-collect-data/check',formData,config).then(res => {
             const { code,msg,data } = res.data;
-            console.log(code,msg,data);
             if(code===0){
                 this.setState({
                     fileList: [],
                     uploading: false,
                     dataSource: data.dataItems,
                 });
-                console.log(this.state.dataSource);
                 message.success('上传成功!');
             }else{
                 this.setState({
@@ -123,7 +120,6 @@ class UploadTestValue extends Component {
     };
 
     saveTest = () => {
-        console.log('表格数据:',this.state.dataSource);
         let saveDataItems = [];
         if(this.state.dataSource){
             this.state.dataSource.forEach(v => {
@@ -140,10 +136,8 @@ class UploadTestValue extends Component {
             monitorType:this.monitorType,
             sectorId:sectorModel.sectorId,
         }
-        console.log('保存的数据:',params);
         axios.post('/manual-collect-data/save',params).then(res => {
             const { code,msg,data } = res.data;
-            console.log(code,msg,data);
             if(code===0){
                 message.success('测试值保存成功!');
             }else{
@@ -288,7 +282,6 @@ class UploadTestValue extends Component {
             title: '是否报警',
             dataIndex: 'isAlert',
             render:(value)=>{
-                console.log(value);
                 return (
                     <div>
                         {value === false ? 

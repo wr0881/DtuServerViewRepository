@@ -84,12 +84,10 @@ class AddBenchmark extends Component {
     }
 
     handleSubmit = e => {
-        console.log('提交表单！！');
         e.preventDefault();    
         const { dispatch, form } = this.props;    
         form.validateFields((err, fieldsValue) => {
             if (err) return;
-            console.log(fieldsValue);
             const data = [];
             for(name in fieldsValue){
                 const [k2,iStr] =  name.split("_");
@@ -102,13 +100,10 @@ class AddBenchmark extends Component {
                     data[index][k2] = fieldsValue[name].format('YYYY-MM-DD HH:mm:ss');
                 }
             }
-            console.log(data);
             
             const sectorId = sectorModel.sectorId;
-            console.log(sectorId);
             addBenchmark(sectorId,data).then(res => {
                 const { code,msg,data } = res.data;
-                console.log(code,msg,data);
                 if(code === 0) {
                     this.setState({visible:true});
                     this.getBenchmarkList();
@@ -378,7 +373,6 @@ class AddBenchmark extends Component {
         );
     }
     componentDidMount() {
-        console.log(sectorModel.sectorId);
         this.getBenchmarkList();
     }
 }
@@ -411,7 +405,6 @@ class EditBenchmark extends Component {
             return result;
         }
         let currentTime = formatTime(new Date());
-        console.log(currentTime);
         form.validateFields((err, values) => {
             if(!err){
                 let params = {
@@ -421,13 +414,9 @@ class EditBenchmark extends Component {
                     remark: values.remark,
                     updateTime: currentTime
                 };
-                console.log(values);
-                console.log(params);
                 const id = this.state.editValue.id;
-                console.log(id);
                 editBenchmark(id,params).then(res => {
                     const {code,msg,data} = res.data;
-                    console.log(code,msg,data);
                     if(code === 0) {
                         message.success('编辑成功!')
                         this.props.getBenchmarkList();

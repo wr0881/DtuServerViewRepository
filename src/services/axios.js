@@ -1,8 +1,13 @@
 /* eslint-disable dot-notation */
 import axios from 'axios';
 
+<<<<<<< HEAD
 // axios.defaults.baseURL = 'http://123.207.88.210:8880'; // 线上
 axios.defaults.baseURL = 'http://123.207.88.210:9093'; // 测试
+=======
+axios.defaults.baseURL = 'http://123.207.88.210:8880'; // 线上
+// axios.defaults.baseURL = 'http://123.207.88.210:9093'; // 测试
+>>>>>>> bce35fb8f96d6c7b2c2e72a87321b14c720d6abf
 // axios.defaults.baseURL = 'http://10.88.89.101:8880'; //邓泽民
 // axios.defaults.baseURL = 'http://10.88.89.170:8880'; //徐善斌
 // axios.defaults.baseURL = 'http://10.88.89.116:9093'; //李茂平

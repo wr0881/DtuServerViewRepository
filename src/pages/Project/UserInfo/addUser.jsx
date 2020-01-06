@@ -144,7 +144,7 @@ class addUser extends Component {
                     rules: [
                       { required: true, message: '不允许为空' },
                       {
-                        pattern: /^((0\d{2,3}-\d{7,8})|(1[3584]\d{9}))$/,
+                        pattern: /^((0\d{2,3}-\d{7,8})|(1[3456789]\d{9}))$/,
                         message: '请输入正确的电话',
                       },
                     ],

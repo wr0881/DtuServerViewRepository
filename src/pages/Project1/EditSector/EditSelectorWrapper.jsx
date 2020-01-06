@@ -43,9 +43,9 @@ class EditSelectorWrapper extends Component {
       // case 'bindBenchmark':
       //   router.push(`${match.url}/bindBenchmark`);
       //   break;
-      case 'generateReport':
-        router.push(`${match.url}/generateReport`);
-        break;
+      // case 'generateReport':
+      //   router.push(`${match.url}/generateReport`);
+      //   break;
       case 'modifySectorBasicInfo':
         router.push(`${match.url}/modifySectorBasicInfo`);
         break;

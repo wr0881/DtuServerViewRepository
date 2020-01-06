@@ -439,7 +439,7 @@ class AddThreshold extends Component {
         </div>
         <Form
           layout="vertical"
-          
+          key={Math.random()}
         // style={{ textAlign: 'right', paddingLeft: '30px', paddingRight: '60px' }}
         >
           <Row gutter={8}>
