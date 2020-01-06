@@ -299,11 +299,11 @@ export default [
                 name: '修改子项目基本信息',
                 component: './Project/EditSector/ModifySectorBasicInfo',
               },
-              // {
-              //   path: '/project/editSector/editReport',
-              //   name: '修改报告信息',
-              //   component: './Project/EditSector/editReport',
-              // },
+              {
+                path: '/project/editSector/editReport',
+                name: '修改报告信息',
+                component: './Project/EditSector/editReport',
+              },
             ],
           },
         ],

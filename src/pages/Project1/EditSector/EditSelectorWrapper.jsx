@@ -101,10 +101,10 @@ class EditSelectorWrapper extends Component {
       //   key: 'bindBenchmark',
       //   tab: '绑定基准点',
       // },
-      {
-        key: 'generateReport',
-        tab: '报告生成',
-      },
+      // {
+      //   key: 'generateReport',
+      //   tab: '报告生成',
+      // },
       {
         key: 'modifySectorBasicInfo',
         tab: '修改子项目基本信息',
