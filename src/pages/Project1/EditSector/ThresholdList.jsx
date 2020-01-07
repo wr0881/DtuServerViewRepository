@@ -399,9 +399,9 @@ class AddThreshold extends Component {
     return (
       <Drawer
         title="添加阈值"
-        //key={Math.random()}
+        // key={Math.random()}
         width={800}
-        onClose={_ => { this.props.handleAddThresholdVisible(false) }}
+        onClose={_ => { this.props.handleAddThresholdVisible(false); }}
         visible={this.props.visible}
       >
         <div style={{ marginBottom: '30px' }}>
@@ -410,7 +410,7 @@ class AddThreshold extends Component {
         </div>
         <Form
           layout="vertical"
-          key={Math.random()}
+          //key={Math.random()}
         // style={{ textAlign: 'right', paddingLeft: '30px', paddingRight: '60px' }}
         >
           <Row gutter={8}>
@@ -475,6 +475,7 @@ class AddThreshold extends Component {
                       if(v.indexOf("3") > -1){
                         for(var i=0;i<value3.length;i++){
                           value3[i].style.display="block";
+                          
                         }                       
                       }else{
                         for(var i=0;i<value3.length;i++){

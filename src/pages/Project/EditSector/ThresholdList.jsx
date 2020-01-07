@@ -100,8 +100,10 @@ class ThresholdList extends Component {
         dataIndex: 'thresholdType',
         key: 'type',
         render: (text, record) => {
+          
           const map = ['当前值', '单次变化量', '累计变化量', '变化速率'];
-          return map[text - 1];
+          console.log(map[text - 1]);
+          return map[text - 1];         
         }
       },
       {
@@ -439,7 +441,7 @@ class AddThreshold extends Component {
         </div>
         <Form
           layout="vertical"
-          key={Math.random()}
+          //key={Math.random()}
         // style={{ textAlign: 'right', paddingLeft: '30px', paddingRight: '60px' }}
         >
           <Row gutter={8}>
