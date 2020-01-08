@@ -142,6 +142,7 @@ class AddSectorName extends Component {
     // const projectDescription = this.state.projectInfo.projectDescription;
     // const adress = state.adress;
     // const detail = state.adress_detail;
+    // console.log(this.state.projectInfo);
     return (
       <Form layout="horizontal" className={`${styles.stepForm} ${styles.disabled}`}>
         <Form.Item {...formItemLayout} label="子项目名称">
@@ -193,7 +194,7 @@ class AddSectorName extends Component {
           })(
             <TextArea
               placeholder="示例: 这是一个什么什么子项目"
-              autosize={{ minRows: 3 }}
+              autoSize={{ minRows: 3 }}
             />
           )}
         </Form.Item>
@@ -215,14 +216,14 @@ class AddSectorName extends Component {
         <Form.Item {...formItemLayout} label="所在省市">
           {getFieldDecorator('adress', {
             rules: [{ required: true, message: '请选择子项目所在省市' }],
-            //initialValue:adress
+            // initialValue:adress
           })(
             <Cascader options={getLocation()} placeholder="示例: 湖南省/长沙市/岳麓区" />
           )}
         </Form.Item>
         <Form.Item {...formItemLayout} label="街道地址">
           {getFieldDecorator('adress_detail', {
-            //initialValue:detail,
+            // initialValue:detail,
             rules: [{ required: true, message: '请输入子项目街道地址' }],
           })(
             <Input placeholder="示例: 学士路学士街道755号" />
