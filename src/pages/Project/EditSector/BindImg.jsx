@@ -336,7 +336,7 @@ class AddImg extends Component {
       >
         <Form
           layout="vertical"
-          key={Math.random()}
+          // key={Math.random()}
         >
           <Form.Item>
             <div>
@@ -608,7 +608,7 @@ class EditImage extends Component {
       >
         <Form
           layout="vertical"
-          key={Math.random()}
+          //key={Math.random()}
         >
           <Form.Item>
           <input

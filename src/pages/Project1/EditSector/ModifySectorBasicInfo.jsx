@@ -182,7 +182,7 @@ class ModifySectorBasicInfo extends Component {
                             initialValue: this.state.sectorBasicInfo.sectorDescription
                         })(
                             <TextArea
-                            autosize={{ minRows: 3 }}
+                            autoSize={{ minRows: 3 }}
                             />
                         )}
                         </Form.Item>

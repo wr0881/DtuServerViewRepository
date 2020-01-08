@@ -292,7 +292,7 @@ class AddImg extends Component {
       >
         <Form
           layout="vertical"
-          key={Math.random()}
+          // key={Math.random()}
         >
           <FormItem>
             <div id="dropbox">

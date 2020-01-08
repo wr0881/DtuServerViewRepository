@@ -182,7 +182,7 @@ class AddProjectName extends Component {
           })(
             <TextArea
               placeholder="示例: 这是一个什么什么项目"
-              autosize={{ minRows: 3 }}
+              autoSize={{ minRows: 3 }}
             />
           )}
         </Form.Item>
