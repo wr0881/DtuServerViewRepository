@@ -105,7 +105,7 @@ class AddBenchmark extends Component {
             addBenchmark(sectorId,data).then(res => {
                 const { code,msg,data } = res.data;
                 if(code === 0) {
-                    this.setState({visible:true});
+                    this.setState({visible:false});
                     this.getBenchmarkList();
                 }
             })
@@ -200,7 +200,21 @@ class AddBenchmark extends Component {
         return (
             <Fragment>
                 {this.state.visible === false ? (
-                <Card bordered={false}>
+                  <Card bordered={false}>
+                  <Button type='primary' onClick={_ => { this.setState({visible:true}); }}>基准点添加</Button>
+                  <Divider />
+                  <Table
+                      loading={this.state.getBenchmarkListLoading}
+                      columns={columns}
+                      dataSource={this.state.benchmarkList}
+                      // pagination={this.state.pagination}
+                      // onChange={(pagination) => {
+                      //     this.setState({pagination});
+                      // }}
+                  />
+              </Card>
+                ) : (
+                  <Card bordered={false}>
                     <div style={{
                         width: '100%',
                         //height: '500px',
@@ -327,7 +341,7 @@ class AddBenchmark extends Component {
                                 textAlign: 'center',
                             }}
                             >
-                            <Button onClick={_ => { this.setState({visible:true});this.getBenchmarkList(); }} style={{ marginRight: 8 }}>
+                            <Button onClick={_ => { this.setState({visible:false});this.getBenchmarkList(); }} style={{ marginRight: 8 }}>
                                 取消
                             </Button>
                             <Button type="primary" htmlType='submit' 
@@ -338,21 +352,7 @@ class AddBenchmark extends Component {
                         </div>
                     </Form>
                     </div>
-                </Card>
-                ) : (
-                    <Card bordered={false}>
-                        <Button type='primary' onClick={_ => { this.setState({visible:false}); }}>基准点添加</Button>
-                        <Divider />
-                        <Table
-                            loading={this.state.getBenchmarkListLoading}
-                            columns={columns}
-                            dataSource={this.state.benchmarkList}
-                            // pagination={this.state.pagination}
-                            // onChange={(pagination) => {
-                            //     this.setState({pagination});
-                            // }}
-                        />
-                    </Card>
+                  </Card>                   
                 )}
 
                 <EditBenchmark 
