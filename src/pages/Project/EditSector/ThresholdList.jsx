@@ -470,7 +470,7 @@ class AddThreshold extends Component {
                   ],
                 })(<Select
                   showSearch
-                  placeholder="示例：ZC45"
+                  placeholder="请选择指标"
                   //onFocus={this.MonitorTypeName}
                   //loading={this.state.getMonitorPointLoading}
                   //notFoundContent={this.state.getMonitorPointLoading ? <Spin size="small" /> : null}
@@ -561,7 +561,7 @@ class AddThreshold extends Component {
                   rules: [
                     { required: true, message: '不允许为空' },
                     {
-                      pattern: /^\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\)(\;\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\))?$/,
+                      pattern: /^\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\)(\;\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\))?$/,
                       message: '阈值格式错误',
                     },
                   ],
@@ -581,7 +581,7 @@ class AddThreshold extends Component {
                   rules: [
                     { required: true, message: '不允许为空' },
                     {
-                      pattern: /^\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\)(\;\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\))?$/,
+                      pattern: /^\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\)(\;\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\))?$/,
                       message: '阈值格式错误',
                     },
                   ],
@@ -603,7 +603,7 @@ class AddThreshold extends Component {
                   rules: [
                     { required: true, message: '不允许为空' },
                     {
-                      pattern: /^\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\)(\;\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\))?$/,
+                      pattern: /^\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\)(\;\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\))?$/,
                       message: '阈值格式错误',
                     },
                   ],
@@ -680,7 +680,23 @@ class EditThreshold extends Component {
       {
         title: '阈值等级',
         dataIndex: 'index',
-        key: 'index',
+        render: (value) => {
+          const value1 = [value];
+          return (
+            <div> 
+            {value1.map(v => {
+              if(v === '一级阈值'){
+                return <div key={Math.random()} style={{color:'#FFC400'}}>{v}</div>
+              }else if(v === '二级阈值'){
+                return <div key={Math.random()} style={{color:'#FA6814'}}>{v}</div>
+              }else if(v === '三级阈值'){
+                return <div key={Math.random()} style={{color:'#F5222D'}}>{v}</div>
+              }
+              return true;
+            })}
+            </div>
+          )
+        }
       },
       {
         title: '测量值(v)',
@@ -804,7 +820,7 @@ class EditThreshold extends Component {
                   rules: [
                     { required: true, message: '不允许为空' },
                     {
-                      pattern: /^\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\)(\;\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\))?$/,
+                      pattern: /^\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\)(\;\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\))?$/,
                       message: '阈值格式错误',
                     },
                   ],
@@ -818,7 +834,7 @@ class EditThreshold extends Component {
                   rules: [
                     { required: true, message: '不允许为空' },
                     {
-                      pattern: /^\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\)(\;\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\))?$/,
+                      pattern: /^\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\)(\;\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\))?$/,
                       message: '阈值格式错误',
                     },
                   ],
@@ -834,7 +850,7 @@ class EditThreshold extends Component {
                   rules: [
                     { required: true, message: '不允许为空' },
                     {
-                      pattern: /^\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\)(\;\([-\+]?[0-9]+\.?[0-9]+\,[-\+]?[0-9]+\.?[0-9]+\))?$/,
+                      pattern: /^\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\)(\;\([-\+]?([0-9]+(\.[0-9]+)?)?\,[-\+]?([0-9]+(\.[0-9]+)?)?\))?$/,
                       message: '阈值格式错误',
                     },
                   ],

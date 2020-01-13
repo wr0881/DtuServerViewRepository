@@ -103,13 +103,13 @@ class UploadTestValue extends Component {
                     uploading: false,
                     dataSource: data.dataItems,
                 });
-                message.success('上传成功!');
+                message.success(msg);
             }else{
                 this.setState({
                     uploading: false,
                     dataSource: []
                 });
-                message.info('上传失败!');
+                message.info(msg);
             }
         }).catch(err => {
             this.setState({
@@ -139,9 +139,9 @@ class UploadTestValue extends Component {
         axios.post('/manual-collect-data/save',params).then(res => {
             const { code,msg,data } = res.data;
             if(code===0){
-                message.success('测试值保存成功!');
+                message.success(msg);
             }else{
-                message.info('测试值保存失败!');
+                message.info(msg);
             }
         }).catch(err => {
             message.error(err);
